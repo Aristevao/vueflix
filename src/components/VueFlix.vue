@@ -7,19 +7,15 @@
       nome: 'Vue.js: The Documentary',
       lancamento: '24/02/2020',
       genero: 'Documentário',
-      imagem: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg'
+      imagem: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg',
+      like: true
     },
     {
       nome: 'Vue.js: The Documentary',
       lancamento: '24/02/2020',
       genero: 'Documentário',
-      imagem: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg'
-    },
-    {
-      nome: 'Vue.js: The Documentary',
-      lancamento: '24/02/2020',
-      genero: 'Documentário',
-      imagem: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg'
+      imagem: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg',
+      like: false
     },
     {
       nome: 'Vue.js: The Documentary',
@@ -57,6 +53,19 @@
 
     adicionandoFilme.value = false;
   }
+
+  const definirLike = (index, like) => {
+    filmes.value[index].like = like;
+  }
+
+  const excluir = (index) => {
+    const texto = `Tem certeza que deseja excluir o filme ${filmes.value[index].nome}?`
+    if (confirm(texto)) {
+      filmes.value.splice(index, 1);
+    }
+  }
+
+
 </script>
 <template>
   <div class="vueflix">
@@ -86,12 +95,14 @@
     </div>
 
     <div class="filmes">
-      <div v-for="filme in filmes" class="filme">
+      <div v-for="(filme, index) in filmes" class="filme">
         <div class="capa-container">
           <div class="acoes-filme">
-            <button class="botao">Gostei</button>
-            <button class="botao danger">Não Gostei</button>
-            <button class="botao danger">Excluir</button>
+            <button class="botao" @click="definirLike(index, true)"
+              :class="{ ativo: filme.like === true }">Gostei</button>
+            <button class="botao danger" @click="definirLike(index, false)" :class="{ ativo: filme.like === false }">Não
+              Gostei</button>
+            <button class=" botao danger" @click="excluir(index)">Excluir</button>
           </div>
           <img class="capa" :src="filme.imagem" alt="" />
         </div>
