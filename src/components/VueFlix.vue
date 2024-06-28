@@ -4,7 +4,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 const movies = ref([
   // {
   //   name: 'https://www.themoviedb.org/t/p/w600_and_h900_bestv2/eqNdWOXUuTWefYMycWz7dVE0Irv.jpg',
-  //   imageURL: 'Vue.js: The Documentary',
+  //   image: 'Vue.js: The Documentary',
   //   releaseDate: '24/02/2020',
   //   genre: 'Documentário',
   //   like: true
