@@ -52,7 +52,7 @@ const setLike = (index, liked) => {
   movies.value[index].like = liked
 }
 
-// todos | gostei | nao-gostei
+// all | liked | disliked
 const selectedFilter = ref('all')
 
 const filteredMovies = computed(() => {
