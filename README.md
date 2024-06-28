@@ -1,21 +1,17 @@
-# VUEFLIX
+#VUEFLIX
 
-Projeto da trilha Vue.js Básico
+Basic Project from implemented in Trilha Vue.js.
 
-## Objetivo
-
-O objetivo desse projeto é que o aluno implemente as funcionalidades utilizando o conhecimento de Vue.js obtido na trilha.
-
-As informações inseridas serão copiadas diretamente do site
+The information entered will be copied directly from the website
 https://www.themoviedb.org/
 
-## IDE Recomendada
+## Recommended IDE
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 
 ## Setup
 
-Instale as dependencias do projeto
+Install project dependencies
 
 ```sh
 npm install
@@ -23,7 +19,7 @@ npm install
 
 ### Compile and Hot-Reload for Development
 
-Execute o ambiente de dev
+Run the dev environment
 
 ```sh
 npm run dev
