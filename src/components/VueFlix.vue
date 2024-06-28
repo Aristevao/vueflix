@@ -66,8 +66,8 @@ const filteredMovies = computed(() => {
   }
 })
 
-// Para evitar sobrescrever os dados do local storage
-// para garantir que até quando mudamos o like
+// To avoid overwriting local storage data
+// to ensure even when we change the like
 watch(
   () => movies,
   (novo, velho) => {
