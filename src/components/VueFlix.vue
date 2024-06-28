@@ -1,5 +1,8 @@
+<!-- eslint-disable vue/return-in-computed-property -->
+<!-- eslint-disable vue/no-ref-as-operand -->
+<!-- eslint-disable no-unused-vars -->
 <script setup>
-  import { ref } from 'vue';
+  import { ref, computed } from 'vue';
 
 
   const filmes = ref([
@@ -58,14 +61,25 @@
     filmes.value[index].like = like;
   }
 
-  const excluir = (index) => {
+  const excluirFilme = (index) => {
     const texto = `Tem certeza que deseja excluir o filme ${filmes.value[index].nome}?`
     if (confirm(texto)) {
       filmes.value.splice(index, 1);
     }
   }
 
+  const filtroSelecionado = ref("todos")
 
+  const filmesParaExibir = computed(() => {
+    switch (filtroSelecionado.value) {
+      case 'gostei':
+        return filmes.value.filter(item => item.like === true)
+      case 'nao-gostei':
+        return filmes.value.filter(item => item.false === false)
+      default:
+        return filmes.value;
+    }
+  })
 </script>
 <template>
   <div class="vueflix">
@@ -73,9 +87,14 @@
       <div class="filtros">
         <div class="titulo">Filtrar</div>
         <div class="opcoes-filtros">
-          <button class="botao ativo">Todos</button>
-          <button class="botao">Gostei</button>
-          <button class="botao">Não Gostei</button>
+          <button class="botao" @click="filtroSelecionado = 'todos'" :class="{ ativo: filtroSelecionado === 'todos' }">
+            Todos</button>
+          <button class="botao" @click="filtroSelecionado = 'gostei'"
+            :class="{ ativo: filtroSelecionado === 'gostei' }">
+            Gostei</button>
+          <button class="botao" @click="filtroSelecionado = 'nao-gostei'"
+            :class="{ ativo: filtroSelecionado === 'nao-gostei' }">
+            Não Gostei</button>
         </div>
       </div>
 
@@ -95,14 +114,14 @@
     </div>
 
     <div class="filmes">
-      <div v-for="(filme, index) in filmes" class="filme">
+      <div v-for="(filme, index) in filmesParaExibir" class="filme">
         <div class="capa-container">
           <div class="acoes-filme">
             <button class="botao" @click="definirLike(index, true)"
               :class="{ ativo: filme.like === true }">Gostei</button>
             <button class="botao danger" @click="definirLike(index, false)" :class="{ ativo: filme.like === false }">Não
               Gostei</button>
-            <button class=" botao danger" @click="excluir(index)">Excluir</button>
+            <button class=" botao danger" @click="excluirFilme(index)">Excluir</button>
           </div>
           <img class="capa" :src="filme.imagem" alt="" />
         </div>
