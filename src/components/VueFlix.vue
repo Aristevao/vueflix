@@ -128,6 +128,8 @@
         <div class="nome">{{ filme.nome }}</div>
         <div class="info">{{ filme.lancamento }} - {{ filme.genero }}</div>
       </div>
+      <p v-if="filmesParaExibir.length === 0" :style="{ flex: 1, textAlign: 'center', marginTop: '16px' }">Não há filmes
+        para exibir.</p>
     </div>
   </div>
 </template>
