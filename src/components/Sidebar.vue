@@ -78,7 +78,7 @@ export default {
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 40px;
 }
 
 .toggle-btn {
