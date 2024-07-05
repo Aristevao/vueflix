@@ -1,8 +1,12 @@
 <template>
   <div id="app">
     <HeaderBar :username="username" :userPicture="userPicture" />
-    <Sidebar :collapsed="collapsed" @toggleSidebar="toggleSidebar" />
-    <router-view></router-view>
+    <div class="main-content">
+      <Sidebar :collapsed="collapsed" @toggleSidebar="toggleSidebar" />
+      <div class="content">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,10 +41,25 @@
   };
 </script>
 
-<style>
+<style scoped>
   #app {
     display: flex;
     flex-direction: column;
     height: 100vh;
+  }
+
+  .main-content {
+    display: flex;
+    flex: 1;
+  }
+
+  .content {
+    flex: 1;
+    padding: 40px; 
+    overflow: auto;
+  }
+
+  router-view {
+    width: 100%;
   }
 </style>
