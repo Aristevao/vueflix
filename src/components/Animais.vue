@@ -1,11 +1,12 @@
 <template>
   <div>
-    <h1 class="title">Animais</h1>
-
-    <!-- Button to toggle filter visibility -->
-    <button @click="toggleFilters" class="toggle-filters-button">
-      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-    </button>
+    <!-- Title and toggle button container -->
+    <div class="header">
+      <div class="title">Animais</div>
+      <button @click="toggleFilters" class="toggle-filters-button">
+        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+      </button>
+    </div>
 
     <!-- Filter inputs -->
     <div v-if="showFilters" class="filters">
@@ -164,10 +165,22 @@
 </script>
 
 <style scoped>
-  .title {
-    font-family: sans-serif;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
   }
 
+  .title {
+    font-family: sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .toggle-filters-button {
+    margin-bottom: 10px;
+  }
 
   .filters {
     margin-bottom: 10px;
