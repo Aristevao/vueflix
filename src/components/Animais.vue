@@ -9,36 +9,36 @@
     </div>
 
     <!-- Filter inputs -->
-    <div v-if="showFilters" class="filters">
-      <div class="filter-item">
-        <input v-model="filters.identification" placeholder="Filter by ID" class="filter-input" />
+    <div v-if="showFilters">
+      <div class="filters">
+        <div class="filter-item">
+          <input v-model="filters.identification" placeholder="Filter by ID" class="filter-input" />
+        </div>
+        <div class="filter-item">
+          <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
+        </div>
+        <div class="filter-item">
+          <input v-model="filters.specie" placeholder="Filter by Species" class="filter-input" />
+        </div>
+        <div class="filter-item">
+          <input v-model="filters.breed" placeholder="Filter by Breed" class="filter-input" />
+        </div>
+        <div class="filter-item">
+          <select v-model="filters.sex" class="filter-input">
+            <option value="">Filter by Sex</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <input v-model="filters.birthdate" placeholder="Filter by Age" class="filter-input" />
+        </div>
+        <div class="filter-item">
+          <input v-model="filters.registrationDate" placeholder="Filter by Registration Date" class="filter-input" />
+        </div>
       </div>
-      <div class="filter-item">
-        <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
-      </div>
-      <div class="filter-item">
-        <input v-model="filters.specie" placeholder="Filter by Species" class="filter-input" />
-      </div>
-      <div class="filter-item">
-        <input v-model="filters.breed" placeholder="Filter by Breed" class="filter-input" />
-      </div>
-      <div class="filter-item">
-        <select v-model="filters.sex" class="filter-input">
-          <option value="">Filter by Sex</option>
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-        </select>
-      </div>
-      <div class="filter-item">
-        <input v-model="filters.birthdate" placeholder="Filter by Age" class="filter-input" />
-      </div>
-      <div class="filter-item">
-        <input v-model="filters.registrationDate" placeholder="Filter by Registration Date" class="filter-input" />
-      </div>
-      <div class="filter-item">
+      <div class="filter-buttons">
         <button @click="clearFilters">Clear Filters</button>
-      </div>
-      <div class="filter-item">
         <button @click="fetchAnimals">Apply Filters</button>
       </div>
     </div>
@@ -137,9 +137,6 @@
         this.currentPage = newPage;
         this.fetchAnimals(); // Fetch data for the new page
       },
-      toggleFilters() {
-        this.showFilters = !this.showFilters; // Toggle filter visibility
-      },
       calculateAge(birthdate) {
         const birthDate = new Date(birthdate);
         const today = new Date();
@@ -159,6 +156,9 @@
         this.filters.birthdate = '';
         this.filters.registrationDate = '';
         this.fetchAnimals();
+      },
+      toggleFilters() {
+        this.showFilters = !this.showFilters; // Toggle filter visibility
       }
     },
   });
@@ -174,7 +174,7 @@
 
   .title {
     font-family: sans-serif;
-    font-size: 30px;
+    font-size: 24px;
     font-weight: bold;
   }
 
@@ -187,7 +187,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    justify-content: space-between;
+    justify-content: left;
   }
 
   .filter-item {
@@ -198,9 +198,14 @@
   .filter-input {
     width: 100%;
     max-width: 150px;
-    /* Adjust as needed */
     padding: 5px;
     box-sizing: border-box;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
   .animal-table {
