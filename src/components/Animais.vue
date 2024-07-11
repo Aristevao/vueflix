@@ -2,8 +2,13 @@
   <div>
     <h1 class="title">Animais</h1>
 
+    <!-- Button to toggle filter visibility -->
+    <button @click="toggleFilters" class="toggle-filters-button">
+      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+    </button>
+
     <!-- Filter inputs -->
-    <div class="filters">
+    <div v-if="showFilters" class="filters">
       <div class="filter-item">
         <input v-model="filters.identification" placeholder="Filter by ID" class="filter-input" />
       </div>
@@ -97,7 +102,8 @@
           sex: '',
           birthdate: '',
           registrationDate: ''
-        }
+        },
+        showFilters: false // State to toggle filter visibility
       };
     },
     mounted() {
@@ -129,6 +135,9 @@
       handlePageChange(newPage) {
         this.currentPage = newPage;
         this.fetchAnimals(); // Fetch data for the new page
+      },
+      toggleFilters() {
+        this.showFilters = !this.showFilters; // Toggle filter visibility
       },
       calculateAge(birthdate) {
         const birthDate = new Date(birthdate);
