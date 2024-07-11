@@ -4,20 +4,37 @@
 
     <!-- Filter inputs -->
     <div class="filters">
-      <input v-model="filters.identification" @keypress.enter="fetchAnimals" placeholder="Filter by ID" />
-      <input v-model="filters.name" @keypress.enter="fetchAnimals" placeholder="Filter by Name" />
-      <input v-model="filters.specie" @keypress.enter="fetchAnimals" placeholder="Filter by Species" />
-      <input v-model="filters.breed" @keypress.enter="fetchAnimals" placeholder="Filter by Breed" />
-      <select v-model="filters.sex" @change="fetchAnimals">
-        <option value="">Filter by Sex</option>
-        <option value="MALE">MALE</option>
-        <option value="FEMALE">FEMALE</option>
-      </select>
-      <input v-model="filters.birthdate" @keypress.enter="fetchAnimals" placeholder="Filter by Age" />
-      <input v-model="filters.registrationDate" @keypress.enter="fetchAnimals"
-        placeholder="Filter by Registration Date" />
-      <button @click="fetchAnimals">Apply Filters</button>
-      <button @click="clearFilters">Clear Filters</button>
+      <div class="filter-item">
+        <input v-model="filters.identification" placeholder="Filter by ID" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <input v-model="filters.specie" placeholder="Filter by Species" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <input v-model="filters.breed" placeholder="Filter by Breed" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <select v-model="filters.sex" class="filter-input">
+          <option value="">Filter by Sex</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
+      </div>
+      <div class="filter-item">
+        <input v-model="filters.birthdate" placeholder="Filter by Age" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <input v-model="filters.registrationDate" placeholder="Filter by Registration Date" class="filter-input" />
+      </div>
+      <div class="filter-item">
+        <button @click="clearFilters">Clear Filters</button>
+      </div>
+      <div class="filter-item">
+        <button @click="fetchAnimals">Apply Filters</button>
+      </div>
     </div>
 
     <table class="animal-table">
@@ -142,10 +159,27 @@
     font-family: sans-serif;
   }
 
+
   .filters {
     margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
   }
 
+  .filter-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-input {
+    width: 100%;
+    max-width: 150px;
+    /* Adjust as needed */
+    padding: 5px;
+    box-sizing: border-box;
+  }
 
   .animal-table {
     width: 100%;
