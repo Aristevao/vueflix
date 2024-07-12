@@ -1,5 +1,5 @@
 <template>
-  <button :class="buttonClass" role="button" :disabled="disabled" @click="$emit('click')">
+  <button :class="buttonClass" @click.prevent="handleClick" :disabled="disabled">
     <slot></slot>
   </button>
 </template>
@@ -26,11 +26,11 @@
         };
       },
     },
-    methods: {
-      handleClick(event) {
-        this.$emit('click', event);
-      },
-    },
+    // methods: {
+    //   handleClick(event) {
+    //     this.$emit('click', event);
+    //   },
+    // },
   };
 </script>
 

@@ -1,19 +1,12 @@
 <template>
   <div>
-     <!-- Title and toggle button container -->
-  <div class="header">
-    <div class="title">Animais</div>
-    <button @click="toggleFilters" type="primary" class="toggle-filters-button">
-      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-    </button>
-  </div>
-     <!-- Title and toggle button container -->
-  <!-- <div class="header">
-    <div class="title">Animais</div>
-    <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
-      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-    </CustomButton>
-  </div> -->
+    <!-- Title and toggle button container -->
+    <div class="header">
+      <div class="title">Animais</div>
+      <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
+        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+      </CustomButton>
+    </div>
 
     <!-- Filter inputs -->
     <div v-if="showFilters">
