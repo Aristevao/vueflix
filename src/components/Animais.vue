@@ -6,6 +6,7 @@
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
       </CustomButton>
+      <CustomButton @click.prevent="toggleAnimalForm" type="primary">Add New</CustomButton>
     </div>
 
     <!-- Filter inputs -->
@@ -43,6 +44,10 @@
       </div>
     </div>
 
+    <!-- AnimalForm component -->
+    <AnimalForm v-if="showAnimalForm" @animal-created="createAnimal" @form-canceled="cancelAnimalForm" />
+
+    <!-- Table and pagination components -->
     <table class="animal-table">
       <!-- Table header -->
       <thead>
@@ -85,12 +90,14 @@
   import axios from 'axios';
   import Pagination from './Pagination.vue';
   import CustomButton from './CustomButton.vue';
+  import AnimalForm from './AnimalForm.vue';
 
   export default defineComponent({
     name: 'Animais',
     components: {
-      Pagination, // Register the Pagination component
+      Pagination,
       CustomButton,
+      AnimalForm,
     },
     data() {
       return {
@@ -106,7 +113,8 @@
           birthdate: '',
           registrationDate: ''
         },
-        showFilters: false // State to toggle filter visibility
+        showFilters: false,
+        showAnimalForm: false,
       };
     },
     mounted() {
@@ -161,7 +169,19 @@
       },
       toggleFilters() {
         this.showFilters = !this.showFilters; // Toggle filter visibility
-      }
+      },
+      toggleAnimalForm() {
+        this.showAnimalForm = !this.showAnimalForm;
+      },
+      createAnimal(newAnimal) {
+        // Logic to add new animal to the list
+        this.animals.push(newAnimal); // Example: Push new animal to the array
+        this.toggleAnimalForm(); // Hide the form after creation
+      },
+      cancelAnimalForm() {
+        // Logic to cancel the animal creation form
+        this.toggleAnimalForm(); // Hide the form on cancel
+      },
     },
   });
 </script>
