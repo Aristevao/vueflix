@@ -1,12 +1,19 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
-    <div class="header">
-      <div class="title">Animais</div>
-      <button @click="toggleFilters" class="toggle-filters-button">
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </button>
-    </div>
+     <!-- Title and toggle button container -->
+  <div class="header">
+    <div class="title">Animais</div>
+    <button @click="toggleFilters" type="primary" class="toggle-filters-button">
+      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+    </button>
+  </div>
+     <!-- Title and toggle button container -->
+  <!-- <div class="header">
+    <div class="title">Animais</div>
+    <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
+      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+    </CustomButton>
+  </div> -->
 
     <!-- Filter inputs -->
     <div v-if="showFilters">
@@ -38,8 +45,8 @@
         </div>
       </div>
       <div class="filter-buttons">
-        <button @click="clearFilters">Clear Filters</button>
-        <button @click="fetchAnimals">Apply Filters</button>
+        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
+        <CustomButton @click="fetchAnimals" type="primary">Apply Filters</CustomButton>
       </div>
     </div>
 
@@ -83,12 +90,14 @@
 <script>
   import { defineComponent } from 'vue';
   import axios from 'axios';
-  import Pagination from './Pagination.vue'; // Import your Pagination component
+  import Pagination from './Pagination.vue';
+  import CustomButton from './CustomButton.vue';
 
   export default defineComponent({
     name: 'Animais',
     components: {
       Pagination, // Register the Pagination component
+      CustomButton,
     },
     data() {
       return {
