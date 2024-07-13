@@ -95,7 +95,7 @@
   import AnimalForm from './AnimalForm.vue';
 
   export default defineComponent({
-    name: 'Animais',
+    name: 'AnimalList',
     components: {
       Pagination,
       CustomButton,

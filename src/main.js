@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import Dashboard from './components/Dashboard.vue';
 import Fazendas from './components/Fazendas.vue';
-import Animais from './components/Animais.vue';
+import Animais from './components/AnimalList.vue';
 import Vacinas from './components/Vacinas.vue';
 import Calendario from './components/Calendario.vue';
 import Notificacoes from './components/Notificacoes.vue';
