@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div class="animal-form-modal" v-if="isVisible">
+    <div v-if="isVisible" class="animal-form-modal">
       <div class="animal-form">
         <h2>Create New Animal</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
@@ -31,8 +31,12 @@
           <label>Description:</label>
           <textarea v-model="formData.description" maxlength="500"></textarea>
 
-          <label>Unit ID:</label>
-          <input type="number" v-model="formData.unitId" required />
+          <label>Unit:</label>
+          <select v-model="formData.unitId" required>
+            <option v-for="unit in units" :key="unit.id" :value="unit.id">
+              {{ unit.name }}
+            </option>
+          </select>
 
           <label>Picture:</label>
           <input type="file" @change="handleFileUpload" />
@@ -53,7 +57,8 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      isVisible: true,// TODO: Default = false. True exige 2 clicks pra abrir a modal
+      isVisible: false,
+      units: [],
       formData: {
         name: '',
         identification: '',
@@ -71,10 +76,20 @@ export default {
   methods: {
     open() {
       this.isVisible = true;
+      this.fetchUnits();
     },
     close() {
       this.isVisible = false;
       this.resetForm();
+    },
+    fetchUnits() {
+      axios.get('http://localhost:8080/api/digital-pec/unit/list')
+        .then(response => {
+          this.units = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching units:', error);
+        });
     },
     handleFileUpload(event) {
       this.formData.picture = event.target.files[0];

@@ -6,7 +6,9 @@
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
       </CustomButton>
-      <CustomButton @click.prevent="toggleAnimalForm" type="primary">Add New</CustomButton>
+      <button @click="openAnimalForm" class="add-new-button">
+        Add New
+      </button>
     </div>
 
     <!-- Filter inputs -->
@@ -45,7 +47,7 @@
     </div>
 
     <!-- AnimalForm component -->
-    <AnimalForm v-if="showAnimalForm" @animal-created="createAnimal" @form-canceled="cancelAnimalForm" />
+    <AnimalForm ref="animalForm" @animal-created="handleAnimalCreated" />
 
     <!-- Table and pagination components -->
     <table class="animal-table">
@@ -170,17 +172,11 @@
       toggleFilters() {
         this.showFilters = !this.showFilters; // Toggle filter visibility
       },
-      toggleAnimalForm() {
-        this.showAnimalForm = !this.showAnimalForm;
+      openAnimalForm() {
+        this.$refs.animalForm.open();
       },
-      createAnimal(newAnimal) {
-        // Logic to add new animal to the list
-        this.animals.push(newAnimal); // Example: Push new animal to the array
-        this.toggleAnimalForm(); // Hide the form after creation
-      },
-      cancelAnimalForm() {
-        // Logic to cancel the animal creation form
-        this.toggleAnimalForm(); // Hide the form on cancel
+      handleAnimalCreated() {
+        this.fetchAnimals();
       },
     },
   });
