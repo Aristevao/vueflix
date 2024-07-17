@@ -42,7 +42,7 @@
           <input type="file" @change="handleFileUpload" />
 
           <div class="button-group">
-            <button type="submit">Create Animal</button>
+            <button type="submit">Save</button>
             <button type="button" @click="cancelForm">Cancel</button>
           </div>
         </form>
@@ -55,11 +55,18 @@
 import axios from 'axios';
 
 export default {
+  props: {
+    animalData: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       isVisible: false,
       units: [],
       formData: {
+        id: null,
         name: '',
         identification: '',
         specie: '',
@@ -73,10 +80,49 @@ export default {
       },
     };
   },
+  watch: {
+    animalData: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue && Object.keys(newValue).length > 0) {
+          this.formData = {
+            id: newValue.id || null,
+            name: newValue.name || '',
+            identification: newValue.identification || '',
+            specie: newValue.specie || '',
+            breed: newValue.breed || '',
+            sex: newValue.sex || '',
+            birthdate: newValue.birthdate || '',
+            registrationDate: newValue.registrationDate || '',
+            description: newValue.description || '',
+            unitId: newValue.unit ? newValue.unit.id : '',
+            picture: null,
+          };
+        }
+      },
+    },
+  },
   methods: {
-    open() {
+    open(animal) {
       this.isVisible = true;
       this.fetchUnits();
+      if (animal) {
+          this.formData = {
+            id: animal.id,
+            name: animal.name,
+            identification: animal.identification,
+            specie: animal.specie,
+            breed: animal.breed,
+            sex: animal.sex,
+            birthdate: animal.birthdate,
+            registrationDate: animal.registrationDate,
+            description: animal.description,
+            unitId: animal.unit.id,
+            picture: null,
+          };
+        } else {
+          this.resetForm();
+        }
     },
     close() {
       this.isVisible = false;
@@ -109,11 +155,19 @@ export default {
         formData.append('picture', this.formData.picture);
       }
 
-      axios.post('http://localhost:8080/api/digital-pec/animal', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      const url = this.formData.id
+          ? `http://localhost:8080/api/digital-pec/animal/${this.formData.id}`
+          : 'http://localhost:8080/api/digital-pec/animal';
+        const method = this.formData.id ? 'put' : 'post';
+  
+        axios({
+          method,
+          url,
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
       .then(response => {
         this.$emit('animal-created', response.data);
         this.close();
@@ -127,6 +181,7 @@ export default {
     },
     resetForm() {
       this.formData = {
+        id: null,
         name: '',
         identification: '',
         specie: '',

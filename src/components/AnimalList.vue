@@ -66,7 +66,7 @@
       </thead>
       <!-- Table body -->
       <tbody>
-        <tr v-for="animal in animals" :key="animal.id">
+        <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)">
           <td class="image-column">
             <img :src="animal.imageUrl || 'http://loremflickr.com/640/480/animals'" alt="Animal Image" width="50"
               height="50" />
@@ -177,6 +177,15 @@
       },
       handleAnimalCreated() {
         this.fetchAnimals();
+      },
+      openAnimalDetails(animalId) {
+        axios.get(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+          .then(response => {
+            this.$refs.animalForm.open(response.data);
+          })
+          .catch(error => {
+            console.error('Error fetching animal details:', error);
+          });
       },
     },
   });
