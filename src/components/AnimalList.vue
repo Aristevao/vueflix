@@ -62,11 +62,13 @@
           <th class="sex-column">Sex</th>
           <th class="age-column">Age</th>
           <th class="registration-date-column">Registration Date</th>
+          <!-- <th class="registration-date-column">Action</th> -->
         </tr>
       </thead>
       <!-- Table body -->
       <tbody>
-        <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)">
+        <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)"
+          @mouseover="showEllipsis(animal.id)" @mouseleave="hideEllipsis(animal.id)">
           <td class="image-column">
             <img :src="animal.imageUrl || 'http://loremflickr.com/640/480/animals'" alt="Animal Image" width="50"
               height="50" />
@@ -78,6 +80,13 @@
           <td class="sex-column">{{ animal.sex }}</td>
           <td class="age-column">{{ calculateAge(animal.birthdate) }}</td>
           <td class="registration-date-column">{{ animal.registrationDate }}</td>
+
+          <!-- <td v-if="true" @click="toggleOptions(animal.id)" class="ellipsis">...</td>
+
+          <div v-if="animal.showEllipsis" class="options">
+            <button @click="openAnimalDetails(animal.id)">Edit</button>
+            <button @click="deleteAnimal(animal.id)">Delete</button>
+          </div> -->
         </tr>
       </tbody>
     </table>
@@ -187,6 +196,24 @@
             console.error('Error fetching animal details:', error);
           });
       },
+      deleteAnimal(animalId) {
+        axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+          .then(() => {
+            this.animals = this.animals.filter(animal => animal.id !== animalId);
+          })
+          .catch(error => {
+            console.error('Error deleting animal:', error);
+          });
+      },
+      showEllipsis(animalId) {
+        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showEllipsis: true } : animal);
+      },
+      hideEllipsis(animalId) {
+        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showEllipsis: false, showOptions: false } : animal);
+      },
+      toggleOptions(animalId) {
+        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showOptions: !animal.showOptions } : animal);
+      },
     },
   });
 </script>
@@ -233,6 +260,47 @@
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+  }
+
+  .button-group {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  .button-group button {
+    margin-left: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    padding: 10px;
+    position: relative;
+  }
+
+  .ellipsis {
+    cursor: pointer;
+    float: right;
+    /* width: 150px; */
+  }
+
+  .options {
+    display: flex;
+    gap: 10px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+
+  .options button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
   }
 
   .animal-table {
