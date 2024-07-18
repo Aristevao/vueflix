@@ -42,7 +42,7 @@
           <input type="file" @change="handleFileUpload" />
 
           <div class="button-group">
-            <!-- <button @click="deleteAnimal(animal.id)">Delete</button> -->
+            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">Delete</button>
             <button type="submit">Save</button>
             <button type="button" @click="cancelForm">Cancel</button>
           </div>
@@ -65,7 +65,7 @@
     data() {
       return {
         isVisible: false,
-        // deleteButtonIsVisible: false,
+        deleteButtonIsVisible: false,
         units: [],
         formData: {
           id: null,
@@ -108,7 +108,10 @@
       open(animal) {
         this.isVisible = true;
         this.fetchUnits();
+
         if (animal) {
+          this.deleteButtonIsVisible = true
+
           this.formData = {
             id: animal.id,
             name: animal.name,
@@ -128,6 +131,7 @@
       },
       close() {
         this.isVisible = false;
+        this.deleteButtonIsVisible = false;
         this.resetForm();
       },
       fetchUnits() {
@@ -157,6 +161,8 @@
           formData.append('picture', this.formData.picture);
         }
 
+        console.log("SUBMIT FORM - PUT/POST");
+
         const url = this.formData.id
           ? `http://localhost:8080/api/digital-pec/animal/${this.formData.id}`
           : 'http://localhost:8080/api/digital-pec/animal';
@@ -176,6 +182,18 @@
           })
           .catch(error => {
             console.error('Error creating animal:', error);
+          });
+      },
+      deleteAnimal(animalId) {
+        console.log("DELETE - DELETE");
+
+        axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+          .then((response) => {
+            this.$emit('animal-created', response.data);
+            this.close();
+          })
+          .catch(error => {
+            console.error('Error deleting animal:', error);
           });
       },
       cancelForm() {
