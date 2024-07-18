@@ -2,7 +2,7 @@
   <transition name="modal">
     <div v-if="isVisible" class="animal-form-modal">
       <div class="animal-form">
-        <h2>Create New Animal</h2>
+        <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <label>Name:</label>
           <input v-model="formData.name" maxlength="80" />
@@ -108,9 +108,10 @@
       open(animal) {
         this.isVisible = true;
         this.fetchUnits();
+        document.addEventListener('keydown', this.handleKeydown);
 
         if (animal) {
-          this.deleteButtonIsVisible = true
+          this.deleteButtonIsVisible = true;
 
           this.formData = {
             id: animal.id,
@@ -133,6 +134,12 @@
         this.isVisible = false;
         this.deleteButtonIsVisible = false;
         this.resetForm();
+        document.removeEventListener('keydown', this.handleKeydown);
+      },
+      handleKeydown(event) {
+        if (event.key === 'Escape') {
+          this.close();
+        }
       },
       fetchUnits() {
         axios.get('http://localhost:8080/api/digital-pec/unit/list')
@@ -161,8 +168,6 @@
           formData.append('picture', this.formData.picture);
         }
 
-        console.log("SUBMIT FORM - PUT/POST");
-
         const url = this.formData.id
           ? `http://localhost:8080/api/digital-pec/animal/${this.formData.id}`
           : 'http://localhost:8080/api/digital-pec/animal';
@@ -185,11 +190,9 @@
           });
       },
       deleteAnimal(animalId) {
-        console.log("DELETE - DELETE");
-
         axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
-          .then((response) => {
-            this.$emit('animal-created', response.data);
+          .then(() => {
+            this.$emit('animal-deleted', animalId);
             this.close();
           })
           .catch(error => {

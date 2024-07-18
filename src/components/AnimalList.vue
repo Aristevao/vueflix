@@ -47,7 +47,7 @@
     </div>
 
     <!-- AnimalForm component -->
-    <AnimalForm ref="animalForm" @animal-created="handleAnimalCreated" />
+    <AnimalForm ref="animalForm" @animal-created="handleAnimalCreated" @animal-deleted="handleAnimalDeleted" />
 
     <!-- Table and pagination components -->
     <table class="animal-table">
@@ -185,6 +185,9 @@
         this.$refs.animalForm.open();
       },
       handleAnimalCreated() {
+        this.fetchAnimals();
+      },
+      handleAnimalDeleted() {
         this.fetchAnimals();
       },
       openAnimalDetails(animalId) {
