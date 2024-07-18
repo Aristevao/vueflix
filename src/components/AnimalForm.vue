@@ -223,6 +223,9 @@
 
 <style scoped>
   .animal-form-modal {
+    /* flex-direction: column;  */
+    /* row-gap: 1rem; */
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -240,7 +243,7 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
+    max-width: 600px;
     width: 100%;
   }
 
