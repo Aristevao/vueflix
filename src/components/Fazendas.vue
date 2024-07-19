@@ -6,8 +6,8 @@
         <div class="fazenda-image-container">
           <img :src="fazenda.picture" class="fazenda-image" />
           <div class="animal-count">
-            <img src='@/assets/animal-white.png' alt="animal icon" />
-            <span>{{ fazenda.personCount || 'N/A' }} Animais</span>
+            <img src="@/assets/animal-white.png" alt="animal icon" />
+            <span>{{ fazenda.animalCount !== undefined ? fazenda.animalCount : 'N/A' }} Animais</span>
           </div>
         </div>
         <div class="fazenda-info">
@@ -33,14 +33,31 @@ export default {
     this.fetchFazendas();
   },
   methods: {
-    fetchFazendas() {
-      axios.get('http://localhost:8080/api/digital-pec/unit')
-        .then(response => {
-          this.fazendas = response.data.content;
-        })
-        .catch(error => {
-          console.error('Error fetching fazendas:', error);
-        });
+    async fetchFazendas() {
+      try {
+        const unitResponse = await axios.get('http://localhost:8080/api/digital-pec/unit');
+        const units = unitResponse.data.content;
+
+        // Fetch animal counts for each unit
+        const fetchAnimalCountPromises = units.map(unit => 
+          axios.get(`http://localhost:8080/api/digital-pec/animal/unit/${unit.id}`)
+            .then(response => ({
+              ...unit,
+              animalCount: response.data
+            }))
+            .catch(error => {
+              console.error(`Error fetching animal count for unit ${unit.id}:`, error);
+              return {
+                ...unit,
+                animalCount: 'N/A'
+              };
+            })
+        );
+
+        this.fazendas = await Promise.all(fetchAnimalCountPromises);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     },
   },
 };
