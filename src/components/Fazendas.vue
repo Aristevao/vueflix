@@ -2,7 +2,7 @@
   <div class="fazendas">
     <h1>Fazendas</h1>
     <div class="fazendas-list">
-      <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openUnitModal(fazenda)">
+      <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openUnitModal(fazenda.id)">
         <div class="fazenda-image-container">
           <img :src="fazenda.picture || defaultImage" class="fazenda-image" />
           <div class="animal-count">
@@ -66,11 +66,16 @@
           console.error('Error fetching data:', error);
         }
       },
-      openUnitModal(unit) {
-        this.selectedUnit = unit;
-        this.$nextTick(() => {
-          this.$refs.unitModal.open();
-        });
+      async openUnitModal(unitId) {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/digital-pec/unit/${unitId}`);
+          this.selectedUnit = response.data;
+          this.$nextTick(() => {
+            this.$refs.unitModal.open();
+          });
+        } catch (error) {
+          console.error(`Error fetching unit data for unit ${unitId}:`, error);
+        }
       },
     },
   };
