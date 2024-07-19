@@ -2,12 +2,12 @@
   <div class="fazendas">
     <h1>Fazendas</h1>
     <div class="fazendas-list">
-      <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openUnitModal(fazenda.id)">
+      <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
         <div class="fazenda-image-container">
-          <img :src="fazenda.picture || defaultImage" class="fazenda-image" />
+          <img :src="fazenda.picture" class="fazenda-image" />
           <div class="animal-count">
-            <img src="@/assets/animal-white.png" alt="animal icon" />
-            <span>{{ fazenda.animalCount !== undefined ? fazenda.animalCount : 'N/A' }} Animais</span>
+            <img src='@/assets/animal-white.png' alt="animal icon" />
+            <span>{{ fazenda.animalCount || 'N/A' }} Animais</span>
           </div>
         </div>
         <div class="fazenda-info">
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <UnitModal :unit="selectedUnit" v-if="selectedUnit" @close="selectedUnit = null" ref="unitModal" />
+    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" />
   </div>
 </template>
 
@@ -33,49 +33,42 @@
       return {
         fazendas: [],
         selectedUnit: null,
-        defaultImage: 'https://via.placeholder.com/400',
       };
     },
     mounted() {
       this.fetchFazendas();
     },
     methods: {
-      async fetchFazendas() {
-        try {
-          const unitResponse = await axios.get('http://localhost:8080/api/digital-pec/unit');
-          const units = unitResponse.data.content;
-
-          // Fetch animal counts for each unit
-          const fetchAnimalCountPromises = units.map(unit =>
-            axios.get(`http://localhost:8080/api/digital-pec/animal/unit/${unit.id}`)
-              .then(response => ({
-                ...unit,
-                animalCount: response.data
-              }))
-              .catch(error => {
-                console.error(`Error fetching animal count for unit ${unit.id}:`, error);
-                return {
-                  ...unit,
-                  animalCount: 'N/A'
-                };
-              })
-          );
-
-          this.fazendas = await Promise.all(fetchAnimalCountPromises);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      },
-      async openUnitModal(unitId) {
-        try {
-          const response = await axios.get(`http://localhost:8080/api/digital-pec/unit/${unitId}`);
-          this.selectedUnit = response.data;
-          this.$nextTick(() => {
-            this.$refs.unitModal.open();
+      fetchFazendas() {
+        axios.get('http://localhost:8080/api/digital-pec/unit')
+          .then(response => {
+            this.fazendas = response.data.content;
+            this.fetchAnimalCounts();
+          })
+          .catch(error => {
+            console.error('Error fetching fazendas:', error);
           });
-        } catch (error) {
-          console.error(`Error fetching unit data for unit ${unitId}:`, error);
-        }
+      },
+      fetchAnimalCounts() {
+        this.fazendas.forEach(fazenda => {
+          axios.get(`http://localhost:8080/api/digital-pec/animal/unit/${fazenda.id}`)
+            .then(response => {
+              fazenda.animalCount = response.data;
+            })
+            .catch(error => {
+              console.error('Error fetching animal count:', error);
+            });
+        });
+      },
+      openModal(id) {
+        axios.get(`http://localhost:8080/api/digital-pec/unit/${id}`)
+          .then(response => {
+            this.selectedUnit = response.data;
+            this.$refs.unitModal.open();
+          })
+          .catch(error => {
+            console.error('Error fetching unit details:', error);
+          });
       },
     },
   };
@@ -95,7 +88,7 @@
   .fazenda-card {
     width: 30%;
     border: 1px solid #ddd;
-    border-radius: 10px;
+    border-radius: 17px;
     overflow: hidden;
     cursor: pointer;
   }

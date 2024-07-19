@@ -1,59 +1,47 @@
 <template>
-    <transition name="modal">
-        <div v-if="isVisible" class="unit-modal">
-            <div class="modal-content">
-                <h2>{{ unit ? unit.name : 'Unit Details' }}</h2>
-                <form>
-                    <div class="form-section">
-                        <h3>Unit Details</h3>
-                        <label>Name:</label>
-                        <input v-model="unit.name" disabled />
-
-                        <label>Street:</label>
-                        <input v-model="unit.address.street" disabled />
-
-                        <label>Number:</label>
-                        <input v-model="unit.address.number" disabled />
-
-                        <label>District:</label>
-                        <input v-model="unit.address.district" disabled />
-
-                        <label>City:</label>
-                        <input v-model="unit.address.city" disabled />
-
-                        <label>State:</label>
-                        <input v-model="unit.address.state" disabled />
-
-                        <label>Zipcode:</label>
-                        <input v-model="unit.address.zipcode" disabled />
-
-                        <label>Description:</label>
-                        <textarea v-model="unit.description" disabled></textarea>
+    <div class="modal-overlay" v-if="isVisible" @click.self="close">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>{{ unit.name }}</h2>
+                <button @click="close" class="close-button">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="unit-info">
+                    <img :src="unit.picture || defaultImage" class="unit-image" />
+                    <p>{{ unit.description }}</p>
+                    <button @click="toggleAddress" class="toggle-address-button">
+                        {{ showAddress ? 'Hide Address' : 'Show Address' }}
+                    </button>
+                    <div v-if="showAddress" class="address-info">
+                        <p><strong>Street:</strong> {{ unit.address.street }}</p>
+                        <p><strong>Number:</strong> {{ unit.address.number }}</p>
+                        <p><strong>District:</strong> {{ unit.address.district }}</p>
+                        <p><strong>Complement:</strong> {{ unit.address.complement }}</p>
+                        <p><strong>Zipcode:</strong> {{ unit.address.zipcode }}</p>
+                        <p><strong>City:</strong> {{ unit.address.city }}</p>
+                        <p><strong>State:</strong> {{ unit.address.state }}</p>
                     </div>
-                    <div class="form-section">
-                        <h3>Profile Picture</h3>
-                        <div class="profile-picture">
-                            <img :src="unit.picture || defaultImage" alt="Profile Picture" />
-                            <button type="button" @click="selectImage">Select image</button>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" @click="close">Close</button>
-                    </div>
-                </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button @click="close" class="cancel-button">Close</button>
             </div>
         </div>
-    </transition>
+    </div>
 </template>
 
 <script>
     export default {
         props: {
-            unit: Object,
+            unit: {
+                type: Object,
+                required: true,
+            },
         },
         data() {
             return {
                 isVisible: false,
+                showAddress: false,
                 defaultImage: 'https://via.placeholder.com/400',
             };
         },
@@ -65,15 +53,15 @@
                 this.isVisible = false;
                 this.$emit('close');
             },
-            selectImage() {
-                // Implement image selection logic here
+            toggleAddress() {
+                this.showAddress = !this.showAddress;
             },
         },
     };
 </script>
 
 <style scoped>
-    .unit-modal {
+    .modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -81,57 +69,88 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
         display: flex;
+        align-items: center;
         justify-content: center;
-        align-items: center;
     }
 
-    .modal-content {
+    .modal {
         background: white;
-        padding: 20px;
         border-radius: 10px;
-        width: 600px;
+        overflow: hidden;
+        width: 500px;
+        max-width: 100%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .form-section {
-        margin-bottom: 20px;
-    }
-
-    .form-section h3 {
-        margin-bottom: 10px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    input,
-    textarea {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-    }
-
-    .profile-picture {
+    .modal-header {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
     }
 
-    .profile-picture img {
-        width: 100px;
-        height: 100px;
-        border-radius: 10px;
-        margin-bottom: 10px;
+    .modal-header h2 {
+        margin: 0;
     }
 
-    .form-actions {
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .unit-info {
+        text-align: center;
+    }
+
+    .unit-image {
+        max-width: 25%;
+        height: auto;
+        border-radius: 17px;
+    }
+
+    .toggle-address-button {
+        margin-top: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .toggle-address-button:hover {
+        background-color: #0056b3;
+    }
+
+    .address-info {
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .modal-footer {
+        padding: 15px;
+        border-top: 1px solid #ddd;
         display: flex;
         justify-content: flex-end;
     }
 
-    .form-actions button {
-        padding: 10px 20px;
-        margin-left: 10px;
+    .cancel-button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .cancel-button:hover {
+        background-color: #5a6268;
     }
 </style>
