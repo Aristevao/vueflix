@@ -4,7 +4,7 @@
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card">
         <div class="fazenda-image-container">
-          <img :src="fazenda.picture" class="fazenda-image" />
+          <img :src="fazenda.picture || defaultImage" class="fazenda-image" />
           <div class="animal-count">
             <img src="@/assets/animal-white.png" alt="animal icon" />
             <span>{{ fazenda.animalCount !== undefined ? fazenda.animalCount : 'N/A' }} Animais</span>
@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       fazendas: [],
+      defaultImage: 'https://via.placeholder.com/400'
     };
   },
   mounted() {
