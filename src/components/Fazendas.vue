@@ -4,10 +4,10 @@
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
         <div class="fazenda-image-container">
-          <img :src="fazenda.picture" class="fazenda-image" />
+          <img :src="fazenda.picture || defaultImage" class="fazenda-image" />
           <div class="animal-count">
             <img src='@/assets/animal-white.png' alt="animal icon" />
-            <span>{{ fazenda.animalCount || 'N/A' }} Animais</span>
+            <span>{{ fazenda.animalCount || '0' }} Animais</span>
           </div>
         </div>
         <div class="fazenda-info">
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" />
+    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @save="saveUnit" />
   </div>
 </template>
 
@@ -33,6 +33,7 @@
       return {
         fazendas: [],
         selectedUnit: null,
+        defaultImage: 'https://via.placeholder.com/400',
       };
     },
     mounted() {
@@ -68,6 +69,19 @@
           })
           .catch(error => {
             console.error('Error fetching unit details:', error);
+          });
+      },
+      saveUnit(editedUnit) {
+        axios.put(`http://localhost:8080/api/digital-pec/unit/${editedUnit.id}`, editedUnit)
+          .then(response => {
+            const index = this.fazendas.findIndex(fazenda => fazenda.id === editedUnit.id);
+            if (index !== -1) {
+              this.$set(this.fazendas, index, editedUnit);
+            }
+            this.selectedUnit = null;
+          })
+          .catch(error => {
+            console.error('Error saving unit:', error);
           });
       },
     },
