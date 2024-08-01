@@ -87,32 +87,7 @@
                 this.showAddress = !this.showAddress;
             },
             saveChanges() {
-                const formData = new FormData();
-                formData.append('name', this.editedUnit.name);
-                formData.append('description', this.editedUnit.description);
-                formData.append('address.street', this.editedUnit.address.street);
-                formData.append('address.number', this.editedUnit.address.number);
-                formData.append('address.district', this.editedUnit.address.district);
-                formData.append('address.complement', this.editedUnit.address.complement);
-                formData.append('address.zipcode', this.editedUnit.address.zipcode);
-                formData.append('address.city', this.editedUnit.address.city);
-                formData.append('address.state', this.editedUnit.address.state);
-
-                axios.put(`http://localhost:8080/api/digital-pec/unit/${this.editedUnit.id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                    .then(response => {
-                        const index = this.fazendas.findIndex(fazenda => fazenda.id === this.editedUnit.id);
-                        if (index !== -1) {
-                            this.$set(this.fazendas, index, this.editedUnit);
-                        }
-                        this.selectedUnit = null;
-                    })
-                    .catch(error => {
-                        console.error('Error saving unit:', error);
-                    });
+                this.$emit('save', this.editedUnit);
                 this.close();
             },
         },

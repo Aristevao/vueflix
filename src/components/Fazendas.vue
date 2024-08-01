@@ -1,6 +1,12 @@
 <template>
-  <div class="fazendas">
-    <h1>Fazendas</h1>
+  <div>
+    <div class="header">
+      <div class="title">Animais</div>
+      <button @click="openAnimalForm" class="add-new-button"> 
+        Add New
+        <!-- TODO: IMPLEMENT -->
+      </button>
+    </div>
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
         <div class="fazenda-image-container">
@@ -72,12 +78,24 @@
           });
       },
       saveUnit(editedUnit) {
-        axios.put(`http://localhost:8080/api/digital-pec/unit/${editedUnit.id}`, editedUnit)
+        const formData = new FormData();
+        formData.append('name', editedUnit.name);
+        formData.append('description', editedUnit.description);
+        formData.append('address.street', editedUnit.address.street);
+        formData.append('address.number', editedUnit.address.number);
+        formData.append('address.district', editedUnit.address.district);
+        formData.append('address.complement', editedUnit.address.complement);
+        formData.append('address.zipcode', editedUnit.address.zipcode);
+        formData.append('address.city', editedUnit.address.city);
+        formData.append('address.state', editedUnit.address.state);
+
+        axios.put(`http://localhost:8080/api/digital-pec/unit/${editedUnit.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
           .then(response => {
-            const index = this.fazendas.findIndex(fazenda => fazenda.id === editedUnit.id);
-            if (index !== -1) {
-              this.$set(this.fazendas, index, editedUnit);
-            }
+            this.fetchFazendas(); // Fetch the list of units again after saving
             this.selectedUnit = null;
           })
           .catch(error => {
@@ -89,8 +107,17 @@
 </script>
 
 <style scoped>
-  .fazendas {
-    padding: 20px;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: bold;
   }
 
   .fazendas-list {
