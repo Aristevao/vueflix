@@ -77,28 +77,20 @@
           });
       },
       openUnitModal() {
-        this.selectedUnit = {}; // Reset selectedUnit to allow adding a new unit
+        this.selectedUnit = null;
         this.$refs.unitModal.open();
       },
-      saveUnit(editedUnit) {
-        const formData = new FormData();
-        formData.append('name', editedUnit.name);
-        formData.append('description', editedUnit.description);
-        formData.append('address.street', editedUnit.address.street);
-        formData.append('address.number', editedUnit.address.number);
-        formData.append('address.district', editedUnit.address.district);
-        formData.append('address.complement', editedUnit.address.complement);
-        formData.append('address.zipcode', editedUnit.address.zipcode);
-        formData.append('address.city', editedUnit.address.city);
-        formData.append('address.state', editedUnit.address.state);
+      saveUnit(formData) {
+        const url = this.selectedUnit ? `http://localhost:8080/api/digital-pec/unit/${this.selectedUnit.id}` : 'http://localhost:8080/api/digital-pec/unit';
+        const method = this.selectedUnit ? 'put' : 'post';
 
-        const requestMethod = editedUnit.id ? 'put' : 'post';
-        const requestUrl = editedUnit.id ? `http://localhost:8080/api/digital-pec/unit/${editedUnit.id}` : `http://localhost:8080/api/digital-pec/unit`;
-
-        axios[requestMethod](requestUrl, formData, {
+        axios({
+          method,
+          url,
+          data: formData,
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         })
           .then(response => {
             this.fetchFazendas(); // Fetch the list of units again after saving

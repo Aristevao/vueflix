@@ -2,7 +2,7 @@
     <div v-if="visible" class="modal">
         <div class="modal-content">
             <span class="close" @click="close">&times;</span>
-            <h2>{{ unit.id ? 'Edit' : 'Add' }} Unit</h2>
+            <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
             <form @submit.prevent="submit">
                 <div>
                     <label for="name">Name</label>
@@ -44,7 +44,7 @@
                     <label for="picture">Picture</label>
                     <input type="file" @change="handleFileUpload" id="picture" />
                 </div>
-                <button type="submit">{{ unit.id ? 'Save' : 'Add' }} Unit</button>
+                <button type="submit">{{ localUnit.id ? 'Save' : 'Add' }} Unit</button>
             </form>
         </div>
     </div>
@@ -55,40 +55,28 @@
         props: {
             unit: {
                 type: Object,
-                default: () => ({
-                    name: '',
-                    description: '',
-                    address: {
-                        street: '',
-                        number: '',
-                        district: '',
-                        complement: '',
-                        zipcode: '',
-                        city: '',
-                        state: ''
-                    },
-                    picture: null
-                })
-            }
+                default: null,
+            },
         },
         data() {
             return {
                 visible: false,
                 localUnit: this.getInitialUnit(),
-                file: null
+                file: null,
             };
         },
         watch: {
             unit: {
                 immediate: true,
                 handler(newVal) {
-                    this.localUnit = { ...this.getInitialUnit(), ...newVal };
+                    this.localUnit = newVal ? { ...this.getInitialUnit(), ...newVal } : this.getInitialUnit();
                 },
             },
         },
         methods: {
             getInitialUnit() {
                 return {
+                    id: null,
                     name: '',
                     description: '',
                     address: {
@@ -114,11 +102,21 @@
                 this.file = event.target.files[0];
             },
             submit() {
+                const formData = new FormData();
+                formData.append('name', this.localUnit.name);
+                formData.append('description', this.localUnit.description);
+                formData.append('address.street', this.localUnit.address.street);
+                formData.append('address.number', this.localUnit.address.number);
+                formData.append('address.district', this.localUnit.address.district);
+                formData.append('address.complement', this.localUnit.address.complement);
+                formData.append('address.zipcode', this.localUnit.address.zipcode);
+                formData.append('address.city', this.localUnit.address.city);
+                formData.append('address.state', this.localUnit.address.state);
                 if (this.file) {
-                    this.localUnit.picture = this.file;
+                    formData.append('picture', this.file);
                 }
 
-                this.$emit('save', this.localUnit);
+                this.$emit('save', formData);
                 this.close();
             },
         },
