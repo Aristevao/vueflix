@@ -6,11 +6,11 @@
             <form @submit.prevent="submit">
                 <div>
                     <label for="name">Name</label>
-                    <input type="text" v-model="localUnit.name" id="name" required />
+                    <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
                 </div>
                 <div>
                     <label for="description">Description</label>
-                    <textarea v-model="localUnit.description" id="description" required></textarea>
+                    <textarea v-model="localUnit.description" id="description" maxlength="500"></textarea>
                 </div>
                 <div>
                     <label for="street">Street</label>
@@ -40,6 +40,10 @@
                     <label for="state">State</label>
                     <input type="text" v-model="localUnit.address.state" id="state" required />
                 </div>
+                <div>
+                    <label for="picture">Picture</label>
+                    <input type="file" @change="handleFileUpload" id="picture" />
+                </div>
                 <button type="submit">{{ unit.id ? 'Save' : 'Add' }} Unit</button>
             </form>
         </div>
@@ -62,7 +66,8 @@
                         zipcode: '',
                         city: '',
                         state: ''
-                    }
+                    },
+                    picture: null
                 })
             }
         },
@@ -70,6 +75,7 @@
             return {
                 visible: false,
                 localUnit: this.getInitialUnit(),
+                file: null
             };
         },
         watch: {
@@ -93,7 +99,8 @@
                         zipcode: '',
                         city: '',
                         state: ''
-                    }
+                    },
+                    picture: null
                 };
             },
             open() {
@@ -103,7 +110,14 @@
                 this.visible = false;
                 this.$emit('close');
             },
+            handleFileUpload(event) {
+                this.file = event.target.files[0];
+            },
             submit() {
+                if (this.file) {
+                    this.localUnit.picture = this.file;
+                }
+
                 this.$emit('save', this.localUnit);
                 this.close();
             },
