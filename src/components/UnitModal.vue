@@ -1,46 +1,57 @@
 <template>
-    <div class="modal-overlay" v-if="isVisible" @click.self="close">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Edit Unit</h2>
-                <button @click="close" class="close-button">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="unit-info">
-                    <img :src="unit.picture || defaultImage" class="unit-image" />
-                    <input type="text" v-model="editedUnit.name" placeholder="Unit Name" />
-                    <textarea v-model="editedUnit.description" placeholder="Description"></textarea>
-                    <button @click="toggleAddress" class="toggle-address-button">
-                        {{ showAddress ? 'Hide Address' : 'Show Address' }}
-                    </button>
-                    <div v-if="showAddress" class="address-info">
-                        <input type="text" v-model="editedUnit.address.street" placeholder="Street" />
-                        <input type="text" v-model="editedUnit.address.number" placeholder="Number" />
-                        <input type="text" v-model="editedUnit.address.district" placeholder="District" />
-                        <input type="text" v-model="editedUnit.address.complement" placeholder="Complement" />
-                        <input type="text" v-model="editedUnit.address.zipcode" placeholder="Zipcode" />
-                        <input type="text" v-model="editedUnit.address.city" placeholder="City" />
-                        <input type="text" v-model="editedUnit.address.state" placeholder="State" />
-                    </div>
+    <div v-if="visible" class="modal">
+        <div class="modal-content">
+            <span class="close" @click="close">&times;</span>
+            <h2>{{ unit.id ? 'Edit' : 'Add' }} Unit</h2>
+            <form @submit.prevent="submit">
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" v-model="localUnit.name" id="name" required />
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" @click="saveChanges" class="save-button">Save</button>
-                <button @click="close" class="cancel-button">Cancel</button>
-            </div>
+                <div>
+                    <label for="description">Description</label>
+                    <textarea v-model="localUnit.description" id="description" required></textarea>
+                </div>
+                <div>
+                    <label for="street">Street</label>
+                    <input type="text" v-model="localUnit.address.street" id="street" required />
+                </div>
+                <div>
+                    <label for="number">Number</label>
+                    <input type="text" v-model="localUnit.address.number" id="number" required />
+                </div>
+                <div>
+                    <label for="district">District</label>
+                    <input type="text" v-model="localUnit.address.district" id="district" required />
+                </div>
+                <div>
+                    <label for="complement">Complement</label>
+                    <input type="text" v-model="localUnit.address.complement" id="complement" />
+                </div>
+                <div>
+                    <label for="zipcode">Zipcode</label>
+                    <input type="text" v-model="localUnit.address.zipcode" id="zipcode" required />
+                </div>
+                <div>
+                    <label for="city">City</label>
+                    <input type="text" v-model="localUnit.address.city" id="city" required />
+                </div>
+                <div>
+                    <label for="state">State</label>
+                    <input type="text" v-model="localUnit.address.state" id="state" required />
+                </div>
+                <button type="submit">{{ unit.id ? 'Save' : 'Add' }} Unit</button>
+            </form>
         </div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios';
-
     export default {
         props: {
             unit: {
                 type: Object,
                 default: () => ({
-                    picture: '',
                     name: '',
                     description: '',
                     address: {
@@ -50,44 +61,50 @@
                         complement: '',
                         zipcode: '',
                         city: '',
-                        state: '',
-                    },
-                }),
-                required: true,
-            },
+                        state: ''
+                    }
+                })
+            }
         },
         data() {
             return {
-                isVisible: false,
-                showAddress: false,
-                editedUnit: {},
-                defaultImage: 'https://via.placeholder.com/400',
-                fazendas: [],  // Initialize fazendas here or receive it via props
-                selectedUnit: null, // Initialize selectedUnit here or receive it via props
+                visible: false,
+                localUnit: this.getInitialUnit(),
             };
         },
         watch: {
             unit: {
                 immediate: true,
                 handler(newVal) {
-                    this.editedUnit = { ...newVal };
+                    this.localUnit = { ...this.getInitialUnit(), ...newVal };
                 },
             },
         },
         methods: {
+            getInitialUnit() {
+                return {
+                    name: '',
+                    description: '',
+                    address: {
+                        street: '',
+                        number: '',
+                        district: '',
+                        complement: '',
+                        zipcode: '',
+                        city: '',
+                        state: ''
+                    }
+                };
+            },
             open() {
-                // this.editedUnit = { ...this.unit }; // Make a copy of the unit to edit
-                this.isVisible = true;
+                this.visible = true;
             },
             close() {
-                this.isVisible = false;
+                this.visible = false;
                 this.$emit('close');
             },
-            toggleAddress() {
-                this.showAddress = !this.showAddress;
-            },
-            saveChanges() {
-                this.$emit('save', this.editedUnit);
+            submit() {
+                this.$emit('save', this.localUnit);
                 this.close();
             },
         },
@@ -95,96 +112,31 @@
 </script>
 
 <style scoped>
-    .modal-overlay {
+    .modal {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
         justify-content: center;
-    }
-
-    .modal {
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        width: 500px;
-        max-width: 100%;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .modal-header {
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        justify-content: space-between;
         align-items: center;
     }
 
-    .modal-header h2 {
-        margin: 0;
-    }
-
-    .close-button {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-    }
-
-    .modal-body {
-        padding: 15px;
-    }
-
-    .unit-info {
-        text-align: center;
-    }
-
-    .unit-image {
-        max-width: 25%;
-        height: auto;
-        border-radius: 17px;
-    }
-
-    .toggle-address-button {
-        margin-top: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 15px;
+    .modal-content {
+        background-color: white;
+        padding: 20px;
         border-radius: 5px;
+        width: 500px;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
         cursor: pointer;
-    }
-
-    .toggle-address-button:hover {
-        background-color: #0056b3;
-    }
-
-    .address-info {
-        margin-top: 15px;
-        text-align: left;
-    }
-
-    .modal-footer {
-        padding: 15px;
-        border-top: 1px solid #ddd;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .cancel-button {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .cancel-button:hover {
-        background-color: #5a6268;
+        font-size: 24px;
     }
 </style>

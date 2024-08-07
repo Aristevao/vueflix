@@ -2,9 +2,8 @@
   <div>
     <div class="header">
       <div class="title">Animais</div>
-      <button @click="openAnimalForm" class="add-new-button"> 
+      <button @click="openUnitModal" class="add-new-button">
         Add New
-        <!-- TODO: IMPLEMENT -->
       </button>
     </div>
     <div class="fazendas-list">
@@ -77,6 +76,10 @@
             console.error('Error fetching unit details:', error);
           });
       },
+      openUnitModal() {
+        this.selectedUnit = {}; // Reset selectedUnit to allow adding a new unit
+        this.$refs.unitModal.open();
+      },
       saveUnit(editedUnit) {
         const formData = new FormData();
         formData.append('name', editedUnit.name);
@@ -89,7 +92,10 @@
         formData.append('address.city', editedUnit.address.city);
         formData.append('address.state', editedUnit.address.state);
 
-        axios.put(`http://localhost:8080/api/digital-pec/unit/${editedUnit.id}`, formData, {
+        const requestMethod = editedUnit.id ? 'put' : 'post';
+        const requestUrl = editedUnit.id ? `http://localhost:8080/api/digital-pec/unit/${editedUnit.id}` : `http://localhost:8080/api/digital-pec/unit`;
+
+        axios[requestMethod](requestUrl, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
