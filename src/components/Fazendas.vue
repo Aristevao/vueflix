@@ -22,7 +22,8 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @save="saveUnit" />
+    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @unit-created="handleUnitCreated"
+      @unit-deleted="handleUnitlDeleted" />
   </div>
 </template>
 
@@ -80,25 +81,11 @@
         this.selectedUnit = null;
         this.$refs.unitModal.open();
       },
-      saveUnit(formData) {
-        const url = this.selectedUnit ? `http://localhost:8080/api/digital-pec/unit/${this.selectedUnit.id}` : 'http://localhost:8080/api/digital-pec/unit';
-        const method = this.selectedUnit ? 'put' : 'post';
-
-        axios({
-          method,
-          url,
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-          .then(response => {
-            this.fetchFazendas(); // Fetch the list of units again after saving
-            this.selectedUnit = null;
-          })
-          .catch(error => {
-            console.error('Error saving unit:', error);
-          });
+      handleUnitCreated() {
+        this.fetchFazendas();
+      },
+      handleUnitlDeleted() {
+        this.fetchFazendas()
       },
     },
   };

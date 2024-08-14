@@ -44,13 +44,23 @@
                     <label for="picture">Picture</label>
                     <input type="file" @change="handleFileUpload" id="picture" />
                 </div>
-                <button type="submit">{{ localUnit.id ? 'Save' : 'Add' }} Unit</button>
+
+                <div class="button-group">
+                    <button class="delete-button" v-if="localUnit.id" type="button"
+                        @click="deleteUnit(localUnit.id)">Delete</button>
+                    <div class="right-buttons">
+                        <button type="submit">Save</button>
+                        <button type="button" @click="cancelForm">Cancel</button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
+
     export default {
         props: {
             unit: {
@@ -116,7 +126,36 @@
                     formData.append('picture', this.file);
                 }
 
-                this.$emit('save', formData);
+                const url = this.selectedUnit ? `http://localhost:8080/api/digital-pec/unit/${this.selectedUnit.id}` : 'http://localhost:8080/api/digital-pec/unit';
+                const method = this.selectedUnit ? 'put' : 'post';
+
+                axios({
+                    method,
+                    url,
+                    data: formData,
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
+                    .then(response => {
+                        this.$emit('unit-created', formData);
+                        this.close();
+                    })
+                    .catch(error => {
+                        console.error('Error saving unit:', error);
+                    });
+            },
+            deleteUnit(unitId) {
+                axios.delete(`http://localhost:8080/api/digital-pec/unit/${unitId}`)
+                    .then(() => {
+                        this.$emit('unit-deleted', unitId);
+                        this.close();
+                    })
+                    .catch(error => {
+                        console.error('Error deleting unit:', error);
+                    });
+            },
+            cancelForm() {
                 this.close();
             },
         },
@@ -150,5 +189,19 @@
         right: 10px;
         cursor: pointer;
         font-size: 24px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .right-buttons button {
+        margin-left: 10px;
+    }
+
+    .delete-button {
+        margin-right: auto;
     }
 </style>
