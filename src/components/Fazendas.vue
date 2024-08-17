@@ -74,7 +74,7 @@
             this.$refs.unitModal.open();
           })
           .catch(error => {
-            console.error('Error fetching unit details:', error);
+            console.error('Error fetching unit details :', error);
           });
       },
       openUnitModal() {
