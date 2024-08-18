@@ -3,44 +3,49 @@
     <div v-if="isVisible" class="animalVaccine-form-modal" @click="handleBackgroundClick">
       <div class="animalVaccine-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Vaccine Application' : 'Create New Vaccine Application' }}</h2>
-        <form @submit.prevent="submitForm">
+        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
+        <form @submit.prevent="submitForm" enctype="multipart/form-data">
+
           <div class="form-group">
-            <label for="animal">Animal ID:</label>
-            <input v-model="formData.animal.id" type="number" required />
+            <label>Animal:</label>
+            <select v-model="formData.animalId" required>
+              <option v-for="animal in animals" :key="animal.id" :value="animal.id">
+                {{ animal.name }}
+              </option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="vaccine">Vaccine ID:</label>
-            <input v-model="formData.vaccine.id" type="number" required />
+            <label>Vaccine:</label>
+            <select v-model="formData.vaccineId" required>
+              <option v-for="vaccine in vaccines" :key="vaccine.id" :value="vaccine.id">
+                {{ vaccine.name }}
+              </option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="completed">Completed:</label>
-            <input v-model="formData.completed" type="checkbox" />
+            <label>Completed:</label>
+            <input type="checkbox" v-model="formData.completed" />
           </div>
 
           <div class="form-group">
-            <label for="applicationDate">Application Date:</label>
-            <input v-model="formData.applicationDate" type="date" required />
+            <label>Application Date:</label>
+            <input type="date" v-model="formData.applicationDate" />
           </div>
 
           <div class="form-group">
-            <label for="nextApplicationDates">Next Application Dates:</label>
-            <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="date-group">
-              <input v-model="formData.nextApplicationDates[index]" type="date" />
+            <label>Next Application Dates:</label>
+            <div v-for="(date, index) in formData.nextApplicationDates" :key="index">
+              <input type="date" v-model="formData.nextApplicationDates[index]" />
               <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
             </div>
             <button type="button" @click="addNextApplicationDate">Add Next Application Date</button>
           </div>
 
           <div class="button-group">
-            <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
-              @click="deleteAnimalVaccine(formData.id)">Delete</button>
-            <div class="right-buttons">
-              <button type="submit">Save</button>
-              <button type="button" @click="cancelForm">Cancel</button>
-            </div>
+            <button type="submit">Save</button>
+            <button type="button" @click="cancelForm">Cancel</button>
           </div>
         </form>
       </div>
@@ -52,50 +57,20 @@
   import axios from 'axios';
 
   export default {
-    props: {
-      animalVaccineData: {
-        type: Object,
-        default: () => ({}),
-      },
-    },
     data() {
       return {
         isVisible: false,
-        deleteButtonIsVisible: false,
+        animals: [],
+        vaccines: [],
         formData: {
           id: null,
-          animal: {
-            id: null,
-          },
-          vaccine: {
-            id: null,
-          },
+          animalId: null,
+          vaccineId: null,
           completed: false,
-          applicationDate: '',
-          nextApplicationDates: [''],
+          applicationDate: null,
+          nextApplicationDates: []
         },
       };
-    },
-    watch: {
-      animalVaccineData: {
-        immediate: true,
-        handler(newValue) {
-          if (newValue && Object.keys(newValue).length > 0) {
-            this.formData = {
-              id: newValue.id || null,
-              animal: {
-                id: newValue.animal.id || null,
-              },
-              vaccine: {
-                id: newValue.vaccine.id || null,
-              },
-              completed: newValue.completed || false,
-              applicationDate: newValue.applicationDate || '',
-              nextApplicationDates: newValue.nextApplicationDates ? newValue.nextApplicationDates : [''],
-            };
-          }
-        },
-      },
     },
     methods: {
       open(animalVaccine) {
@@ -103,52 +78,51 @@
         document.addEventListener('keydown', this.handleKeydown);
 
         if (animalVaccine) {
-          this.deleteButtonIsVisible = true;
           this.formData = {
             id: animalVaccine.id,
-            animal: {
-              id: animalVaccine.animal.id,
-            },
-            vaccine: {
-              id: animalVaccine.vaccine.id,
-            },
-            completed: animalVaccine.completed,
-            applicationDate: animalVaccine.applicationDate,
-            nextApplicationDates: animalVaccine.nextApplicationDates || [''],
+            animalId: animalVaccine.animal.id,
+            vaccineId: animalVaccine.vaccine.id,
+            completed: animalVaccine.completed || false,
+            applicationDate: animalVaccine.applicationDate || null,
+            nextApplicationDates: animalVaccine.nextApplicationDates || []
           };
         } else {
           this.resetForm();
         }
+
+        this.fetchAnimals();
+        this.fetchVaccines();
       },
       close() {
         this.isVisible = false;
-        this.deleteButtonIsVisible = false;
         this.resetForm();
         document.removeEventListener('keydown', this.handleKeydown);
       },
-      handleBackgroundClick(event) {
-        if (event.target === event.currentTarget) {
-          this.close();
-        }
+      fetchAnimals() {
+        axios.get('http://localhost:8080/api/digital-pec/animal/list')
+          .then(response => {
+            this.animals = response.data;
+          })
+          .catch(error => {
+            console.error('Error fetching animals:', error);
+          });
       },
-      handleKeydown(event) {
-        if (event.key === 'Escape') {
-          this.close();
-        } else if (event.key === 'Enter') {
-          this.submitForm();
-        }
+      fetchVaccines() {
+        axios.get('http://localhost:8080/api/digital-pec/vaccine/list')
+          .then(response => {
+            this.vaccines = response.data;
+          })
+          .catch(error => {
+            console.error('Error fetching vaccines:', error);
+          });
       },
       submitForm() {
         const payload = {
-          animal: {
-            id: this.formData.animal.id,
-          },
-          vaccine: {
-            id: this.formData.vaccine.id,
-          },
+          animal: { id: this.formData.animalId },
+          vaccine: { id: this.formData.vaccineId },
           completed: this.formData.completed,
           applicationDate: this.formData.applicationDate,
-          nextApplicationDates: this.formData.nextApplicationDates,
+          nextApplicationDates: this.formData.nextApplicationDates
         };
 
         const url = this.formData.id
@@ -169,17 +143,7 @@
             this.close();
           })
           .catch(error => {
-            console.error('Error creating or updating animalVaccine:', error);
-          });
-      },
-      deleteAnimalVaccine(animalVaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
-          .then(() => {
-            this.$emit('animalVaccine-deleted', animalVaccineId);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error deleting animalVaccine:', error);
+            console.error('Error saving animalVaccine:', error);
           });
       },
       cancelForm() {
@@ -188,19 +152,15 @@
       resetForm() {
         this.formData = {
           id: null,
-          animal: {
-            id: null,
-          },
-          vaccine: {
-            id: null,
-          },
+          animalId: null,
+          vaccineId: null,
           completed: false,
-          applicationDate: '',
-          nextApplicationDates: [''],
+          applicationDate: null,
+          nextApplicationDates: []
         };
       },
       addNextApplicationDate() {
-        this.formData.nextApplicationDates.push('');
+        this.formData.nextApplicationDates.push(null);
       },
       removeNextApplicationDate(index) {
         this.formData.nextApplicationDates.splice(index, 1);
