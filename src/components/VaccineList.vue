@@ -189,6 +189,7 @@
 
   .toggle-filters-button {
     margin-bottom: 10px;
+    /* margin-left: auto; Move filter button to the right; beside the "Add New". */
   }
 
   .filters {
