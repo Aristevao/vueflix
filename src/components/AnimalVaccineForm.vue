@@ -1,13 +1,13 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="vaccine-form-modal" @click="handleBackgroundClick">
-      <div class="vaccine-form" @click.stop>
+    <div v-if="isVisible" class="animalVaccine-form-modal" @click="handleBackgroundClick">
+      <div class="animalVaccine-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
             <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" required/>
+            <input v-model="formData.name" maxlength="80" required />
           </div>
 
           <div class="form-group">
@@ -18,7 +18,7 @@
           <div class="form-group">
             <label>Species:</label>
             <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
-              <input v-model="specie.name" placeholder="Enter species name"/>
+              <input v-model="specie.name" placeholder="Enter species name" />
               <button type="button" @click="removeSpecie(index)">Remove</button>
             </div>
             <button type="button" @click="addSpecie">Add Species</button>
@@ -26,7 +26,7 @@
 
           <div class="button-group">
             <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
-              @click="deleteVaccine(formData.id)">Delete</button>
+              @click="deleteAnimalVaccine(formData.id)">Delete</button>
             <div class="right-buttons">
               <button type="submit">Save</button>
               <button type="button" @click="cancelForm">Cancel</button>
@@ -43,7 +43,7 @@
 
   export default {
     props: {
-      vaccineData: {
+      animalVaccineData: {
         type: Object,
         default: () => ({}),
       },
@@ -62,7 +62,7 @@
       };
     },
     watch: {
-      vaccineData: {
+      animalVaccineData: {
         immediate: true,
         handler(newValue) {
           if (newValue && Object.keys(newValue).length > 0) {
@@ -77,18 +77,18 @@
       },
     },
     methods: {
-      open(vaccine) {
+      open(animalVaccine) {
         this.isVisible = true;
         document.addEventListener('keydown', this.handleKeydown);
 
-        if (vaccine) {
+        if (animalVaccine) {
           this.deleteButtonIsVisible = true;
 
           this.formData = {
-            id: vaccine.id,
-            name: vaccine.name,
-            species: vaccine.species ? vaccine.species.map(s => ({ name: s.name })) : [{ name: '' }],
-            description: vaccine.description
+            id: animalVaccine.id,
+            name: animalVaccine.name,
+            species: animalVaccine.species ? animalVaccine.species.map(s => ({ name: s.name })) : [{ name: '' }],
+            description: animalVaccine.description
           };
         } else {
           this.resetForm();
@@ -101,7 +101,6 @@
         document.removeEventListener('keydown', this.handleKeydown);
       },
       handleBackgroundClick(event) {
-        // Check if the click was outside the .vaccine-form
         if (event.target === event.currentTarget) {
           this.close();
         }
@@ -124,8 +123,8 @@
         };
 
         const url = this.formData.id
-          ? `http://localhost:8080/api/digital-pec/vaccine/${this.formData.id}`
-          : 'http://localhost:8080/api/digital-pec/vaccine';
+          ? `http://localhost:8080/api/digital-pec/animal/vaccine/${this.formData.id}`
+          : 'http://localhost:8080/api/digital-pec/animal/vaccine';
         const method = this.formData.id ? 'put' : 'post';
 
         axios({
@@ -137,21 +136,21 @@
           },
         })
           .then(response => {
-            this.$emit('vaccine-created', response.data);
+            this.$emit('animalVaccine-created', response.data);
             this.close();
           })
           .catch(error => {
-            console.error('Error creating vaccine:', error);
+            console.error('Error creating animalVaccine:', error);
           });
       },
-      deleteVaccine(vaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
+      deleteAnimalVaccine(animalVaccineId) {
+        axios.delete(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
           .then(() => {
-            this.$emit('vaccine-deleted', vaccineId);
+            this.$emit('animalVaccine-deleted', animalVaccineId);
             this.close();
           })
           .catch(error => {
-            console.error('Error deleting vaccine:', error);
+            console.error('Error deleting animalVaccine:', error);
           });
       },
       cancelForm() {
@@ -176,7 +175,7 @@
 </script>
 
 <style scoped>
-  .vaccine-form-modal {
+  .animalVaccine-form-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -189,7 +188,7 @@
     z-index: 999;
   }
 
-  .vaccine-form {
+  .animalVaccine-form {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
