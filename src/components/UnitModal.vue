@@ -185,10 +185,10 @@
 
     .close {
         position: absolute;
-        top: 10px;
+        top: 5px;
         right: 10px;
-        cursor: pointer;
         font-size: 24px;
+        cursor: pointer;
     }
 
     .button-group {

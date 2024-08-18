@@ -2,6 +2,7 @@
   <transition name="modal">
     <div v-if="isVisible" class="vaccine-form-modal" @click="handleBackgroundClick">
       <div class="vaccine-form" @click.stop>
+        <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
@@ -24,9 +25,12 @@
           </div>
 
           <div class="button-group">
-            <button v-if="deleteButtonIsVisible" type="button" @click="deleteVaccine(formData.id)">Delete</button>
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
+              @click="deleteVaccine(formData.id)">Delete</button>
+            <div class="right-buttons">
+              <button type="submit">Save</button>
+              <button type="button" @click="cancelForm">Cancel</button>
+            </div>
           </div>
         </form>
       </div>
@@ -100,6 +104,13 @@
         // Check if the click was outside the .vaccine-form
         if (event.target === event.currentTarget) {
           this.close();
+        }
+      },
+      handleKeydown(event) {
+        if (event.key === 'Escape') {
+          this.close();
+        } else if (event.key === 'Enter') {
+          this.submitForm();
         }
       },
       handleFileUpload(event) {
@@ -185,6 +196,15 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
+    position: relative;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
   }
 
   .form-group {
@@ -218,12 +238,17 @@
   }
 
   .button-group {
+    display: flex;
+    justify-content: space-between;
     margin-top: 20px;
-    text-align: right;
   }
 
-  .button-group button {
+  .right-buttons button {
     margin-left: 10px;
+  }
+
+  .delete-button {
+    margin-right: auto;
   }
 
   .modal-enter-active,
