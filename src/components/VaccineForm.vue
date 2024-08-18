@@ -7,7 +7,7 @@
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
             <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" />
+            <input v-model="formData.name" maxlength="80" required/>
           </div>
 
           <div class="form-group">
@@ -18,7 +18,7 @@
           <div class="form-group">
             <label>Species:</label>
             <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
-              <input v-model="specie.name" placeholder="Enter species name" />
+              <input v-model="specie.name" placeholder="Enter species name"/>
               <button type="button" @click="removeSpecie(index)">Remove</button>
             </div>
             <button type="button" @click="addSpecie">Add Species</button>

@@ -16,32 +16,32 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/fazendas" active-class="active">
-            <img src="@/assets/fazendas.png" alt="Fazendas" class="menu-icon" />
+          <router-link to="/units" active-class="active">
+            <img src="@/assets/fazendas.png" alt="Units" class="menu-icon" />
             <span v-if="!collapsed">Fazendas</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/animais" active-class="active">
-            <img src="@/assets/animais.png" alt="Animais" class="menu-icon" />
+          <router-link to="/animals" active-class="active">
+            <img src="@/assets/animais.png" alt="Animals" class="menu-icon" />
             <span v-if="!collapsed">Animais</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/vacinas" active-class="active">
-            <img src="@/assets/vacinas.png" alt="Vacinas" class="menu-icon" />
+          <router-link to="/vaccines" active-class="active">
+            <img src="@/assets/vacinas.png" alt="Vaccines" class="menu-icon" />
             <span v-if="!collapsed">Vacinas</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/calendario" active-class="active">
-            <img src="@/assets/calendario.png" alt="Calendário" class="menu-icon" />
+          <router-link to="/calendar" active-class="active">
+            <img src="@/assets/calendario.png" alt="Calendar" class="menu-icon" />
             <span v-if="!collapsed">Calendário</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/notificacoes" active-class="active">
-            <img src="@/assets/notificacoes.png" alt="Notificações" class="menu-icon" />
+          <router-link to="/notifications" active-class="active">
+            <img src="@/assets/notificacoes.png" alt="Notifications" class="menu-icon" />
             <span v-if="!collapsed">Notificações</span>
           </router-link>
         </li>
