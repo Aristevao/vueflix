@@ -64,7 +64,7 @@
   import VaccineForm from './VaccineForm.vue';
 
   export default defineComponent({
-    name: 'Vacinas',
+    name: 'VaccineList',
     components: {
       Pagination,
       CustomButton,
