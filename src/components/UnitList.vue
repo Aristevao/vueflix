@@ -22,8 +22,8 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @unit-created="handleUnitCreated"
-      @unit-deleted="handleUnitlDeleted" />
+    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @unit-created="fetchFazendasAfterAction"
+      @unit-deleted="fetchFazendasAfterAction" />
   </div>
 </template>
 
@@ -74,19 +74,16 @@
             this.$refs.unitModal.open();
           })
           .catch(error => {
-            console.error('Error fetching unit details :', error);
+            console.error('Error fetching unit details: ', error);
           });
       },
       openUnitModal() {
         this.selectedUnit = null;
         this.$refs.unitModal.open();
       },
-      handleUnitCreated() {
+      fetchFazendasAfterAction() {
         this.fetchFazendas();
-      },
-      handleUnitlDeleted() {
-        this.fetchFazendas()
-      },
+      }
     },
   };
 </script>
