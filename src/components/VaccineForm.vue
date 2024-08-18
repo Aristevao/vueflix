@@ -4,18 +4,24 @@
       <div class="vaccine-form">
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-          <label>Name:</label>
-          <input v-model="formData.name" maxlength="80" />
-
-          <label>Description:</label>
-          <textarea v-model="formData.description" maxlength="500"></textarea>
-
-          <label>Species:</label>
-          <div v-for="(specie, index) in formData.species" :key="index">
-            <input v-model="specie.name" placeholder="Enter species name" />
-            <button type="button" @click="removeSpecie(index)">Remove</button>
+          <div class="form-group">
+            <label>Name:</label>
+            <input v-model="formData.name" maxlength="80" />
           </div>
-          <button type="button" @click="addSpecie">Add Species</button>
+
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea v-model="formData.description" maxlength="500"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Species:</label>
+            <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
+              <input v-model="specie.name" placeholder="Enter species name" />
+              <button type="button" @click="removeSpecie(index)">Remove</button>
+            </div>
+            <button type="button" @click="addSpecie">Add Species</button>
+          </div>
 
           <div class="button-group">
             <button v-if="deleteButtonIsVisible" type="button" @click="deleteVaccine(formData.id)">Delete</button>
@@ -105,19 +111,17 @@
           species: this.formData.species.map(specie => ({ name: specie.name }))
         };
 
-        // Determine the request URL and method
         const url = this.formData.id
           ? `http://localhost:8080/api/digital-pec/vaccine/${this.formData.id}`
           : 'http://localhost:8080/api/digital-pec/vaccine';
         const method = this.formData.id ? 'put' : 'post';
 
-        // Send the request as JSON
         axios({
           method,
           url,
-          data: payload,  // Send payload directly as JSON
+          data: payload,
           headers: {
-            'Content-Type': 'application/json',  // Specify JSON content type
+            'Content-Type': 'application/json',
           },
         })
           .then(response => {
@@ -180,6 +184,36 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .species-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .species-group input {
+    flex: 1;
+    margin-right: 10px;
   }
 
   .button-group {
