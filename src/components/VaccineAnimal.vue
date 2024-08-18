@@ -39,11 +39,11 @@
       <!-- Table header -->
       <thead>
         <tr>
-          <th class="animal-column">Animal Name</th>
+          <th class="name-column">Animal Name</th>
           <th class="vaccine-column">Vaccine Name</th>
+          <th class="date-column">Application Date</th>
+          <th class="next-date-column">Next Application Dates</th>
           <th class="completed-column">Completed</th>
-          <th class="application-date-column">Application Date</th>
-          <th class="next-application-dates-column">Next Application Dates</th>
         </tr>
       </thead>
       <!-- Table body -->
@@ -51,11 +51,11 @@
         <tr v-for="animalVaccine in animalVaccines" :key="animalVaccine.id"
           @click="openVaccineDetails(animalVaccine.id)" @mouseover="showEllipsis(animalVaccine.id)"
           @mouseleave="hideEllipsis(animalVaccine.id)">
-          <td class="animal-column">{{ animalVaccine.animal.name }}</td>
+          <td class="name-column">{{ animalVaccine.animal.name }}</td>
           <td class="vaccine-column">{{ animalVaccine.vaccine.name }}</td>
+          <td class="date-column">{{ formatDate(animalVaccine.applicationDate) }}</td>
+          <td class="next-date-column">{{ formatNextApplicationDates(animalVaccine.nextApplicationDates) }}</td>
           <td class="completed-column">{{ animalVaccine.completed ? 'Yes' : 'No' }}</td>
-          <td class="application-date-column">{{ animalVaccine.applicationDate }}</td>
-          <td class="next-application-dates-column">{{ animalVaccine.nextApplicationDates.join(', ') }}</td>
         </tr>
       </tbody>
     </table>
@@ -164,6 +164,12 @@
       toggleOptions(animalVaccineId) {
         this.animalVaccines = this.animalVaccines.map(animalVaccine => animalVaccine.id === animalVaccineId ? { ...animalVaccine, showOptions: !animalVaccine.showOptions } : animalVaccine);
       },
+      formatDate(date) {
+        return new Intl.DateTimeFormat('pt-BR').format(new Date(date));
+      },
+      formatNextApplicationDates(dates) {
+        return dates.map(date => this.formatDate(date)).join(', ');
+      }
     },
   });
 </script>
@@ -288,23 +294,24 @@
     text-align: center;
   }
 
-  .animal-column {
-    width: 150px;
+  .name-column {
+    width: 120px;
   }
 
   .vaccine-column {
-    width: 150px;
+    width: 120px;
+  }
+
+  .date-column {
+    width: 125px;
+  }
+
+  .next-date-column {
+    width: 200px;
   }
 
   .completed-column {
-    width: 100px;
-  }
-
-  .application-date-column {
-    width: 150px;
-  }
-
-  .next-application-dates-column {
-    width: 250px;
+    width: 80px;
+    text-align: center;
   }
 </style>
