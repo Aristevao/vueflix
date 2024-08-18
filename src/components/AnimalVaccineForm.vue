@@ -3,25 +3,35 @@
     <div v-if="isVisible" class="animalVaccine-form-modal" @click="handleBackgroundClick">
       <div class="animalVaccine-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
-        <form @submit.prevent="submitForm" enctype="multipart/form-data">
+        <h2>{{ formData.id ? 'Edit Vaccine Application' : 'Create New Vaccine Application' }}</h2>
+        <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" required />
+            <label for="animal">Animal ID:</label>
+            <input v-model="formData.animal.id" type="number" required />
           </div>
 
           <div class="form-group">
-            <label>Description:</label>
-            <textarea v-model="formData.description" maxlength="500"></textarea>
+            <label for="vaccine">Vaccine ID:</label>
+            <input v-model="formData.vaccine.id" type="number" required />
           </div>
 
           <div class="form-group">
-            <label>Species:</label>
-            <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
-              <input v-model="specie.name" placeholder="Enter species name" />
-              <button type="button" @click="removeSpecie(index)">Remove</button>
+            <label for="completed">Completed:</label>
+            <input v-model="formData.completed" type="checkbox" />
+          </div>
+
+          <div class="form-group">
+            <label for="applicationDate">Application Date:</label>
+            <input v-model="formData.applicationDate" type="date" required />
+          </div>
+
+          <div class="form-group">
+            <label for="nextApplicationDates">Next Application Dates:</label>
+            <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="date-group">
+              <input v-model="formData.nextApplicationDates[index]" type="date" />
+              <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
             </div>
-            <button type="button" @click="addSpecie">Add Species</button>
+            <button type="button" @click="addNextApplicationDate">Add Next Application Date</button>
           </div>
 
           <div class="button-group">
@@ -52,12 +62,17 @@
       return {
         isVisible: false,
         deleteButtonIsVisible: false,
-        units: [],
         formData: {
           id: null,
-          name: '',
-          species: [{ name: '' }],
-          description: ''
+          animal: {
+            id: null,
+          },
+          vaccine: {
+            id: null,
+          },
+          completed: false,
+          applicationDate: '',
+          nextApplicationDates: [''],
         },
       };
     },
@@ -68,9 +83,15 @@
           if (newValue && Object.keys(newValue).length > 0) {
             this.formData = {
               id: newValue.id || null,
-              name: newValue.name || '',
-              species: newValue.species ? newValue.species.map(s => ({ name: s.name })) : [{ name: '' }],
-              description: newValue.description || ''
+              animal: {
+                id: newValue.animal.id || null,
+              },
+              vaccine: {
+                id: newValue.vaccine.id || null,
+              },
+              completed: newValue.completed || false,
+              applicationDate: newValue.applicationDate || '',
+              nextApplicationDates: newValue.nextApplicationDates ? newValue.nextApplicationDates : [''],
             };
           }
         },
@@ -83,12 +104,17 @@
 
         if (animalVaccine) {
           this.deleteButtonIsVisible = true;
-
           this.formData = {
             id: animalVaccine.id,
-            name: animalVaccine.name,
-            species: animalVaccine.species ? animalVaccine.species.map(s => ({ name: s.name })) : [{ name: '' }],
-            description: animalVaccine.description
+            animal: {
+              id: animalVaccine.animal.id,
+            },
+            vaccine: {
+              id: animalVaccine.vaccine.id,
+            },
+            completed: animalVaccine.completed,
+            applicationDate: animalVaccine.applicationDate,
+            nextApplicationDates: animalVaccine.nextApplicationDates || [''],
           };
         } else {
           this.resetForm();
@@ -112,14 +138,17 @@
           this.submitForm();
         }
       },
-      handleFileUpload(event) {
-        this.formData.picture = event.target.files[0];
-      },
       submitForm() {
         const payload = {
-          name: this.formData.name,
-          description: this.formData.description,
-          species: this.formData.species.map(specie => ({ name: specie.name }))
+          animal: {
+            id: this.formData.animal.id,
+          },
+          vaccine: {
+            id: this.formData.vaccine.id,
+          },
+          completed: this.formData.completed,
+          applicationDate: this.formData.applicationDate,
+          nextApplicationDates: this.formData.nextApplicationDates,
         };
 
         const url = this.formData.id
@@ -140,7 +169,7 @@
             this.close();
           })
           .catch(error => {
-            console.error('Error creating animalVaccine:', error);
+            console.error('Error creating or updating animalVaccine:', error);
           });
       },
       deleteAnimalVaccine(animalVaccineId) {
@@ -159,16 +188,22 @@
       resetForm() {
         this.formData = {
           id: null,
-          name: '',
-          species: [{ name: '' }],
-          description: ''
+          animal: {
+            id: null,
+          },
+          vaccine: {
+            id: null,
+          },
+          completed: false,
+          applicationDate: '',
+          nextApplicationDates: [''],
         };
       },
-      addSpecie() {
-        this.formData.species.push({ name: '' });
+      addNextApplicationDate() {
+        this.formData.nextApplicationDates.push('');
       },
-      removeSpecie(index) {
-        this.formData.species.splice(index, 1);
+      removeNextApplicationDate(index) {
+        this.formData.nextApplicationDates.splice(index, 1);
       }
     },
   };
