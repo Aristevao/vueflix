@@ -1,7 +1,7 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="vaccine-form-modal">
-      <div class="vaccine-form">
+    <div v-if="isVisible" class="vaccine-form-modal" @click="handleBackgroundClick">
+      <div class="vaccine-form" @click.stop>
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
@@ -96,8 +96,9 @@
         this.resetForm();
         document.removeEventListener('keydown', this.handleKeydown);
       },
-      handleKeydown(event) {
-        if (event.key === 'Escape') {
+      handleBackgroundClick(event) {
+        // Check if the click was outside the .vaccine-form
+        if (event.target === event.currentTarget) {
           this.close();
         }
       },
