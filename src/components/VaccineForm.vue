@@ -1,48 +1,24 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="animal-form-modal">
-      <div class="animal-form">
-        <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
+    <div v-if="isVisible" class="vaccine-form-modal">
+      <div class="vaccine-form">
+        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <label>Name:</label>
           <input v-model="formData.name" maxlength="80" />
 
-          <label>Identification:</label>
-          <input v-model="formData.identification" required maxlength="80" />
-
-          <label>Specie:</label>
-          <input v-model="formData.specie" maxlength="80" />
-
-          <label>Breed:</label>
-          <input v-model="formData.breed" maxlength="80" />
-
-          <label>Sex:</label>
-          <select v-model="formData.sex">
-            <option>MALE</option>
-            <option>FEMALE</option>
-          </select>
-
-          <label>Birthdate:</label>
-          <input type="date" v-model="formData.birthdate" />
-
-          <label>Registration Date:</label>
-          <input type="date" v-model="formData.registrationDate" />
-
           <label>Description:</label>
           <textarea v-model="formData.description" maxlength="500"></textarea>
 
-          <label>Unit:</label>
-          <select v-model="formData.unitId" required>
-            <option v-for="unit in units" :key="unit.id" :value="unit.id">
-              {{ unit.name }}
-            </option>
-          </select>
-
-          <label>Picture:</label>
-          <input type="file" @change="handleFileUpload" />
+          <label>Species:</label>
+          <div v-for="(specie, index) in formData.species" :key="index">
+            <input v-model="specie.name" placeholder="Enter species name" />
+            <button type="button" @click="removeSpecie(index)">Remove</button>
+          </div>
+          <button type="button" @click="addSpecie">Add Species</button>
 
           <div class="button-group">
-            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">Delete</button>
+            <button v-if="deleteButtonIsVisible" type="button" @click="deleteVaccine(formData.id)">Delete</button>
             <button type="submit">Save</button>
             <button type="button" @click="cancelForm">Cancel</button>
           </div>
@@ -57,7 +33,7 @@
 
   export default {
     props: {
-      animalData: {
+      vaccineData: {
         type: Object,
         default: () => ({}),
       },
@@ -70,61 +46,39 @@
         formData: {
           id: null,
           name: '',
-          identification: '',
-          specie: '',
-          breed: '',
-          sex: '',
-          birthdate: '',
-          registrationDate: '',
-          description: '',
-          unitId: '',
-          picture: null,
+          species: [{ name: '' }],
+          description: ''
         },
       };
     },
     watch: {
-      animalData: {
+      vaccineData: {
         immediate: true,
         handler(newValue) {
           if (newValue && Object.keys(newValue).length > 0) {
             this.formData = {
               id: newValue.id || null,
               name: newValue.name || '',
-              identification: newValue.identification || '',
-              specie: newValue.specie || '',
-              breed: newValue.breed || '',
-              sex: newValue.sex || '',
-              birthdate: newValue.birthdate || '',
-              registrationDate: newValue.registrationDate || '',
-              description: newValue.description || '',
-              unitId: newValue.unit ? newValue.unit.id : '',
-              picture: null,
+              species: newValue.species ? newValue.species.map(s => ({ name: s.name })) : [{ name: '' }],
+              description: newValue.description || ''
             };
           }
         },
       },
     },
     methods: {
-      open(animal) {
+      open(vaccine) {
         this.isVisible = true;
-        this.fetchUnits();
         document.addEventListener('keydown', this.handleKeydown);
 
-        if (animal) {
+        if (vaccine) {
           this.deleteButtonIsVisible = true;
 
           this.formData = {
-            id: animal.id,
-            name: animal.name,
-            identification: animal.identification,
-            specie: animal.specie,
-            breed: animal.breed,
-            sex: animal.sex,
-            birthdate: animal.birthdate,
-            registrationDate: animal.registrationDate,
-            description: animal.description,
-            unitId: animal.unit.id,
-            picture: null,
+            id: vaccine.id,
+            name: vaccine.name,
+            species: vaccine.species ? vaccine.species.map(s => ({ name: s.name })) : [{ name: '' }],
+            description: vaccine.description
           };
         } else {
           this.resetForm();
@@ -141,62 +95,47 @@
           this.close();
         }
       },
-      fetchUnits() {
-        axios.get('http://localhost:8080/api/digital-pec/unit/list')
-          .then(response => {
-            this.units = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching units:', error);
-          });
-      },
       handleFileUpload(event) {
         this.formData.picture = event.target.files[0];
       },
       submitForm() {
-        const formData = new FormData();
-        formData.append('name', this.formData.name);
-        formData.append('identification', this.formData.identification);
-        formData.append('specie', this.formData.specie);
-        formData.append('breed', this.formData.breed);
-        formData.append('sex', this.formData.sex);
-        formData.append('birthdate', this.formData.birthdate);
-        formData.append('registrationDate', this.formData.registrationDate);
-        formData.append('description', this.formData.description);
-        formData.append('unit.id', this.formData.unitId);
-        if (this.formData.picture) {
-          formData.append('picture', this.formData.picture);
-        }
+        const payload = {
+          name: this.formData.name,
+          description: this.formData.description,
+          species: this.formData.species.map(specie => ({ name: specie.name }))
+        };
 
+        // Determine the request URL and method
         const url = this.formData.id
-          ? `http://localhost:8080/api/digital-pec/animal/${this.formData.id}`
-          : 'http://localhost:8080/api/digital-pec/animal';
+          ? `http://localhost:8080/api/digital-pec/vaccine/${this.formData.id}`
+          : 'http://localhost:8080/api/digital-pec/vaccine';
         const method = this.formData.id ? 'put' : 'post';
 
+        // Send the request as JSON
         axios({
           method,
           url,
-          data: formData,
+          data: payload,  // Send payload directly as JSON
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',  // Specify JSON content type
           },
         })
           .then(response => {
-            this.$emit('animal-created', response.data);
+            this.$emit('vaccine-created', response.data);
             this.close();
           })
           .catch(error => {
-            console.error('Error creating animal:', error);
+            console.error('Error creating vaccine:', error);
           });
       },
-      deleteAnimal(animalId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+      deleteVaccine(vaccineId) {
+        axios.delete(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
           .then(() => {
-            this.$emit('animal-deleted', animalId);
+            this.$emit('vaccine-deleted', vaccineId);
             this.close();
           })
           .catch(error => {
-            console.error('Error deleting animal:', error);
+            console.error('Error deleting vaccine:', error);
           });
       },
       cancelForm() {
@@ -206,26 +145,22 @@
         this.formData = {
           id: null,
           name: '',
-          identification: '',
-          specie: '',
-          breed: '',
-          sex: '',
-          birthdate: '',
-          registrationDate: '',
-          description: '',
-          unitId: '',
-          picture: null,
+          species: [{ name: '' }],
+          description: ''
         };
       },
+      addSpecie() {
+        this.formData.species.push({ name: '' });
+      },
+      removeSpecie(index) {
+        this.formData.species.splice(index, 1);
+      }
     },
   };
 </script>
 
 <style scoped>
-  .animal-form-modal {
-    /* flex-direction: column;  */
-    /* row-gap: 1rem; */
-    
+  .vaccine-form-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -238,7 +173,7 @@
     z-index: 999;
   }
 
-  .animal-form {
+  .vaccine-form {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
