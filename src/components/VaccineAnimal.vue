@@ -140,7 +140,7 @@
       openVaccineDetails(animalVaccineId) {
         axios.get(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
           .then(response => {
-            this.$refs.animalAnimalVaccineForm.open(response.data);
+            this.$refs.animalVaccineForm.open(response.data);
           })
           .catch(error => {
             console.error('Error fetching animalVaccine details:', error);

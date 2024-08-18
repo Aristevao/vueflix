@@ -24,7 +24,7 @@
             </select>
           </div>
 
-          <div class="form-group">
+          <div class="form-completed">
             <label>Completed:</label>
             <input type="checkbox" v-model="formData.completed" />
           </div>
@@ -44,8 +44,12 @@
           </div>
 
           <div class="button-group">
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
+              @click="deleteVaccine(formData.id)">Delete</button>
+            <div class="right-buttons">
+              <button type="submit">Save</button>
+              <button type="button" @click="cancelForm">Cancel</button>
+            </div>
           </div>
         </form>
       </div>
@@ -60,6 +64,7 @@
     data() {
       return {
         isVisible: false,
+        deleteButtonIsVisible: false,
         animals: [],
         vaccines: [],
         formData: {
@@ -78,6 +83,8 @@
         document.addEventListener('keydown', this.handleKeydown);
 
         if (animalVaccine) {
+          this.deleteButtonIsVisible = true;
+
           this.formData = {
             id: animalVaccine.id,
             animalId: animalVaccine.animal.id,
@@ -95,6 +102,7 @@
       },
       close() {
         this.isVisible = false;
+        this.deleteButtonIsVisible = false;
         this.resetForm();
         document.removeEventListener('keydown', this.handleKeydown);
       },
@@ -144,6 +152,16 @@
           })
           .catch(error => {
             console.error('Error saving animalVaccine:', error);
+          });
+      },
+      deleteVaccine(animalVaccineId) {
+        axios.delete(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
+          .then(() => {
+            this.$emit('animalVaccine-deleted', animalVaccineId);
+            this.close();
+          })
+          .catch(error => {
+            console.error('Error deleting vaccine:', error);
           });
       },
       cancelForm() {
@@ -208,6 +226,12 @@
   .form-group label {
     display: block;
     margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-completed {
+    display: block;
+    margin-bottom: 15px;
     font-weight: bold;
   }
 
