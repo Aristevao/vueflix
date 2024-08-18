@@ -18,9 +18,6 @@
           <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.species" placeholder="Filter by Species" class="filter-input" />
-        </div>
-        <div class="filter-item">
           <input v-model="filters.description" placeholder="Filter by Description" class="filter-input" />
         </div>
       </div>
