@@ -2,16 +2,15 @@
     <div>
       <h1>Notificacoes</h1>
     </div>
-     <!--Mensagens nao lidas-->
     <div>
-      <h2 class="container-name" v-on:click="notRead = true">Não Lida</h2> 
-      <h2 class="container-name" style="position: relative; left: 15px" v-on:click="notRead = false">Lidas</h2>
+      <h2 class="container-name" id="nome-container" v-on:click="changeValue(true)">Não Lida</h2> 
+      <h2 class="container-name" id="nome-container2" v-on:click="changeValue(false)">Lidas</h2>
     </div>
     <div class="container" v-if="notRead">
       <div v-for="notification in notifications" :key="notification.date" class="partitions">
         <div v-if="!notification.isRead">
           <h3 style="margin-left: 10px; display: inline;">{{notification.title}}<span class="close" v-on:click="notification.isRead = true">X</span>
-            <span class="date">{{notification.date}}</span>
+            <span class="date">{{dateManipulation(notification.createdAt)}}</span>
           </h3>
           <p class="info">{{notification.message}}</p>
         </div>
@@ -20,7 +19,7 @@
   <div v-if="!notRead">
     <div class="container" v-for="notification in notifications " :key="notification.date">
       <div v-if= "notification.isRead" class="partitions">
-      <h3 style="margin-left: 10px; display: inline;">{{notification.title}}<span class="date">{{notification.date}}</span></h3>
+      <h3 style="margin-left: 10px; display: inline;">{{notification.title}}<span class="date">{{dateManipulation(notification.createdAt)}}</span></h3>
       <p class="info">{{notification.message}}</p>
       </div>
     </div>
@@ -28,36 +27,53 @@
 </template>
   
   <script>
-  const cirilo =
-  {
-     id: 0,
-     isRead: false,
-     title: "Mensagem para maria Joaquina",
-     message: "Eu te odeio maria Joaquina",
-     date: "Agosto 19",
-  }
+  import axios from 'axios';
   export default {
     name: 'Notificacoes',
     data()
     {
       
       return{
-        notifications: [cirilo],
+        notifications: [],
         notRead: true,
       };
     },
     methods:
     {
-      /*fetchNotifications() {
-        axios.get("api")
+      fetchNotifications() {
+        axios.get("http://localhost:8080/api/digital-pec/notification")
           .then(response => {
             this.notifications = response.data.content
           })
           .catch(error => {
             console.error('Error fetching notifications:', error)
           });
-      }*/
+      },
+      changeValue(value)
+      {
+        this.notRead = value
+        this.fetchNotifications()
+        if(value === true)
+        {
+          document.getElementById('nome-container').style.borderBottom = "3px solid red"
+          document.getElementById('nome-container2').style.borderBottom = 0
+        }
+        else
+        {
+          document.getElementById('nome-container2').style.borderBottom = "3px solid red"
+          document.getElementById('nome-container').style.borderBottom = 0
+        }
+      },
+      dateManipulation(date)
+      {
+        const notificationDate = new Date(date)
+        const datePT = notificationDate.toLocaleDateString('pt-br')
+        return datePT
+      },
+
+      
     }
+    
   }
   </script>
 
@@ -69,9 +85,19 @@
   display: inline-block;
   padding-bottom: 10px;
   margin-left: 10px;
-  border-bottom: 3px solid rgb(255, 0, 0);
   margin-bottom: 0;
 }
+#nome-container
+{
+  border-bottom: 3px solid rgb(255, 0, 0);
+}
+#nome-container2
+{
+  border-bottom: 0;
+  position: relative;
+  left: 15px;
+}
+
 .container
 {
   border: 1px solid black;
