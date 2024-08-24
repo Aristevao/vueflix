@@ -83,7 +83,6 @@
                 password: password.value
             });
 
-            // Custom header extraction
             const token = response.headers['authorization'];
             if (token) {
                 console.log('Token:', token);

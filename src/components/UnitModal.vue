@@ -137,7 +137,7 @@
                             'Content-Type': 'multipart/form-data',
                         },
                     });
-                    this.$emit('unit-created', response.data); // Pass the response data instead of formData
+                    this.$emit('unit-created', response.data);
                     this.close();
                 } catch (error) {
                     console.error('Error saving unit:', error);

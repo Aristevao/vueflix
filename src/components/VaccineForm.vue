@@ -101,7 +101,6 @@
         document.removeEventListener('keydown', this.handleKeydown);
       },
       handleBackgroundClick(event) {
-        // Check if the click was outside the .vaccine-form
         if (event.target === event.currentTarget) {
           this.close();
         }

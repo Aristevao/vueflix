@@ -129,7 +129,7 @@
       };
     },
     mounted() {
-      this.fetchAnimals(); // Fetch data when the component is mounted
+      this.fetchAnimals();
     },
     methods: {
       async fetchAnimals() {

@@ -148,7 +148,7 @@
         this.fetchVaccines();
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters; // Toggle filter visibility
+        this.showFilters = !this.showFilters;
       },
       openVaccineForm() {
         this.$refs.vaccineForm.open();
