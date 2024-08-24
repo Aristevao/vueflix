@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
     <div class="header">
       <div class="title">Animais</div>
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Filter inputs -->
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
@@ -46,12 +44,9 @@
       </div>
     </div>
 
-    <!-- AnimalForm component -->
     <AnimalForm ref="animalForm" @animal-created="handleAnimalCreated" @animal-deleted="handleAnimalDeleted" />
 
-    <!-- Table and pagination components -->
     <table class="animal-table">
-      <!-- Table header -->
       <thead>
         <tr>
           <th class="image-column"></th>
@@ -65,7 +60,6 @@
           <!-- <th class="registration-date-column">Action</th> -->
         </tr>
       </thead>
-      <!-- Table body -->
       <tbody>
         <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)"
           @mouseover="showEllipsis(animal.id)" @mouseleave="hideEllipsis(animal.id)">
@@ -91,7 +85,6 @@
       </tbody>
     </table>
 
-    <!-- Pagination component -->
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>

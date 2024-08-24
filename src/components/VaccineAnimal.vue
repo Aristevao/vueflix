@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
     <div class="header">
       <div class="title">Aplicações</div>
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Filter inputs -->
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
@@ -30,13 +28,10 @@
       </div>
     </div>
 
-    <!-- AnimalVaccineForm component -->
     <AnimalVaccineForm ref="animalVaccineForm" @animalVaccine-created="handleAnimalVaccineCreated"
       @animalVaccine-deleted="handleAnimalVaccineDeleted" />
 
-    <!-- Table and pagination components -->
     <table class="animalVaccine-table">
-      <!-- Table header -->
       <thead>
         <tr>
           <th class="name-column">Animal Name</th>
@@ -46,7 +41,7 @@
           <th class="completed-column">Completed</th>
         </tr>
       </thead>
-      <!-- Table body -->
+
       <tbody>
         <tr v-for="animalVaccine in animalVaccines" :key="animalVaccine.id"
           @click="openVaccineDetails(animalVaccine.id)" @mouseover="showEllipsis(animalVaccine.id)"
@@ -60,7 +55,6 @@
       </tbody>
     </table>
 
-    <!-- Pagination component -->
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>
