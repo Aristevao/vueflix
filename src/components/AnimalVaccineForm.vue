@@ -58,7 +58,7 @@
 </template>
 
 <script>
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
 
   export default {
     data() {
@@ -106,25 +106,25 @@
         this.resetForm();
         document.removeEventListener('keydown', this.handleKeydown);
       },
-      fetchAnimals() {
-        axios.get('http://localhost:8080/api/digital-pec/animal/list')
-          .then(response => {
-            this.animals = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching animals:', error);
-          });
+      async fetchAnimals() {
+        try {
+          const response = await apiClient.get('animal/list');
+          this.animals = response.data;
+        } catch (error) {
+          console.error('Error fetching animals:', error);
+        }
       },
-      fetchVaccines() {
-        axios.get('http://localhost:8080/api/digital-pec/vaccine/list')
-          .then(response => {
-            this.vaccines = response.data;
-          })
-          .catch(error => {
-            console.error('Error fetching vaccines:', error);
-          });
+
+      async fetchVaccines() {
+        try {
+          const response = await apiClient.get('vaccine/list');
+          this.vaccines = response.data;
+        } catch (error) {
+          console.error('Error fetching vaccines:', error);
+        }
       },
-      submitForm() {
+
+      async submitForm() {
         const payload = {
           animal: { id: this.formData.animalId },
           vaccine: { id: this.formData.vaccineId },
@@ -134,35 +134,34 @@
         };
 
         const url = this.formData.id
-          ? `http://localhost:8080/api/digital-pec/animal/vaccine/${this.formData.id}`
-          : 'http://localhost:8080/api/digital-pec/animal/vaccine';
+          ? `animal/vaccine/${this.formData.id}`
+          : 'animal/vaccine';
         const method = this.formData.id ? 'put' : 'post';
 
-        axios({
-          method,
-          url,
-          data: payload,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then(response => {
-            this.$emit('animalVaccine-created', response.data);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error saving animalVaccine:', error);
+        try {
+          const response = await apiClient({
+            method,
+            url,
+            data: payload,
+            headers: {
+              'Content-Type': 'application/json',
+            },
           });
+          this.$emit('animalVaccine-created', response.data);
+          this.close();
+        } catch (error) {
+          console.error('Error saving animalVaccine:', error);
+        }
       },
-      deleteVaccine(animalVaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
-          .then(() => {
-            this.$emit('animalVaccine-deleted', animalVaccineId);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error deleting vaccine:', error);
-          });
+
+      async deleteVaccine(animalVaccineId) {
+        try {
+          await apiClient.delete(`animal/vaccine/${animalVaccineId}`);
+          this.$emit('animalVaccine-deleted', animalVaccineId);
+          this.close();
+        } catch (error) {
+          console.error('Error deleting vaccine:', error);
+        }
       },
       cancelForm() {
         this.close();

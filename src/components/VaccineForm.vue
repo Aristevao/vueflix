@@ -142,7 +142,6 @@
           console.error('Error creating vaccine:', error);
         }
       },
-
       async deleteVaccine(vaccineId) {
         try {
           await apiClient.delete(`/vaccine/${vaccineId}`);
