@@ -86,7 +86,6 @@
         methods: {
             getInitialUnit() {
                 return {
-                    id: null,
                     name: '',
                     description: '',
                     address: {
@@ -96,9 +95,9 @@
                         complement: '',
                         zipcode: '',
                         city: '',
-                        state: ''
+                        state: '',
                     },
-                    picture: null
+                    picture: null,
                 };
             },
             open() {
@@ -126,8 +125,8 @@
                     formData.append('picture', this.file);
                 }
 
-                const url = this.selectedUnit ? `/unit/${this.selectedUnit.id}` : '/unit';
-                const method = this.selectedUnit ? 'put' : 'post';
+                const url = this.localUnit.id ? `/unit/${this.localUnit.id}` : '/unit';
+                const method = this.localUnit.id ? 'put' : 'post';
 
                 try {
                     const response = await apiClient({
