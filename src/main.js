@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+import Login from './components/Login.vue';
 import Dashboard from './components/Dashboard.vue';
 import UnitList from './components/UnitList.vue';
 import Animais from './components/AnimalList.vue';
@@ -10,6 +11,7 @@ import VaccineAnimal from './components/VaccineAnimal.vue';
 import Notificacoes from './components/Notificacoes.vue';
 
 const routes = [
+  { path: '/login', component: Login },
   { path: '/dashboard', component: Dashboard },
   { path: '/units', component: UnitList },
   { path: '/animals', component: Animais },

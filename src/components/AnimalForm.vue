@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
 
   export default {
     props: {
@@ -142,7 +142,7 @@
         }
       },
       fetchUnits() {
-        axios.get('http://localhost:8080/api/digital-pec/unit/list')
+        apiClient.get('/unit/list')
           .then(response => {
             this.units = response.data;
           })
@@ -153,7 +153,7 @@
       handleFileUpload(event) {
         this.formData.picture = event.target.files[0];
       },
-      submitForm() {
+      async submitForm() {
         const formData = new FormData();
         formData.append('name', this.formData.name);
         formData.append('identification', this.formData.identification);
@@ -169,35 +169,33 @@
         }
 
         const url = this.formData.id
-          ? `http://localhost:8080/api/digital-pec/animal/${this.formData.id}`
-          : 'http://localhost:8080/api/digital-pec/animal';
+          ? `/animal/${this.formData.id}`
+          : '/animal';
         const method = this.formData.id ? 'put' : 'post';
 
-        axios({
-          method,
-          url,
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-          .then(response => {
-            this.$emit('animal-created', response.data);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error creating animal:', error);
+        try {
+          const response = await apiClient({
+            method,
+            url,
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
           });
+          this.$emit('animal-created', response.data);
+          this.close();
+        } catch (error) {
+          console.error('Error creating animal:', error);
+        }
       },
-      deleteAnimal(animalId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
-          .then(() => {
-            this.$emit('animal-deleted', animalId);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error deleting animal:', error);
-          });
+      async deleteAnimal(animalId) {
+        try {
+          await apiClient.delete(`/animal/${animalId}`);
+          this.$emit('animal-deleted', animalId);
+          this.close();
+        } catch (error) {
+          console.error('Error deleting animal:', error);
+        }
       },
       cancelForm() {
         this.close();
@@ -225,7 +223,7 @@
   .animal-form-modal {
     /* flex-direction: column;  */
     /* row-gap: 1rem; */
-    
+
     position: fixed;
     top: 0;
     left: 0;
