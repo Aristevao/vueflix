@@ -4,53 +4,51 @@
       <h1>Notificacoes</h1>
     </div>
     <div>
-      <h2 class="container-name" id="nome-container" v-on:click="changeValue(true)">Não Lida</h2> 
+      <h2 class="container-name" id="nome-container" v-on:click="changeValue(true)">Não Lida</h2>
       <h2 class="container-name" id="nome-container2" v-on:click="changeValue(false)">Lidas</h2>
     </div>
     <div class="container" v-if="notRead">
       <div v-for="notification in notifications" :key="notification.date" class="partitions">
         <div v-if="!notification.isRead">
-          <h3 style="margin-left: 10px; display: inline;">{{notification.title}}<span class="close" v-on:click="notification.isRead = true">X</span>
-            <span class="date">{{dateManipulation(notification.createdAt)}}</span>
+          <h3 style="margin-left: 10px; display: inline;">{{ notification.title }}<span class="close"
+              v-on:click="notification.isRead = true">X</span>
+            <span class="date">{{ dateManipulation(notification.createdAt) }}</span>
           </h3>
           <p class="info">{{ notification.message }}</p>
         </div>
       </div>
     </div>
-  <div v-if="!notRead">
-    <div class="container" v-for="notification in notifications " :key="notification.date">
-      <div v-if= "notification.isRead" class="partitions">
-      <h3 style="margin-left: 10px; display: inline;">{{notification.title}}<span class="date">{{dateManipulation(notification.createdAt)}}</span></h3>
-      <p class="info">{{notification.message}}</p>
+    <div v-if="!notRead">
+      <div class="container" v-for="notification in notifications " :key="notification.date">
+        <div v-if="notification.isRead" class="partitions">
+          <h3 style="margin-left: 10px; display: inline;">{{ notification.title }}<span class="date">{{
+            dateManipulation(notification.createdAt) }}</span></h3>
+          <p class="info">{{ notification.message }}</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Pagination component -->
-  <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
+    <!-- Pagination component -->
+    <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
+  </div>
 </template>
-  
-  <script>
-  import { defineComponent } from 'vue';
+
+<script>
   import axios from 'axios';
   import Pagination from './Pagination.vue';
 
-  const cirilo =
-  {
-     id: 0,
-     isRead: false,
-     title: "Mensagem para maria Joaquina",
-     message: "Eu te odeio maria Joaquina",
-     date: "Agosto 19",
-  }
   export default {
     name: 'Notificacoes',
-    data()
-    {
-      
-      return{
+    components: {
+      Pagination
+    },
+    data() {
+
+      return {
         notifications: [],
+        currentPage: 1,
         notRead: true,
+        totalPages: 0,
       };
     },
     mounted() {
@@ -72,6 +70,27 @@
         } catch (error) {
           console.error(error);
         }
+      },
+      changeValue(value) {
+        this.notRead = value
+        this.fetchNotifications()
+        if (value === true) {
+          document.getElementById('nome-container').style.borderBottom = "3px solid red"
+          document.getElementById('nome-container2').style.borderBottom = 0
+        }
+        else {
+          document.getElementById('nome-container2').style.borderBottom = "3px solid red"
+          document.getElementById('nome-container').style.borderBottom = 0
+        }
+      },
+      dateManipulation(date) {
+        const notificationDate = new Date(date)
+        const datePT = notificationDate.toLocaleDateString('pt-br')
+        return datePT
+      },
+      handlePageChange(newPage) {
+        this.currentPage = newPage;
+        this.fetchNotifications();
       }
     }
   }
@@ -79,32 +98,30 @@
 
 <style scoped>
 
-.container-name
-{
-  font-weight: normal;
-  display: inline-block;
-  padding-bottom: 10px;
-  margin-left: 10px;
-  margin-bottom: 0;
-}
-#nome-container
-{
-  border-bottom: 3px solid rgb(255, 0, 0);
-}
-#nome-container2
-{
-  border-bottom: 0;
-  position: relative;
-  left: 15px;
-}
+  .container-name {
+    font-weight: normal;
+    display: inline-block;
+    padding-bottom: 10px;
+    margin-left: 10px;
+    margin-bottom: 0;
+  }
 
-.container
-{
-  border: 1px solid black;
-  max-width: 100%;
-  height: 500px;
-  /*background-color: rgb(72, 72, 72);*/
-  border-radius: 10px;
+  #nome-container {
+    border-bottom: 3px solid rgb(255, 0, 0);
+  }
+
+  #nome-container2 {
+    border-bottom: 0;
+    position: relative;
+    left: 15px;
+  }
+
+  .container {
+    border: 1px solid black;
+    max-width: 100%;
+    height: 500px;
+    /*background-color: rgb(72, 72, 72);*/
+    border-radius: 10px;
 
   }
 
