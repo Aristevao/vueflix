@@ -156,7 +156,7 @@
       },
       handlePageChange(newPage) {
         this.currentPage = newPage;
-        this.fetchAnimals(); // Fetch data for the new page
+        this.fetchAnimals();
       },
       calculateAge(birthdate) {
         const birthDate = new Date(birthdate);

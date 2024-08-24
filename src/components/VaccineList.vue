@@ -58,7 +58,7 @@
 
 <script>
   import { defineComponent } from 'vue';
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
   import Pagination from './Pagination.vue';
   import CustomButton from './CustomButton.vue';
   import VaccineForm from './VaccineForm.vue';
@@ -90,7 +90,7 @@
     methods: {
       async fetchVaccines() {
         try {
-          const response = await axios.get('http://localhost:8080/api/digital-pec/vaccine', {
+          const response = await apiClient.get('/vaccine', {
             params: {
               page: this.currentPage - 1,
               size: 10,
@@ -103,12 +103,29 @@
           this.vaccines = response.data.content;
           this.totalPages = response.data.totalPages;
         } catch (error) {
-          console.error(error);
+          console.error('Error fetching vaccines:', error);
+        }
+      },
+
+      async openVaccineDetails(vaccineId) {
+        try {
+          const response = await apiClient.get(`/vaccine/${vaccineId}`);
+          this.$refs.vaccineForm.open(response.data);
+        } catch (error) {
+          console.error('Error fetching vaccine details:', error);
+        }
+      },
+      async deleteVaccine(vaccineId) {
+        try {
+          await apiClient.delete(`/vaccine/${vaccineId}`);
+          this.vaccines = this.vaccines.filter(vaccine => vaccine.id !== vaccineId);
+        } catch (error) {
+          console.error('Error deleting vaccine:', error);
         }
       },
       handlePageChange(newPage) {
         this.currentPage = newPage;
-        this.fetchVaccines(); // Fetch data for the new page
+        this.fetchVaccines();
       },
       calculateDescription(birthdate) {
         const birthDate = new Date(birthdate);
@@ -141,24 +158,6 @@
       },
       handleVaccineDeleted() {
         this.fetchVaccines();
-      },
-      openVaccineDetails(vaccineId) {
-        axios.get(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
-          .then(response => {
-            this.$refs.vaccineForm.open(response.data);
-          })
-          .catch(error => {
-            console.error('Error fetching vaccine details:', error);
-          });
-      },
-      deleteVaccine(vaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
-          .then(() => {
-            this.vaccines = this.vaccines.filter(vaccine => vaccine.id !== vaccineId);
-          })
-          .catch(error => {
-            console.error('Error deleting vaccine:', error);
-          });
       },
       showEllipsis(vaccineId) {
         this.vaccines = this.vaccines.map(vaccine => vaccine.id === vaccineId ? { ...vaccine, showEllipsis: true } : vaccine);
