@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, provide } from 'vue';
 import { useRoute } from 'vue-router';
 import Sidebar from './components/Sidebar.vue';
 import HeaderBar from './components/HeaderBar.vue';
@@ -26,16 +26,17 @@ export default {
     const collapsed = ref(false);
     const route = useRoute();
 
-    const username = 'John Doe'; // Replace with actual username
-    const userPicture = '@/assets/user.jpg'; // Replace with actual user picture path
+    const username = ref('Guest');
+    const userPicture = '@/assets/user.jpg';
 
     const toggleSidebar = () => {
       collapsed.value = !collapsed.value;
     };
 
-    const showHeaderAndSidebar = computed(() => {
-      return route.name !== 'Login';
-    });
+    const showHeaderAndSidebar = computed(() => route.name !== 'Login');
+
+    // Provide the username to child components
+    provide('username', username);
 
     return {
       collapsed,
@@ -44,6 +45,13 @@ export default {
       userPicture,
       showHeaderAndSidebar,
     };
+  },
+  created() {
+    // Set the username from localStorage when the component is created
+    const storedUsername = localStorage.getItem('name');
+    if (storedUsername) {
+      this.username = storedUsername;
+    }
   },
 };
 </script>

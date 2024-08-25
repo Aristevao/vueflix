@@ -57,24 +57,22 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient';
+  import { inject } from 'vue';
   import { useRouter } from 'vue-router';
+  import apiClient from '../store/apiClient';
 
   export default {
     name: 'Sidebar',
-    data() {
-      return {
-        collapsed: false,
-      };
-    },
     setup() {
       const router = useRouter();
+      const username = inject('username');
 
       const logout = async () => {
         try {
           await apiClient.post('http://localhost:8080/api/digital-pec/logoff');
           localStorage.removeItem('authToken');
           localStorage.removeItem('name');
+          username.value = 'Guest';
           router.push({ name: 'Login' });
         } catch (error) {
           console.error('Logout failed:', error);
@@ -83,6 +81,7 @@
 
       return {
         logout,
+        collapsed: false,
       };
     },
     methods: {

@@ -60,39 +60,30 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { inject } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
 
-    const email = ref('');
-    const password = ref('');
-    const showCreateAccount = ref(false);
     const router = useRouter();
-
-    const newUser = ref({
-        name: '',
-        email: '',
-        phone: '',
-        birthdate: '',
-        picture: '',
-        password: ''
-    });
+    const username = inject('username');
 
     const login = async () => {
         try {
             const response = await axios.post('http://localhost:8080/api/digital-pec/authenticate', {
                 username: email.value,
-                password: password.value
+                password: password.value,
             });
 
             const token = response.headers['authorization'];
             if (token) {
-                console.log('Token:', token);
                 localStorage.setItem('authToken', token);
 
                 const decoded = jwtDecode(token);
                 localStorage.setItem('name', decoded.name);
+
+                // Update the username reactive variable
+                username.value = decoded.name;
 
                 router.push({ name: 'Home' });
             } else {
@@ -100,26 +91,6 @@
             }
         } catch (error) {
             console.error('Login failed:', error);
-        }
-    };
-
-    const recoverPassword = () => {
-        // Handle password recovery logic here
-        alert('Password recovery process initiated.');
-    };
-
-    const showCreateAccountForm = () => {
-        showCreateAccount.value = true;
-    };
-
-    const createAccount = async () => {
-        try {
-            const response = await axios.post('http://localhost:8080/api/digital-pec/user', newUser.value);
-            console.log(response.data);
-            alert('User created successfully!');
-            showCreateAccount.value = false;  // Hide create account form
-        } catch (error) {
-            console.error('Account creation failed:', error);
         }
     };
 </script>
