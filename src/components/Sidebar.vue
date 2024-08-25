@@ -45,119 +45,170 @@
             <span v-if="!collapsed">Notificações</span>
           </router-link>
         </li>
+        <li @click="logout" class="logout">
+          <img src="@/assets/logout.png" alt="Logout" class="menu-icon" />
+          <span v-if="!collapsed">Logout</span>
+        </li>
       </ul>
     </nav>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'Sidebar',
-  data() {
-    return {
-      collapsed: false,
-    };
-  },
-  methods: {
-    toggleSidebar() {
-      this.collapsed = !this.collapsed;
+  import apiClient from '../store/apiClient';
+  import { useRouter } from 'vue-router';
+
+  export default {
+    name: 'Sidebar',
+    data() {
+      return {
+        collapsed: false,
+      };
     },
-  },
-};
+    setup() {
+      const router = useRouter();
+
+      const logout = async () => {
+        try {
+          await apiClient.post('http://localhost:8080/api/digital-pec/logoff');
+          router.push({ name: 'Login' });
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
+      };
+
+      return {
+        logout,
+      };
+    },
+    methods: {
+      toggleSidebar() {
+        this.collapsed = !this.collapsed;
+      },
+    },
+  };
 </script>
 
 <style scoped>
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  background-color: #f4f4f4;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  transition: width 0.3s;
-  position: relative;
-  font-family: sans-serif;
-}
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s;
+    position: relative;
+    font-family: sans-serif;
+  }
 
-.sidebar.collapsed {
-  width: 40px;
-}
+  .sidebar.collapsed {
+    width: 40px;
+  }
 
-.toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
+  .toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
 
-.logo {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  color: #333;
-}
+  .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
 
-.logo-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 10px;
-}
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
 
-.toggle-icon {
-  width: 24px;
-  height: 24px;
-}
+  .toggle-icon {
+    width: 24px;
+    height: 24px;
+  }
 
-.sidebar.collapsed .toggle-icon {
-  width: 24px;
-  height: 24px;
-  margin-top: -10px;
-  margin-left: -28px;
-}
+  .sidebar.collapsed .toggle-icon {
+    width: 24px;
+    height: 24px;
+    margin-top: -10px;
+    margin-left: -28px;
+  }
 
-.sidebar.collapsed .logo-text {
-  display: none;
-}
+  .sidebar.collapsed .logo-text {
+    display: none;
+  }
 
-nav ul {
-  list-style: none;
-  padding: 0;
-}
+  nav ul {
+    list-style: none;
+    padding: 0;
+  }
 
-nav li {
-  margin: 10px 0;
-}
+  nav li {
+    margin: 10px 0;
+  }
 
-nav a {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #333;
-  padding: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
+  nav a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
 
-nav a:hover {
-  background-color: #ddd;
-}
+  nav a:hover {
+    background-color: #ddd;
+  }
 
-nav a.active {
-  background-color: #ddd;
-}
+  nav a.active {
+    background-color: #ddd;
+  }
 
-.menu-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-}
+  .menu-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
 
-.sidebar.collapsed .menu-icon {
-  margin-right: 0;
-}
+  .sidebar.collapsed .menu-icon {
+    margin-right: 0;
+  }
 
-.sidebar.collapsed nav a span {
-  display: none;
-}
+  .sidebar.collapsed nav a span {
+    display: none;
+  }
+
+  .logout {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: #333;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .logout:hover {
+    background-color: #ddd;
+  }
+
+  .logout .menu-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+
+  .sidebar.collapsed .logout .menu-icon {
+    margin-right: 0;
+  }
+
+  .sidebar.collapsed .logout span {
+    display: none;
+  }
 </style>
