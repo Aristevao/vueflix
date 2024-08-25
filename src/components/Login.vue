@@ -63,6 +63,7 @@
     import { ref } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
+    import { jwtDecode } from 'jwt-decode';
 
     const email = ref('');
     const password = ref('');
@@ -89,17 +90,18 @@
             if (token) {
                 console.log('Token:', token);
                 localStorage.setItem('authToken', token);
+
+                const decoded = jwtDecode(token);
+                localStorage.setItem('name', decoded.name);
+
+                router.push({ name: 'Home' });
             } else {
                 console.error('Authorization token not found in headers');
             }
-
-            // Redirect to the main application page after successful login
-            router.push({ name: 'Home' });
         } catch (error) {
             console.error('Login failed:', error);
         }
     };
-
 
     const recoverPassword = () => {
         // Handle password recovery logic here

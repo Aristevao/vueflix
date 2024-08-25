@@ -73,6 +73,8 @@
       const logout = async () => {
         try {
           await apiClient.post('http://localhost:8080/api/digital-pec/logoff');
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('name');
           router.push({ name: 'Login' });
         } catch (error) {
           console.error('Logout failed:', error);
