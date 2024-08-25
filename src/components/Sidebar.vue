@@ -7,50 +7,52 @@
       <img src="@/assets/paw.png" alt="Logo" class="logo-icon" v-if="!collapsed" />
       <span class="logo-text" v-if="!collapsed">DigitalPec</span>
     </div>
-    <nav>
-      <ul>
-        <li>
-          <router-link to="/dashboard" active-class="active">
-            <img src="@/assets/home.png" alt="Dashboard" class="menu-icon" />
-            <span v-if="!collapsed">Dashboard</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/units" active-class="active">
-            <img src="@/assets/fazendas.png" alt="Units" class="menu-icon" />
-            <span v-if="!collapsed">Fazendas</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/animals" active-class="active">
-            <img src="@/assets/animais.png" alt="Animals" class="menu-icon" />
-            <span v-if="!collapsed">Animais</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/vaccines" active-class="active">
-            <img src="@/assets/vacinas.png" alt="Vaccines" class="menu-icon" />
-            <span v-if="!collapsed">Vacinas</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/vaccineAnimal" active-class="active">
-            <img src="@/assets/calendario.png" alt="Calendar" class="menu-icon" />
-            <span v-if="!collapsed">Calendário</span>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/notifications" active-class="active">
-            <img src="@/assets/notificacoes.png" alt="Notifications" class="menu-icon" />
-            <span v-if="!collapsed">Notificações</span>
-          </router-link>
-        </li>
-        <li @click="logout" class="logout">
-          <img src="@/assets/logout.png" alt="Logout" class="menu-icon" />
-          <span v-if="!collapsed">Logout</span>
-        </li>
-      </ul>
-    </nav>
+    <div class="nav-container">
+      <nav>
+        <ul>
+          <li>
+            <router-link to="/dashboard" active-class="active">
+              <img src="@/assets/home.png" alt="Dashboard" class="menu-icon" />
+              <span v-if="!collapsed">Dashboard</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/units" active-class="active">
+              <img src="@/assets/fazendas.png" alt="Units" class="menu-icon" />
+              <span v-if="!collapsed">Fazendas</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/animals" active-class="active">
+              <img src="@/assets/animais.png" alt="Animals" class="menu-icon" />
+              <span v-if="!collapsed">Animais</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/vaccines" active-class="active">
+              <img src="@/assets/vacinas.png" alt="Vaccines" class="menu-icon" />
+              <span v-if="!collapsed">Vacinas</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/vaccineAnimal" active-class="active">
+              <img src="@/assets/calendario.png" alt="Calendar" class="menu-icon" />
+              <span v-if="!collapsed">Calendário</span>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/notifications" active-class="active">
+              <img src="@/assets/notificacoes.png" alt="Notifications" class="menu-icon" />
+              <span v-if="!collapsed">Notificações</span>
+            </router-link>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <li @click="logout" class="logout">
+      <img src="@/assets/logout.png" alt="Logout" class="menu-icon" />
+      <span v-if="!collapsed">Logout</span>
+    </li>
   </div>
 </template>
 
@@ -99,6 +101,8 @@
     transition: width 0.3s;
     position: relative;
     font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
   }
 
   .sidebar.collapsed {
@@ -141,6 +145,11 @@
 
   .sidebar.collapsed .logo-text {
     display: none;
+  }
+
+  .nav-container {
+    flex: 1;
+    /* Allow this container to take up all available space */
   }
 
   nav ul {
@@ -188,10 +197,12 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: 10px;
     color: #333;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin-top: auto;
+    /* Pushes the logout button to the bottom */
   }
 
   .logout:hover {
