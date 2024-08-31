@@ -1,7 +1,10 @@
 <template>
     <div class="login-container">
-        <h2>Login</h2>
-        <form @submit.prevent="login">
+        <h2 v-if="!isCreatingAccount">Login</h2>
+        <h3 v-if="isCreatingAccount">Create Account</h3>
+
+        <!-- Login Form -->
+        <form v-if="!isCreatingAccount" @submit.prevent="login">
             <div class="form-group">
                 <label for="email">E-mail:</label>
                 <input type="email" id="email" v-model="email" required />
@@ -15,58 +18,74 @@
             <button type="submit">Login</button>
         </form>
 
+        <!-- Create Account Form -->
+        <form v-if="isCreatingAccount" @submit.prevent="createAccount">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" v-model="newUser.name" required maxlength="80" />
+                <small v-if="validationErrors.name">{{ validationErrors.name }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="newEmail">E-mail:</label>
+                <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" />
+                <small v-if="validationErrors.email">{{ validationErrors.email }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16" />
+                <small v-if="validationErrors.phone">{{ validationErrors.phone }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="birthdate">Birthdate:</label>
+                <input type="date" id="birthdate" v-model="newUser.birthdate" />
+            </div>
+
+            <div class="form-group">
+                <label for="picture">Profile Picture URL:</label>
+                <input type="url" id="picture" v-model="newUser.picture" />
+            </div>
+
+            <div class="form-group">
+                <label for="newPassword">Password:</label>
+                <input type="password" id="newPassword" v-model="newUser.password" required />
+            </div>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <!-- Actions -->
         <div class="actions">
-            <button @click="recoverPassword">Recover Password</button>
-            <button @click="showCreateAccountForm">Create an Account</button>
-        </div>
-
-        <div v-if="showCreateAccount">
-            <h3>Create Account</h3>
-            <form @submit.prevent="createAccount">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" v-model="newUser.name" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="email">E-mail:</label>
-                    <input type="email" id="newEmail" v-model="newUser.email" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" v-model="newUser.phone" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="birthdate">Birthdate:</label>
-                    <input type="date" id="birthdate" v-model="newUser.birthdate" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="picture">Profile Picture URL:</label>
-                    <input type="url" id="picture" v-model="newUser.picture" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="newPassword">Password:</label>
-                    <input type="password" id="newPassword" v-model="newUser.password" required />
-                </div>
-
-                <button type="submit">Create Account</button>
-            </form>
+            <button @click="recoverPassword" v-if="!isCreatingAccount">Recover Password</button>
+            <button @click="toggleForm">{{ isCreatingAccount ? 'Back to Login' : 'Create an Account' }}</button>
         </div>
     </div>
 </template>
 
 <script setup>
-    import { inject } from 'vue';
+    import { inject, ref } from 'vue';
     import axios from 'axios';
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
 
     const router = useRouter();
     const username = inject('username');
+
+    const isCreatingAccount = ref(false);
+    const email = ref('');
+    const password = ref('');
+    const newUser = ref({
+        name: '',
+        email: '',
+        phone: '',
+        birthdate: '',
+        picture: '',
+        password: ''
+    });
+    const formattedPhone = ref('');
+    const validationErrors = ref({});
 
     const login = async () => {
         try {
@@ -92,6 +111,64 @@
         } catch (error) {
             console.error('Login failed:', error);
         }
+    };
+
+    const createAccount = async () => {
+        if (validateCreateAccountForm()) {
+            try {
+                newUser.value.phone = unformatPhone(formattedPhone.value); // Remove formatting
+                await axios.post('http://localhost:8080/api/digital-pec/user', newUser.value);
+                alert('Account created successfully!');
+                toggleForm(); // Switch back to login form
+            } catch (error) {
+                console.error('Account creation failed:', error);
+            }
+        }
+    };
+
+    const validateCreateAccountForm = () => {
+        validationErrors.value = {};
+
+        if (!newUser.value.name || newUser.value.name.length > 80) {
+            validationErrors.value.name = 'Name is required and must be at most 80 characters.';
+        }
+        if (!newUser.value.email || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newUser.value.email) || newUser.value.email.length > 320) {
+            validationErrors.value.email = 'Valid email is required and must be at most 320 characters.';
+        }
+        if (newUser.value.phone && newUser.value.phone.length > 12) {
+            validationErrors.value.phone = 'Phone number must be at most 12 digits.';
+        }
+
+        return Object.keys(validationErrors.value).length === 0;
+    };
+
+    const applyPhoneMask = () => {
+        let rawPhone = unformatPhone(formattedPhone.value);
+        if (rawPhone.length > 12) {
+            rawPhone = rawPhone.slice(0, 12);
+        }
+        formattedPhone.value = formatPhone(rawPhone);
+    };
+
+    const formatPhone = (phone) => {
+        if (!phone) return '';
+        if (phone.length <= 2) return `(${phone}`;
+        if (phone.length <= 7) return `(${phone.slice(0, 2)}) ${phone.slice(2)}`;
+        if (phone.length === 11) return `(${phone.slice(0, 2)}) ${phone.slice(2, 3)} ${phone.slice(3, 7)}-${phone.slice(7, 11)}`;
+        if (phone.length === 12) return `(${phone.slice(0, 2)}) ${phone.slice(2, 3)} ${phone.slice(3, 8)}-${phone.slice(8, 12)}`;
+        return phone;
+    };
+
+    const unformatPhone = (phone) => {
+        return phone.replace(/\D/g, '');
+    };
+
+    const toggleForm = () => {
+        isCreatingAccount.value = !isCreatingAccount.value;
+    };
+
+    const recoverPassword = () => {
+        alert('Recover Password clicked');
     };
 </script>
 
@@ -125,5 +202,9 @@
 
     button:hover {
         background-color: #0056b3;
+    }
+
+    small {
+        color: red;
     }
 </style>
