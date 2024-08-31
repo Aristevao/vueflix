@@ -43,15 +43,15 @@
                 <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
             </div>
 
+            <!-- File Input for Uploading User Picture -->
             <div class="form-group">
-                <label for="picture">Profile Picture URL:</label>
-                <input type="url" id="picture" v-model="newUser.picture" />
+                <label for="upload-picture">Upload Profile Picture:</label>
+                <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
             </div>
 
-            <div class="form-group">
-                <label for="newPassword">Password:</label>
-                <input type="password" id="newPassword" v-model="newUser.password" required maxlength="80"
-                    minlength="4" />
+            <!-- Preview Selected Image -->
+            <div class="preview">
+                <img :src="imagePreview" alt="Selected Profile Picture" v-if="imagePreview" />
             </div>
 
             <button type="submit">Create Account</button>
@@ -90,6 +90,7 @@
     });
     const formattedPhone = ref('');
     const validationErrors = ref({});
+    const imagePreview = ref(''); // To store and preview the selected image
 
     const login = async () => {
         try {
@@ -127,6 +128,18 @@
             } catch (error) {
                 console.error('Account creation failed:', error);
             }
+        }
+    };
+
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                imagePreview.value = reader.result; // Show image preview
+                newUser.value.pictureBase64 = reader.result.split(',')[1]; // Extract the Base64 part
+            };
+            reader.readAsDataURL(file); // Convert the file to a base64-encoded string
         }
     };
 
