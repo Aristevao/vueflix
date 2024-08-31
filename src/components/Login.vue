@@ -40,7 +40,7 @@
 
             <div class="form-group">
                 <label for="birthdate">Birthdate:</label>
-                <input type="date" id="birthdate" v-model="newUser.birthdate" />
+                <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
             </div>
 
             <div class="form-group">
@@ -50,7 +50,8 @@
 
             <div class="form-group">
                 <label for="newPassword">Password:</label>
-                <input type="password" id="newPassword" v-model="newUser.password" required />
+                <input type="password" id="newPassword" v-model="newUser.password" required maxlength="80"
+                    minlength="4" />
             </div>
 
             <button type="submit">Create Account</button>
@@ -70,9 +71,12 @@
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
 
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }); // YYYY-MM-DD format for UTC-3
+
     const router = useRouter();
     const username = inject('username');
 
+    // Reactive states
     const isCreatingAccount = ref(false);
     const email = ref('');
     const password = ref('');
@@ -80,7 +84,7 @@
         name: '',
         email: '',
         phone: '',
-        birthdate: '',
+        birthdate: '1990-01-01', // Default birthdate
         picture: '',
         password: ''
     });
