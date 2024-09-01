@@ -43,27 +43,24 @@
                 <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
             </div>
 
-            <!-- Preset Images -->
             <div class="form-group">
                 <label>Choose a Preset Profile Picture:</label>
                 <div class="preset-images">
-                    <div v-for="(image, index) in presetImages" :key="index">
-                        <input type="radio" :id="'preset-' + index" :value="image.src" v-model="selectedPresetImage"
-                            @change="convertToBase64(image.src)" />
+                    <div v-for="(image, index) in presetImages" :key="index" class="preset-image-container">
+                        <input type="radio" :id="'preset-' + index" :value="image.base64"
+                            v-model="newUser.picture" />
                         <label :for="'preset-' + index">
-                            <img :src="image.src" :alt="`Default User ${index + 1}`" class="preset-image" />
+                            <img :src="image.src" :alt="image.label" class="preset-image" />
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- Or Upload Your Own Image -->
             <div class="form-group">
                 <label for="upload-picture">Or Upload Your Own Profile Picture:</label>
                 <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
             </div>
 
-            <!-- Preview Selected Image -->
             <div class="preview" v-if="newUser.picture">
                 <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
                     class="profile-picture-preview" />
@@ -85,10 +82,12 @@
     import axios from 'axios';
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
-
-    // Define paths to your asset images
-    const user1Image = new URL('@/assets/user-male.png', import.meta.url).href;
-    const user2Image = new URL('@/assets/user-female.png', import.meta.url).href;
+    import user1 from '@/assets/avatar-1.png';
+    import user2 from '@/assets/avatar-2.png';
+    import user3 from '@/assets/avatar-3.png';
+    import user4 from '@/assets/avatar-4.png';
+    import user5 from '@/assets/avatar-5.png';
+    import user6 from '@/assets/avatar-6.png';
 
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
 
@@ -111,11 +110,28 @@
     const validationErrors = ref({});
     const imagePreview = ref('');
 
-    // Preset Images
+    // Preset asset images
     const presetImages = [
-        { src: user1Image, base64: '' },
-        { src: user2Image, base64: '' }
+        { label: 'Default User 1', src: user1, base64: '' },
+        { label: 'Default User 2', src: user2, base64: '' },
+        { label: 'Default User 3', src: user3, base64: '' },
+        { label: 'Default User 4', src: user4, base64: '' },
+        { label: 'Default User 5', src: user5, base64: '' },
+        { label: 'Default User 6', src: user6, base64: '' }
     ];
+
+    // Load base64 versions for each preset image
+    presetImages.forEach(image => {
+        fetch(image.src)
+            .then(res => res.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    image.base64 = reader.result.split(',')[1];
+                };
+                reader.readAsDataURL(blob);
+            });
+    });
 
     const convertToBase64 = async (imageSrc) => {
         try {
@@ -261,6 +277,32 @@
 
     small {
         color: red;
+    }
+
+    .preset-images {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        /* Three columns per row */
+        gap: 10px;
+        /* Space between images */
+        margin-bottom: 15px;
+    }
+
+    .preset-image-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .preset-image {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid #ddd;
+        /* Optional border styling */
+        margin-top: 5px;
     }
 
     .profile-picture-preview {
