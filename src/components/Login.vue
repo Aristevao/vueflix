@@ -64,9 +64,9 @@
             </div>
 
             <!-- Preview Selected Image -->
-            <div class="preview">
+            <div class="preview" v-if="newUser.picture">
                 <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
-                    v-if="newUser.picture" />
+                    class="profile-picture-preview" />
             </div>
 
             <button type="submit">Create Account</button>
@@ -261,5 +261,13 @@
 
     small {
         color: red;
+    }
+
+    .profile-picture-preview {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
     }
 </style>
