@@ -43,15 +43,30 @@
                 <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
             </div>
 
-            <!-- File Input for Uploading User Picture -->
+            <!-- Preset Images -->
             <div class="form-group">
-                <label for="upload-picture">Upload Profile Picture:</label>
+                <label>Choose a Preset Profile Picture:</label>
+                <div class="preset-images">
+                    <div v-for="(image, index) in presetImages" :key="index">
+                        <input type="radio" :id="'preset-' + index" :value="image.src" v-model="selectedPresetImage"
+                            @change="convertToBase64(image.src)" />
+                        <label :for="'preset-' + index">
+                            <img :src="image.src" :alt="`Default User ${index + 1}`" class="preset-image" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Or Upload Your Own Image -->
+            <div class="form-group">
+                <label for="upload-picture">Or Upload Your Own Profile Picture:</label>
                 <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
             </div>
 
             <!-- Preview Selected Image -->
             <div class="preview">
-                <img :src="imagePreview" alt="Selected Profile Picture" v-if="imagePreview" />
+                <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
+                    v-if="newUser.picture" />
             </div>
 
             <button type="submit">Create Account</button>
@@ -71,7 +86,11 @@
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
 
-    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }); // YYYY-MM-DD format for UTC-3
+    // Define paths to your asset images
+    const user1Image = new URL('@/assets/user-male.png', import.meta.url).href;
+    const user2Image = new URL('@/assets/user-female.png', import.meta.url).href;
+
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
 
     const router = useRouter();
     const username = inject('username');
@@ -90,7 +109,27 @@
     });
     const formattedPhone = ref('');
     const validationErrors = ref({});
-    const imagePreview = ref(''); // To store and preview the selected image
+    const imagePreview = ref('');
+
+    // Preset Images
+    const presetImages = [
+        { src: user1Image, base64: '' },
+        { src: user2Image, base64: '' }
+    ];
+
+    const convertToBase64 = async (imageSrc) => {
+        try {
+            const response = await fetch(imageSrc);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                newUser.value.picture = reader.result.split(',')[1];
+            };
+            reader.readAsDataURL(blob);
+        } catch (error) {
+            console.error('Error converting image to base64:', error);
+        }
+    };
 
     const login = async () => {
         try {
@@ -106,7 +145,6 @@
                 const decoded = jwtDecode(token);
                 localStorage.setItem('name', decoded.name);
 
-                // Update the username reactive variable
                 username.value = decoded.name;
 
                 router.push({ name: 'Home' });
@@ -136,10 +174,10 @@
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                imagePreview.value = reader.result; // Show image preview
-                newUser.value.pictureBase64 = reader.result.split(',')[1]; // Extract the Base64 part
+                imagePreview.value = reader.result;
+                newUser.value.picture = reader.result.split(',')[1];
             };
-            reader.readAsDataURL(file); // Convert the file to a base64-encoded string
+            reader.readAsDataURL(file);
         }
     };
 
