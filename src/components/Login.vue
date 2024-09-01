@@ -47,8 +47,7 @@
                 <label>Choose a Preset Profile Picture:</label>
                 <div class="preset-images">
                     <div v-for="(image, index) in presetImages" :key="index" class="preset-image-container">
-                        <input type="radio" :id="'preset-' + index" :value="image.base64"
-                            v-model="newUser.picture" />
+                        <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
                         <label :for="'preset-' + index">
                             <img :src="image.src" :alt="image.label" class="preset-image" />
                         </label>
@@ -82,12 +81,12 @@
     import axios from 'axios';
     import { useRouter } from 'vue-router';
     import { jwtDecode } from 'jwt-decode';
-    import user1 from '@/assets/avatar-1.png';
-    import user2 from '@/assets/avatar-2.png';
-    import user3 from '@/assets/avatar-3.png';
-    import user4 from '@/assets/avatar-4.png';
-    import user5 from '@/assets/avatar-5.png';
-    import user6 from '@/assets/avatar-6.png';
+    import avatar1 from '@/assets/avatar-1.png';
+    import avatar2 from '@/assets/avatar-2.png';
+    import avatar3 from '@/assets/avatar-3.png';
+    import avatar4 from '@/assets/avatar-4.png';
+    import avatar5 from '@/assets/avatar-5.png';
+    import avatar6 from '@/assets/avatar-6.png';
 
     const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
 
@@ -102,7 +101,7 @@
         name: '',
         email: '',
         phone: '',
-        birthdate: '1990-01-01', // Default birthdate
+        birthdate: '1990-01-01',
         picture: '',
         password: ''
     });
@@ -110,17 +109,15 @@
     const validationErrors = ref({});
     const imagePreview = ref('');
 
-    // Preset asset images
     const presetImages = [
-        { label: 'Default User 1', src: user1, base64: '' },
-        { label: 'Default User 2', src: user2, base64: '' },
-        { label: 'Default User 3', src: user3, base64: '' },
-        { label: 'Default User 4', src: user4, base64: '' },
-        { label: 'Default User 5', src: user5, base64: '' },
-        { label: 'Default User 6', src: user6, base64: '' }
+        { label: 'Default User 1', src: avatar1, base64: '' },
+        { label: 'Default User 2', src: avatar2, base64: '' },
+        { label: 'Default User 3', src: avatar3, base64: '' },
+        { label: 'Default User 4', src: avatar4, base64: '' },
+        { label: 'Default User 5', src: avatar5, base64: '' },
+        { label: 'Default User 6', src: avatar6, base64: '' }
     ];
 
-    // Load base64 versions for each preset image
     presetImages.forEach(image => {
         fetch(image.src)
             .then(res => res.blob())
@@ -132,20 +129,6 @@
                 reader.readAsDataURL(blob);
             });
     });
-
-    const convertToBase64 = async (imageSrc) => {
-        try {
-            const response = await fetch(imageSrc);
-            const blob = await response.blob();
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                newUser.value.picture = reader.result.split(',')[1];
-            };
-            reader.readAsDataURL(blob);
-        } catch (error) {
-            console.error('Error converting image to base64:', error);
-        }
-    };
 
     const login = async () => {
         try {
@@ -175,10 +158,10 @@
     const createAccount = async () => {
         if (validateCreateAccountForm()) {
             try {
-                newUser.value.phone = unformatPhone(formattedPhone.value); // Remove formatting
+                newUser.value.phone = unformatPhone(formattedPhone.value);
                 await axios.post('http://localhost:8080/api/digital-pec/user', newUser.value);
                 alert('Account created successfully!');
-                toggleForm(); // Switch back to login form
+                toggleForm();
             } catch (error) {
                 console.error('Account creation failed:', error);
             }
@@ -301,7 +284,6 @@
         object-fit: cover;
         cursor: pointer;
         border: 2px solid #ddd;
-        /* Optional border styling */
         margin-top: 5px;
     }
 
