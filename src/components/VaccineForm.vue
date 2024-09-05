@@ -7,7 +7,7 @@
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
             <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" required/>
+            <input v-model="formData.name" maxlength="80" required />
           </div>
 
           <div class="form-group">
@@ -18,7 +18,7 @@
           <div class="form-group">
             <label>Species:</label>
             <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
-              <input v-model="specie.name" placeholder="Enter species name"/>
+              <input v-model="specie.name" placeholder="Enter species name" />
               <button type="button" @click="removeSpecie(index)">Remove</button>
             </div>
             <button type="button" @click="addSpecie">Add Species</button>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
 
   export default {
     props: {
@@ -101,7 +101,6 @@
         document.removeEventListener('keydown', this.handleKeydown);
       },
       handleBackgroundClick(event) {
-        // Check if the click was outside the .vaccine-form
         if (event.target === event.currentTarget) {
           this.close();
         }
@@ -116,7 +115,7 @@
       handleFileUpload(event) {
         this.formData.picture = event.target.files[0];
       },
-      submitForm() {
+      async submitForm() {
         const payload = {
           name: this.formData.name,
           description: this.formData.description,
@@ -124,35 +123,33 @@
         };
 
         const url = this.formData.id
-          ? `http://localhost:8080/api/digital-pec/vaccine/${this.formData.id}`
-          : 'http://localhost:8080/api/digital-pec/vaccine';
+          ? `/vaccine/${this.formData.id}`
+          : '/vaccine';
         const method = this.formData.id ? 'put' : 'post';
 
-        axios({
-          method,
-          url,
-          data: payload,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-          .then(response => {
-            this.$emit('vaccine-created', response.data);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error creating vaccine:', error);
+        try {
+          const response = await apiClient({
+            method,
+            url,
+            data: payload,
+            headers: {
+              'Content-Type': 'application/json',
+            },
           });
+          this.$emit('vaccine-created', response.data);
+          this.close();
+        } catch (error) {
+          console.error('Error creating vaccine:', error);
+        }
       },
-      deleteVaccine(vaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
-          .then(() => {
-            this.$emit('vaccine-deleted', vaccineId);
-            this.close();
-          })
-          .catch(error => {
-            console.error('Error deleting vaccine:', error);
-          });
+      async deleteVaccine(vaccineId) {
+        try {
+          await apiClient.delete(`/vaccine/${vaccineId}`);
+          this.$emit('vaccine-deleted', vaccineId);
+          this.close();
+        } catch (error) {
+          console.error('Error deleting vaccine:', error);
+        }
       },
       cancelForm() {
         this.close();

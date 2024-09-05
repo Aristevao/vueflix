@@ -17,7 +17,6 @@
     },
     methods: {
       goToPage(pageNumber) {
-        // Emit an event to notify the parent component about the page change
         this.$emit('page-change', pageNumber);
       },
     },

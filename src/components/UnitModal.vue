@@ -59,7 +59,7 @@
 </template>
 
 <script>
-    import axios from 'axios';
+    import apiClient from '../store/apiClient';
 
     export default {
         props: {
@@ -86,7 +86,6 @@
         methods: {
             getInitialUnit() {
                 return {
-                    id: null,
                     name: '',
                     description: '',
                     address: {
@@ -96,9 +95,9 @@
                         complement: '',
                         zipcode: '',
                         city: '',
-                        state: ''
+                        state: '',
                     },
-                    picture: null
+                    picture: null,
                 };
             },
             open() {
@@ -111,7 +110,7 @@
             handleFileUpload(event) {
                 this.file = event.target.files[0];
             },
-            submit() {
+            async submit() {
                 const formData = new FormData();
                 formData.append('name', this.localUnit.name);
                 formData.append('description', this.localUnit.description);
@@ -126,34 +125,32 @@
                     formData.append('picture', this.file);
                 }
 
-                const url = this.selectedUnit ? `http://localhost:8080/api/digital-pec/unit/${this.selectedUnit.id}` : 'http://localhost:8080/api/digital-pec/unit';
-                const method = this.selectedUnit ? 'put' : 'post';
+                const url = this.localUnit.id ? `/unit/${this.localUnit.id}` : '/unit';
+                const method = this.localUnit.id ? 'put' : 'post';
 
-                axios({
-                    method,
-                    url,
-                    data: formData,
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                })
-                    .then(response => {
-                        this.$emit('unit-created', formData);
-                        this.close();
-                    })
-                    .catch(error => {
-                        console.error('Error saving unit:', error);
+                try {
+                    const response = await apiClient({
+                        method,
+                        url,
+                        data: formData,
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
                     });
+                    this.$emit('unit-created', response.data);
+                    this.close();
+                } catch (error) {
+                    console.error('Error saving unit:', error);
+                }
             },
-            deleteUnit(unitId) {
-                axios.delete(`http://localhost:8080/api/digital-pec/unit/${unitId}`)
-                    .then(() => {
-                        this.$emit('unit-deleted', unitId);
-                        this.close();
-                    })
-                    .catch(error => {
-                        console.error('Error deleting unit:', error);
-                    });
+            async deleteUnit(unitId) {
+                try {
+                    await apiClient.delete(`/unit/${unitId}`);
+                    this.$emit('unit-deleted', unitId);
+                    this.close();
+                } catch (error) {
+                    console.error('Error deleting unit:', error);
+                }
             },
             cancelForm() {
                 this.close();

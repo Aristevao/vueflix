@@ -22,13 +22,13 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null" @unit-created="fetchFazendasAfterAction"
-      @unit-deleted="fetchFazendasAfterAction" />
+    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null"
+      @unit-created="fetchFazendasAfterAction" @unit-deleted="fetchFazendasAfterAction" />
   </div>
 </template>
 
 <script>
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
   import UnitModal from './UnitModal.vue';
 
   export default {
@@ -46,36 +46,35 @@
       this.fetchFazendas();
     },
     methods: {
-      fetchFazendas() {
-        axios.get('http://localhost:8080/api/digital-pec/unit')
-          .then(response => {
-            this.fazendas = response.data.content;
-            this.fetchAnimalCounts();
-          })
-          .catch(error => {
-            console.error('Error fetching fazendas:', error);
-          });
+      async fetchFazendas() {
+        try {
+          const response = await apiClient.get('/unit');
+          this.fazendas = response.data.content;
+          this.fetchAnimalCounts();
+        } catch (error) {
+          console.error('Error fetching units:', error);
+        }
       },
-      fetchAnimalCounts() {
-        this.fazendas.forEach(fazenda => {
-          axios.get(`http://localhost:8080/api/digital-pec/animal/unit/${fazenda.id}`)
-            .then(response => {
-              fazenda.animalCount = response.data;
-            })
-            .catch(error => {
-              console.error('Error fetching animal count:', error);
-            });
+      async fetchAnimalCounts() {
+        const animalCountPromises = this.fazendas.map(async (fazenda) => {
+          try {
+            const response = await apiClient.get(`/animal/unit/${fazenda.id}`);
+            fazenda.animalCount = response.data;
+          } catch (error) {
+            console.error(`Error fetching animal count for unit ${fazenda.id}:`, error);
+          }
         });
+
+        await Promise.all(animalCountPromises);
       },
-      openModal(id) {
-        axios.get(`http://localhost:8080/api/digital-pec/unit/${id}`)
-          .then(response => {
-            this.selectedUnit = response.data;
-            this.$refs.unitModal.open();
-          })
-          .catch(error => {
-            console.error('Error fetching unit details: ', error);
-          });
+      async openModal(id) {
+        try {
+          const response = await apiClient.get(`/unit/${id}`);
+          this.selectedUnit = response.data;
+          this.$refs.unitModal.open();
+        } catch (error) {
+          console.error('Error fetching unit details:', error);
+        }
       },
       openUnitModal() {
         this.selectedUnit = null;

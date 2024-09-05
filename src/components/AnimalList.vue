@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
     <div class="header">
       <div class="title">Animais</div>
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Filter inputs -->
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
@@ -46,12 +44,9 @@
       </div>
     </div>
 
-    <!-- AnimalForm component -->
     <AnimalForm ref="animalForm" @animal-created="handleAnimalCreated" @animal-deleted="handleAnimalDeleted" />
 
-    <!-- Table and pagination components -->
     <table class="animal-table">
-      <!-- Table header -->
       <thead>
         <tr>
           <th class="image-column"></th>
@@ -65,7 +60,6 @@
           <!-- <th class="registration-date-column">Action</th> -->
         </tr>
       </thead>
-      <!-- Table body -->
       <tbody>
         <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)"
           @mouseover="showEllipsis(animal.id)" @mouseleave="hideEllipsis(animal.id)">
@@ -91,14 +85,13 @@
       </tbody>
     </table>
 
-    <!-- Pagination component -->
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
   import Pagination from './Pagination.vue';
   import CustomButton from './CustomButton.vue';
   import AnimalForm from './AnimalForm.vue';
@@ -129,12 +122,12 @@
       };
     },
     mounted() {
-      this.fetchAnimals(); // Fetch data when the component is mounted
+      this.fetchAnimals();
     },
     methods: {
       async fetchAnimals() {
         try {
-          const response = await axios.get('http://localhost:8080/api/digital-pec/animal', {
+          const response = await apiClient.get('/animal', {
             params: {
               page: this.currentPage - 1,
               size: 10,
@@ -151,12 +144,12 @@
           this.animals = response.data.content;
           this.totalPages = response.data.totalPages;
         } catch (error) {
-          console.error(error);
+          console.error('Failed to fetch animals:', error);
         }
       },
       handlePageChange(newPage) {
         this.currentPage = newPage;
-        this.fetchAnimals(); // Fetch data for the new page
+        this.fetchAnimals();
       },
       calculateAge(birthdate) {
         const birthDate = new Date(birthdate);
@@ -179,7 +172,7 @@
         this.fetchAnimals();
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters; // Toggle filter visibility
+        this.showFilters = !this.showFilters;
       },
       openAnimalForm() {
         this.$refs.animalForm.open();
@@ -191,7 +184,7 @@
         this.fetchAnimals();
       },
       openAnimalDetails(animalId) {
-        axios.get(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+        apiClient.get(`/animal/${animalId}`)
           .then(response => {
             this.$refs.animalForm.open(response.data);
           })
@@ -200,7 +193,7 @@
           });
       },
       deleteAnimal(animalId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/${animalId}`)
+        apiClient.delete(`/animal/${animalId}`)
           .then(() => {
             this.animals = this.animals.filter(animal => animal.id !== animalId);
           })

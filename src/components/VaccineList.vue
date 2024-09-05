@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
     <div class="header">
       <div class="title">Vaccines</div>
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Filter inputs -->
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
@@ -27,12 +25,9 @@
       </div>
     </div>
 
-    <!-- VaccineForm component -->
     <VaccineForm ref="vaccineForm" @vaccine-created="handleVaccineCreated" @vaccine-deleted="handleVaccineDeleted" />
 
-    <!-- Table and pagination components -->
     <table class="vaccine-table">
-      <!-- Table header -->
       <thead>
         <tr>
           <th class="name-column">Name</th>
@@ -40,7 +35,6 @@
           <th class="description-column">Description</th>
         </tr>
       </thead>
-      <!-- Table body -->
       <tbody>
         <tr v-for="vaccine in vaccines" :key="vaccine.id" @click="openVaccineDetails(vaccine.id)"
           @mouseover="showEllipsis(vaccine.id)" @mouseleave="hideEllipsis(vaccine.id)">
@@ -51,14 +45,13 @@
       </tbody>
     </table>
 
-    <!-- Pagination component -->
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
   import Pagination from './Pagination.vue';
   import CustomButton from './CustomButton.vue';
   import VaccineForm from './VaccineForm.vue';
@@ -90,7 +83,7 @@
     methods: {
       async fetchVaccines() {
         try {
-          const response = await axios.get('http://localhost:8080/api/digital-pec/vaccine', {
+          const response = await apiClient.get('/vaccine', {
             params: {
               page: this.currentPage - 1,
               size: 10,
@@ -103,12 +96,29 @@
           this.vaccines = response.data.content;
           this.totalPages = response.data.totalPages;
         } catch (error) {
-          console.error(error);
+          console.error('Error fetching vaccines:', error);
+        }
+      },
+
+      async openVaccineDetails(vaccineId) {
+        try {
+          const response = await apiClient.get(`/vaccine/${vaccineId}`);
+          this.$refs.vaccineForm.open(response.data);
+        } catch (error) {
+          console.error('Error fetching vaccine details:', error);
+        }
+      },
+      async deleteVaccine(vaccineId) {
+        try {
+          await apiClient.delete(`/vaccine/${vaccineId}`);
+          this.vaccines = this.vaccines.filter(vaccine => vaccine.id !== vaccineId);
+        } catch (error) {
+          console.error('Error deleting vaccine:', error);
         }
       },
       handlePageChange(newPage) {
         this.currentPage = newPage;
-        this.fetchVaccines(); // Fetch data for the new page
+        this.fetchVaccines();
       },
       calculateDescription(birthdate) {
         const birthDate = new Date(birthdate);
@@ -131,7 +141,7 @@
         this.fetchVaccines();
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters; // Toggle filter visibility
+        this.showFilters = !this.showFilters;
       },
       openVaccineForm() {
         this.$refs.vaccineForm.open();
@@ -141,24 +151,6 @@
       },
       handleVaccineDeleted() {
         this.fetchVaccines();
-      },
-      openVaccineDetails(vaccineId) {
-        axios.get(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
-          .then(response => {
-            this.$refs.vaccineForm.open(response.data);
-          })
-          .catch(error => {
-            console.error('Error fetching vaccine details:', error);
-          });
-      },
-      deleteVaccine(vaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/vaccine/${vaccineId}`)
-          .then(() => {
-            this.vaccines = this.vaccines.filter(vaccine => vaccine.id !== vaccineId);
-          })
-          .catch(error => {
-            console.error('Error deleting vaccine:', error);
-          });
       },
       showEllipsis(vaccineId) {
         this.vaccines = this.vaccines.map(vaccine => vaccine.id === vaccineId ? { ...vaccine, showEllipsis: true } : vaccine);

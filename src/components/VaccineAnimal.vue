@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Title and toggle button container -->
     <div class="header">
       <div class="title">Aplicações</div>
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
@@ -11,7 +10,6 @@
       </button>
     </div>
 
-    <!-- Filter inputs -->
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
@@ -30,13 +28,10 @@
       </div>
     </div>
 
-    <!-- AnimalVaccineForm component -->
     <AnimalVaccineForm ref="animalVaccineForm" @animalVaccine-created="handleAnimalVaccineCreated"
       @animalVaccine-deleted="handleAnimalVaccineDeleted" />
 
-    <!-- Table and pagination components -->
     <table class="animalVaccine-table">
-      <!-- Table header -->
       <thead>
         <tr>
           <th class="name-column">Animal Name</th>
@@ -46,7 +41,7 @@
           <th class="completed-column">Completed</th>
         </tr>
       </thead>
-      <!-- Table body -->
+
       <tbody>
         <tr v-for="animalVaccine in animalVaccines" :key="animalVaccine.id"
           @click="openVaccineDetails(animalVaccine.id)" @mouseover="showEllipsis(animalVaccine.id)"
@@ -60,14 +55,13 @@
       </tbody>
     </table>
 
-    <!-- Pagination component -->
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
   </div>
 </template>
 
 <script>
   import { defineComponent } from 'vue';
-  import axios from 'axios';
+  import apiClient from '../store/apiClient';
   import Pagination from './Pagination.vue';
   import CustomButton from './CustomButton.vue';
   import AnimalVaccineForm from './AnimalVaccineForm.vue';
@@ -99,7 +93,7 @@
     methods: {
       async fetchVaccines() {
         try {
-          const response = await axios.get('http://localhost:8080/api/digital-pec/animal/vaccine', {
+          const response = await apiClient.get('/animal/vaccine', {
             params: {
               page: this.currentPage - 1,
               size: 10,
@@ -112,7 +106,25 @@
           this.animalVaccines = response.data.content;
           this.totalPages = response.data.totalPages;
         } catch (error) {
-          console.error(error);
+          console.error('Error fetching vaccines:', error);
+        }
+      },
+
+      async openVaccineDetails(animalVaccineId) {
+        try {
+          const response = await apiClient.get(`/animal/vaccine/${animalVaccineId}`);
+          this.$refs.animalVaccineForm.open(response.data);
+        } catch (error) {
+          console.error('Error fetching animalVaccine details:', error);
+        }
+      },
+
+      async deleteVaccine(animalVaccineId) {
+        try {
+          await apiClient.delete(`/animal/vaccine/${animalVaccineId}`);
+          this.animalVaccines = this.animalVaccines.filter(animalVaccine => animalVaccine.id !== animalVaccineId);
+        } catch (error) {
+          console.error('Error deleting animalVaccine:', error);
         }
       },
       handlePageChange(newPage) {
@@ -136,24 +148,6 @@
       },
       handleAnimalVaccineDeleted() {
         this.fetchVaccines();
-      },
-      openVaccineDetails(animalVaccineId) {
-        axios.get(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
-          .then(response => {
-            this.$refs.animalVaccineForm.open(response.data);
-          })
-          .catch(error => {
-            console.error('Error fetching animalVaccine details:', error);
-          });
-      },
-      deleteVaccine(animalVaccineId) {
-        axios.delete(`http://localhost:8080/api/digital-pec/animal/vaccine/${animalVaccineId}`)
-          .then(() => {
-            this.animalVaccines = this.animalVaccines.filter(animalVaccine => animalVaccine.id !== animalVaccineId);
-          })
-          .catch(error => {
-            console.error('Error deleting animalVaccine:', error);
-          });
       },
       showEllipsis(animalVaccineId) {
         this.animalVaccines = this.animalVaccines.map(animalVaccine => animalVaccine.id === animalVaccineId ? { ...animalVaccine, showEllipsis: true } : animalVaccine);
