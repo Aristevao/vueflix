@@ -2,16 +2,14 @@
   <div>
     <div class="header">
       <div class="title">Animais</div>
-      <button @click="openUnitModal" class="add-new-button">
-        Add New
-      </button>
+      <button @click="openUnitModal" class="add-new-button">Add New</button>
     </div>
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
         <div class="fazenda-image-container">
           <img :src="fazenda.picture || defaultImage" class="fazenda-image" />
           <div class="animal-count">
-            <img src='@/assets/animal-white.png' alt="animal icon" />
+            <img src="@/assets/animal-white.png" alt="animal icon" />
             <span>{{ fazenda.animalCount || '0' }} Animais</span>
           </div>
         </div>
@@ -28,63 +26,63 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient';
-  import UnitModal from './UnitModal.vue';
+  import apiClient from '../store/apiClient'
+  import UnitModal from './UnitModal.vue'
 
   export default {
     components: {
-      UnitModal,
+      UnitModal
     },
     data() {
       return {
         fazendas: [],
         selectedUnit: null,
-        defaultImage: 'https://via.placeholder.com/400',
-      };
+        defaultImage: 'https://via.placeholder.com/400'
+      }
     },
     mounted() {
-      this.fetchFazendas();
+      this.fetchFazendas()
     },
     methods: {
       async fetchFazendas() {
         try {
-          const response = await apiClient.get('/unit');
-          this.fazendas = response.data.content;
-          this.fetchAnimalCounts();
+          const response = await apiClient.get('/unit')
+          this.fazendas = response.data.content
+          this.fetchAnimalCounts()
         } catch (error) {
-          console.error('Error fetching units:', error);
+          console.error('Error fetching units:', error)
         }
       },
       async fetchAnimalCounts() {
         const animalCountPromises = this.fazendas.map(async (fazenda) => {
           try {
-            const response = await apiClient.get(`/animal/unit/${fazenda.id}`);
-            fazenda.animalCount = response.data;
+            const response = await apiClient.get(`/animal/unit/${fazenda.id}`)
+            fazenda.animalCount = response.data
           } catch (error) {
-            console.error(`Error fetching animal count for unit ${fazenda.id}:`, error);
+            console.error(`Error fetching animal count for unit ${fazenda.id}:`, error)
           }
-        });
+        })
 
-        await Promise.all(animalCountPromises);
+        await Promise.all(animalCountPromises)
       },
       async openModal(id) {
         try {
-          const response = await apiClient.get(`/unit/${id}`);
-          this.selectedUnit = response.data;
-          this.$refs.unitModal.open();
+          const response = await apiClient.get(`/unit/${id}`)
+          this.selectedUnit = response.data
+          this.$refs.unitModal.open()
         } catch (error) {
-          console.error('Error fetching unit details:', error);
+          console.error('Error fetching unit details:', error)
         }
       },
       openUnitModal() {
-        this.selectedUnit = null;
-        this.$refs.unitModal.open();
+        this.selectedUnit = null
+        this.$refs.unitModal.open()
       },
       fetchFazendasAfterAction() {
-        this.fetchFazendas();
+        this.fetchFazendas()
       }
-    },
-  };
+    }
+  }
 </script>
 
 <style scoped>

@@ -5,7 +5,6 @@
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-
           <div class="form-group">
             <label>Animal:</label>
             <select v-model="formData.animalId" required>
@@ -45,7 +44,9 @@
 
           <div class="button-group">
             <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
-              @click="deleteVaccine(formData.id)">Delete</button>
+              @click="deleteVaccine(formData.id)">
+              Delete
+            </button>
             <div class="right-buttons">
               <button type="submit">Save</button>
               <button type="button" @click="cancelForm">Cancel</button>
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient';
+  import apiClient from '../store/apiClient'
 
   export default {
     data() {
@@ -74,16 +75,16 @@
           completed: false,
           applicationDate: null,
           nextApplicationDates: []
-        },
-      };
+        }
+      }
     },
     methods: {
       open(animalVaccine) {
-        this.isVisible = true;
-        document.addEventListener('keydown', this.handleKeydown);
+        this.isVisible = true
+        document.addEventListener('keydown', this.handleKeydown)
 
         if (animalVaccine) {
-          this.deleteButtonIsVisible = true;
+          this.deleteButtonIsVisible = true
 
           this.formData = {
             id: animalVaccine.id,
@@ -92,35 +93,35 @@
             completed: animalVaccine.completed || false,
             applicationDate: animalVaccine.applicationDate || null,
             nextApplicationDates: animalVaccine.nextApplicationDates || []
-          };
+          }
         } else {
-          this.resetForm();
+          this.resetForm()
         }
 
-        this.fetchAnimals();
-        this.fetchVaccines();
+        this.fetchAnimals()
+        this.fetchVaccines()
       },
       close() {
-        this.isVisible = false;
-        this.deleteButtonIsVisible = false;
-        this.resetForm();
-        document.removeEventListener('keydown', this.handleKeydown);
+        this.isVisible = false
+        this.deleteButtonIsVisible = false
+        this.resetForm()
+        document.removeEventListener('keydown', this.handleKeydown)
       },
       async fetchAnimals() {
         try {
-          const response = await apiClient.get('animal/list');
-          this.animals = response.data;
+          const response = await apiClient.get('animal/list')
+          this.animals = response.data
         } catch (error) {
-          console.error('Error fetching animals:', error);
+          console.error('Error fetching animals:', error)
         }
       },
 
       async fetchVaccines() {
         try {
-          const response = await apiClient.get('vaccine/list');
-          this.vaccines = response.data;
+          const response = await apiClient.get('vaccine/list')
+          this.vaccines = response.data
         } catch (error) {
-          console.error('Error fetching vaccines:', error);
+          console.error('Error fetching vaccines:', error)
         }
       },
 
@@ -131,12 +132,10 @@
           completed: this.formData.completed,
           applicationDate: this.formData.applicationDate,
           nextApplicationDates: this.formData.nextApplicationDates
-        };
+        }
 
-        const url = this.formData.id
-          ? `animal/vaccine/${this.formData.id}`
-          : 'animal/vaccine';
-        const method = this.formData.id ? 'put' : 'post';
+        const url = this.formData.id ? `animal/vaccine/${this.formData.id}` : 'animal/vaccine'
+        const method = this.formData.id ? 'put' : 'post'
 
         try {
           const response = await apiClient({
@@ -144,27 +143,27 @@
             url,
             data: payload,
             headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          this.$emit('animalVaccine-created', response.data);
-          this.close();
+              'Content-Type': 'application/json'
+            }
+          })
+          this.$emit('animalVaccine-created', response.data)
+          this.close()
         } catch (error) {
-          console.error('Error saving animalVaccine:', error);
+          console.error('Error saving animalVaccine:', error)
         }
       },
 
       async deleteVaccine(animalVaccineId) {
         try {
-          await apiClient.delete(`animal/vaccine/${animalVaccineId}`);
-          this.$emit('animalVaccine-deleted', animalVaccineId);
-          this.close();
+          await apiClient.delete(`animal/vaccine/${animalVaccineId}`)
+          this.$emit('animalVaccine-deleted', animalVaccineId)
+          this.close()
         } catch (error) {
-          console.error('Error deleting vaccine:', error);
+          console.error('Error deleting vaccine:', error)
         }
       },
       cancelForm() {
-        this.close();
+        this.close()
       },
       resetForm() {
         this.formData = {
@@ -174,16 +173,16 @@
           completed: false,
           applicationDate: null,
           nextApplicationDates: []
-        };
+        }
       },
       addNextApplicationDate() {
-        this.formData.nextApplicationDates.push(null);
+        this.formData.nextApplicationDates.push(null)
       },
       removeNextApplicationDate(index) {
-        this.formData.nextApplicationDates.splice(index, 1);
+        this.formData.nextApplicationDates.splice(index, 1)
       }
-    },
-  };
+    }
+  }
 </script>
 
 <style scoped>

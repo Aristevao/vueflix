@@ -16,23 +16,23 @@
 </template>
 
 <script>
-  import { inject } from 'vue';
+  import { inject } from 'vue'
 
   export default {
     name: 'HeaderBar',
     props: {
       userPicture: {
         type: String,
-        required: true,
-      },
+        required: true
+      }
     },
     setup() {
-      const username = inject('username');
+      const username = inject('username')
       return {
-        username,
-      };
-    },
-  };
+        username
+      }
+    }
+  }
 </script>
 
 <style scoped>

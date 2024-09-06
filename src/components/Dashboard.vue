@@ -1,12 +1,11 @@
 <template>
-    <div>
-      <h1>Dashboard</h1>
-    </div>
-  </template>
-  
-  <script>
+  <div>
+    <h1>Dashboard</h1>
+  </div>
+</template>
+
+<script>
   export default {
-    name: 'Dashboard',
-  };
-  </script>
-  
+    name: 'Dashboard'
+  }
+</script>

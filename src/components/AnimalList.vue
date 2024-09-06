@@ -5,9 +5,7 @@
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
       </CustomButton>
-      <button @click="openAnimalForm" class="add-new-button">
-        Add New
-      </button>
+      <button @click="openAnimalForm" class="add-new-button">Add New</button>
     </div>
 
     <div v-if="showFilters">
@@ -90,18 +88,18 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-  import apiClient from '../store/apiClient';
-  import Pagination from './Pagination.vue';
-  import CustomButton from './CustomButton.vue';
-  import AnimalForm from './AnimalForm.vue';
+  import { defineComponent } from 'vue'
+  import apiClient from '../store/apiClient'
+  import Pagination from './Pagination.vue'
+  import CustomButton from './CustomButton.vue'
+  import AnimalForm from './AnimalForm.vue'
 
   export default defineComponent({
     name: 'AnimalList',
     components: {
       Pagination,
       CustomButton,
-      AnimalForm,
+      AnimalForm
     },
     data() {
       return {
@@ -118,11 +116,11 @@
           registrationDate: ''
         },
         showFilters: false,
-        showAnimalForm: false,
-      };
+        showAnimalForm: false
+      }
     },
     mounted() {
-      this.fetchAnimals();
+      this.fetchAnimals()
     },
     methods: {
       async fetchAnimals() {
@@ -140,78 +138,86 @@
               birthdate: this.filters.birthdate,
               registrationDate: this.filters.registrationDate
             }
-          });
-          this.animals = response.data.content;
-          this.totalPages = response.data.totalPages;
+          })
+          this.animals = response.data.content
+          this.totalPages = response.data.totalPages
         } catch (error) {
-          console.error('Failed to fetch animals:', error);
+          console.error('Failed to fetch animals:', error)
         }
       },
       handlePageChange(newPage) {
-        this.currentPage = newPage;
-        this.fetchAnimals();
+        this.currentPage = newPage
+        this.fetchAnimals()
       },
       calculateAge(birthdate) {
-        const birthDate = new Date(birthdate);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
+        const birthDate = new Date(birthdate)
+        const today = new Date()
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const monthDifference = today.getMonth() - birthDate.getMonth()
         if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
+          age--
         }
-        return `${age} year${age !== 1 ? 's' : ''}`;
+        return `${age} year${age !== 1 ? 's' : ''}`
       },
       clearFilters() {
-        this.filters.identification = '';
-        this.filters.name = '';
-        this.filters.specie = '';
-        this.filters.breed = '';
-        this.filters.sex = '';
-        this.filters.birthdate = '';
-        this.filters.registrationDate = '';
-        this.fetchAnimals();
+        this.filters.identification = ''
+        this.filters.name = ''
+        this.filters.specie = ''
+        this.filters.breed = ''
+        this.filters.sex = ''
+        this.filters.birthdate = ''
+        this.filters.registrationDate = ''
+        this.fetchAnimals()
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters;
+        this.showFilters = !this.showFilters
       },
       openAnimalForm() {
-        this.$refs.animalForm.open();
+        this.$refs.animalForm.open()
       },
       handleAnimalCreated() {
-        this.fetchAnimals();
+        this.fetchAnimals()
       },
       handleAnimalDeleted() {
-        this.fetchAnimals();
+        this.fetchAnimals()
       },
       openAnimalDetails(animalId) {
-        apiClient.get(`/animal/${animalId}`)
-          .then(response => {
-            this.$refs.animalForm.open(response.data);
+        apiClient
+          .get(`/animal/${animalId}`)
+          .then((response) => {
+            this.$refs.animalForm.open(response.data)
           })
-          .catch(error => {
-            console.error('Error fetching animal details:', error);
-          });
+          .catch((error) => {
+            console.error('Error fetching animal details:', error)
+          })
       },
       deleteAnimal(animalId) {
-        apiClient.delete(`/animal/${animalId}`)
+        apiClient
+          .delete(`/animal/${animalId}`)
           .then(() => {
-            this.animals = this.animals.filter(animal => animal.id !== animalId);
+            this.animals = this.animals.filter((animal) => animal.id !== animalId)
           })
-          .catch(error => {
-            console.error('Error deleting animal:', error);
-          });
+          .catch((error) => {
+            console.error('Error deleting animal:', error)
+          })
       },
       showEllipsis(animalId) {
-        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showEllipsis: true } : animal);
+        this.animals = this.animals.map((animal) =>
+          animal.id === animalId ? { ...animal, showEllipsis: true } : animal
+        )
       },
       hideEllipsis(animalId) {
-        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showEllipsis: false, showOptions: false } : animal);
+        this.animals = this.animals.map((animal) =>
+          animal.id === animalId ? { ...animal, showEllipsis: false, showOptions: false } : animal
+        )
       },
       toggleOptions(animalId) {
-        this.animals = this.animals.map(animal => animal.id === animalId ? { ...animal, showOptions: !animal.showOptions } : animal);
-      },
-    },
-  });
+        this.animals = this.animals.map((animal) =>
+          animal.id === animalId ? { ...animal, showOptions: !animal.showOptions } : animal
+        )
+      }
+    }
+  })
 </script>
 
 <style scoped>

@@ -26,7 +26,9 @@
 
           <div class="button-group">
             <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
-              @click="deleteVaccine(formData.id)">Delete</button>
+              @click="deleteVaccine(formData.id)">
+              Delete
+            </button>
             <div class="right-buttons">
               <button type="submit">Save</button>
               <button type="button" @click="cancelForm">Cancel</button>
@@ -39,14 +41,14 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient';
+  import apiClient from '../store/apiClient'
 
   export default {
     props: {
       vaccineData: {
         type: Object,
-        default: () => ({}),
-      },
+        default: () => ({})
+      }
     },
     data() {
       return {
@@ -58,8 +60,8 @@
           name: '',
           species: [{ name: '' }],
           description: ''
-        },
-      };
+        }
+      }
     },
     watch: {
       vaccineData: {
@@ -69,63 +71,65 @@
             this.formData = {
               id: newValue.id || null,
               name: newValue.name || '',
-              species: newValue.species ? newValue.species.map(s => ({ name: s.name })) : [{ name: '' }],
+              species: newValue.species
+                ? newValue.species.map((s) => ({ name: s.name }))
+                : [{ name: '' }],
               description: newValue.description || ''
-            };
+            }
           }
-        },
-      },
+        }
+      }
     },
     methods: {
       open(vaccine) {
-        this.isVisible = true;
-        document.addEventListener('keydown', this.handleKeydown);
+        this.isVisible = true
+        document.addEventListener('keydown', this.handleKeydown)
 
         if (vaccine) {
-          this.deleteButtonIsVisible = true;
+          this.deleteButtonIsVisible = true
 
           this.formData = {
             id: vaccine.id,
             name: vaccine.name,
-            species: vaccine.species ? vaccine.species.map(s => ({ name: s.name })) : [{ name: '' }],
+            species: vaccine.species
+              ? vaccine.species.map((s) => ({ name: s.name }))
+              : [{ name: '' }],
             description: vaccine.description
-          };
+          }
         } else {
-          this.resetForm();
+          this.resetForm()
         }
       },
       close() {
-        this.isVisible = false;
-        this.deleteButtonIsVisible = false;
-        this.resetForm();
-        document.removeEventListener('keydown', this.handleKeydown);
+        this.isVisible = false
+        this.deleteButtonIsVisible = false
+        this.resetForm()
+        document.removeEventListener('keydown', this.handleKeydown)
       },
       handleBackgroundClick(event) {
         if (event.target === event.currentTarget) {
-          this.close();
+          this.close()
         }
       },
       handleKeydown(event) {
         if (event.key === 'Escape') {
-          this.close();
+          this.close()
         } else if (event.key === 'Enter') {
-          this.submitForm();
+          this.submitForm()
         }
       },
       handleFileUpload(event) {
-        this.formData.picture = event.target.files[0];
+        this.formData.picture = event.target.files[0]
       },
       async submitForm() {
         const payload = {
           name: this.formData.name,
           description: this.formData.description,
-          species: this.formData.species.map(specie => ({ name: specie.name }))
-        };
+          species: this.formData.species.map((specie) => ({ name: specie.name }))
+        }
 
-        const url = this.formData.id
-          ? `/vaccine/${this.formData.id}`
-          : '/vaccine';
-        const method = this.formData.id ? 'put' : 'post';
+        const url = this.formData.id ? `/vaccine/${this.formData.id}` : '/vaccine'
+        const method = this.formData.id ? 'put' : 'post'
 
         try {
           const response = await apiClient({
@@ -133,26 +137,26 @@
             url,
             data: payload,
             headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          this.$emit('vaccine-created', response.data);
-          this.close();
+              'Content-Type': 'application/json'
+            }
+          })
+          this.$emit('vaccine-created', response.data)
+          this.close()
         } catch (error) {
-          console.error('Error creating vaccine:', error);
+          console.error('Error creating vaccine:', error)
         }
       },
       async deleteVaccine(vaccineId) {
         try {
-          await apiClient.delete(`/vaccine/${vaccineId}`);
-          this.$emit('vaccine-deleted', vaccineId);
-          this.close();
+          await apiClient.delete(`/vaccine/${vaccineId}`)
+          this.$emit('vaccine-deleted', vaccineId)
+          this.close()
         } catch (error) {
-          console.error('Error deleting vaccine:', error);
+          console.error('Error deleting vaccine:', error)
         }
       },
       cancelForm() {
-        this.close();
+        this.close()
       },
       resetForm() {
         this.formData = {
@@ -160,16 +164,16 @@
           name: '',
           species: [{ name: '' }],
           description: ''
-        };
+        }
       },
       addSpecie() {
-        this.formData.species.push({ name: '' });
+        this.formData.species.push({ name: '' })
       },
       removeSpecie(index) {
-        this.formData.species.splice(index, 1);
+        this.formData.species.splice(index, 1)
       }
-    },
-  };
+    }
+  }
 </script>
 
 <style scoped>

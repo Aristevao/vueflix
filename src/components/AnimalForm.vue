@@ -42,7 +42,9 @@
           <input type="file" @change="handleFileUpload" />
 
           <div class="button-group">
-            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">Delete</button>
+            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">
+              Delete
+            </button>
             <button type="submit">Save</button>
             <button type="button" @click="cancelForm">Cancel</button>
           </div>
@@ -53,14 +55,14 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient';
+  import apiClient from '../store/apiClient'
 
   export default {
     props: {
       animalData: {
         type: Object,
-        default: () => ({}),
-      },
+        default: () => ({})
+      }
     },
     data() {
       return {
@@ -78,9 +80,9 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null,
-        },
-      };
+          picture: null
+        }
+      }
     },
     watch: {
       animalData: {
@@ -98,20 +100,20 @@
               registrationDate: newValue.registrationDate || '',
               description: newValue.description || '',
               unitId: newValue.unit ? newValue.unit.id : '',
-              picture: null,
-            };
+              picture: null
+            }
           }
-        },
-      },
+        }
+      }
     },
     methods: {
       open(animal) {
-        this.isVisible = true;
-        this.fetchUnits();
-        document.addEventListener('keydown', this.handleKeydown);
+        this.isVisible = true
+        this.fetchUnits()
+        document.addEventListener('keydown', this.handleKeydown)
 
         if (animal) {
-          this.deleteButtonIsVisible = true;
+          this.deleteButtonIsVisible = true
 
           this.formData = {
             id: animal.id,
@@ -124,54 +126,53 @@
             registrationDate: animal.registrationDate,
             description: animal.description,
             unitId: animal.unit.id,
-            picture: null,
-          };
+            picture: null
+          }
         } else {
-          this.resetForm();
+          this.resetForm()
         }
       },
       close() {
-        this.isVisible = false;
-        this.deleteButtonIsVisible = false;
-        this.resetForm();
-        document.removeEventListener('keydown', this.handleKeydown);
+        this.isVisible = false
+        this.deleteButtonIsVisible = false
+        this.resetForm()
+        document.removeEventListener('keydown', this.handleKeydown)
       },
       handleKeydown(event) {
         if (event.key === 'Escape') {
-          this.close();
+          this.close()
         }
       },
       fetchUnits() {
-        apiClient.get('/unit/list')
-          .then(response => {
-            this.units = response.data;
+        apiClient
+          .get('/unit/list')
+          .then((response) => {
+            this.units = response.data
           })
-          .catch(error => {
-            console.error('Error fetching units:', error);
-          });
+          .catch((error) => {
+            console.error('Error fetching units:', error)
+          })
       },
       handleFileUpload(event) {
-        this.formData.picture = event.target.files[0];
+        this.formData.picture = event.target.files[0]
       },
       async submitForm() {
-        const formData = new FormData();
-        formData.append('name', this.formData.name);
-        formData.append('identification', this.formData.identification);
-        formData.append('specie', this.formData.specie);
-        formData.append('breed', this.formData.breed);
-        formData.append('sex', this.formData.sex);
-        formData.append('birthdate', this.formData.birthdate);
-        formData.append('registrationDate', this.formData.registrationDate);
-        formData.append('description', this.formData.description);
-        formData.append('unit.id', this.formData.unitId);
+        const formData = new FormData()
+        formData.append('name', this.formData.name)
+        formData.append('identification', this.formData.identification)
+        formData.append('specie', this.formData.specie)
+        formData.append('breed', this.formData.breed)
+        formData.append('sex', this.formData.sex)
+        formData.append('birthdate', this.formData.birthdate)
+        formData.append('registrationDate', this.formData.registrationDate)
+        formData.append('description', this.formData.description)
+        formData.append('unit.id', this.formData.unitId)
         if (this.formData.picture) {
-          formData.append('picture', this.formData.picture);
+          formData.append('picture', this.formData.picture)
         }
 
-        const url = this.formData.id
-          ? `/animal/${this.formData.id}`
-          : '/animal';
-        const method = this.formData.id ? 'put' : 'post';
+        const url = this.formData.id ? `/animal/${this.formData.id}` : '/animal'
+        const method = this.formData.id ? 'put' : 'post'
 
         try {
           const response = await apiClient({
@@ -179,26 +180,26 @@
             url,
             data: formData,
             headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          this.$emit('animal-created', response.data);
-          this.close();
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+          this.$emit('animal-created', response.data)
+          this.close()
         } catch (error) {
-          console.error('Error creating animal:', error);
+          console.error('Error creating animal:', error)
         }
       },
       async deleteAnimal(animalId) {
         try {
-          await apiClient.delete(`/animal/${animalId}`);
-          this.$emit('animal-deleted', animalId);
-          this.close();
+          await apiClient.delete(`/animal/${animalId}`)
+          this.$emit('animal-deleted', animalId)
+          this.close()
         } catch (error) {
-          console.error('Error deleting animal:', error);
+          console.error('Error deleting animal:', error)
         }
       },
       cancelForm() {
-        this.close();
+        this.close()
       },
       resetForm() {
         this.formData = {
@@ -212,11 +213,11 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null,
-        };
-      },
-    },
-  };
+          picture: null
+        }
+      }
+    }
+  }
 </script>
 
 <style scoped>

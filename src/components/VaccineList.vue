@@ -5,9 +5,7 @@
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
       </CustomButton>
-      <button @click="openVaccineForm" class="add-new-button">
-        Add New
-      </button>
+      <button @click="openVaccineForm" class="add-new-button">Add New</button>
     </div>
 
     <div v-if="showFilters">
@@ -39,7 +37,7 @@
         <tr v-for="vaccine in vaccines" :key="vaccine.id" @click="openVaccineDetails(vaccine.id)"
           @mouseover="showEllipsis(vaccine.id)" @mouseleave="hideEllipsis(vaccine.id)">
           <td class="name-column">{{ vaccine.name }}</td>
-          <td class="species-column">{{ vaccine.species.map(s => s.name).join(', ') }}</td>
+          <td class="species-column">{{ vaccine.species.map((s) => s.name).join(', ') }}</td>
           <td class="description-column">{{ vaccine.description }}</td>
         </tr>
       </tbody>
@@ -50,18 +48,18 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-  import apiClient from '../store/apiClient';
-  import Pagination from './Pagination.vue';
-  import CustomButton from './CustomButton.vue';
-  import VaccineForm from './VaccineForm.vue';
+  import { defineComponent } from 'vue'
+  import apiClient from '../store/apiClient'
+  import Pagination from './Pagination.vue'
+  import CustomButton from './CustomButton.vue'
+  import VaccineForm from './VaccineForm.vue'
 
   export default defineComponent({
     name: 'VaccineList',
     components: {
       Pagination,
       CustomButton,
-      VaccineForm,
+      VaccineForm
     },
     data() {
       return {
@@ -74,11 +72,11 @@
           description: ''
         },
         showFilters: false,
-        showVaccineForm: false,
-      };
+        showVaccineForm: false
+      }
     },
     mounted() {
-      this.fetchVaccines();
+      this.fetchVaccines()
     },
     methods: {
       async fetchVaccines() {
@@ -92,77 +90,83 @@
               species: this.filters.species,
               description: this.filters.description
             }
-          });
-          this.vaccines = response.data.content;
-          this.totalPages = response.data.totalPages;
+          })
+          this.vaccines = response.data.content
+          this.totalPages = response.data.totalPages
         } catch (error) {
-          console.error('Error fetching vaccines:', error);
+          console.error('Error fetching vaccines:', error)
         }
       },
 
       async openVaccineDetails(vaccineId) {
         try {
-          const response = await apiClient.get(`/vaccine/${vaccineId}`);
-          this.$refs.vaccineForm.open(response.data);
+          const response = await apiClient.get(`/vaccine/${vaccineId}`)
+          this.$refs.vaccineForm.open(response.data)
         } catch (error) {
-          console.error('Error fetching vaccine details:', error);
+          console.error('Error fetching vaccine details:', error)
         }
       },
       async deleteVaccine(vaccineId) {
         try {
-          await apiClient.delete(`/vaccine/${vaccineId}`);
-          this.vaccines = this.vaccines.filter(vaccine => vaccine.id !== vaccineId);
+          await apiClient.delete(`/vaccine/${vaccineId}`)
+          this.vaccines = this.vaccines.filter((vaccine) => vaccine.id !== vaccineId)
         } catch (error) {
-          console.error('Error deleting vaccine:', error);
+          console.error('Error deleting vaccine:', error)
         }
       },
       handlePageChange(newPage) {
-        this.currentPage = newPage;
-        this.fetchVaccines();
+        this.currentPage = newPage
+        this.fetchVaccines()
       },
       calculateDescription(birthdate) {
-        const birthDate = new Date(birthdate);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDifference = today.getMonth() - birthDate.getMonth();
+        const birthDate = new Date(birthdate)
+        const today = new Date()
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const monthDifference = today.getMonth() - birthDate.getMonth()
         if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
+          age--
         }
-        return `${age} year${age !== 1 ? 's' : ''}`;
+        return `${age} year${age !== 1 ? 's' : ''}`
       },
       clearFilters() {
-        this.filters.identification = '';
-        this.filters.name = '';
-        this.filters.species = '';
-        this.filters.description = '';
-        this.filters.sex = '';
-        this.filters.birthdate = '';
-        this.filters.registrationDate = '';
-        this.fetchVaccines();
+        this.filters.identification = ''
+        this.filters.name = ''
+        this.filters.species = ''
+        this.filters.description = ''
+        this.filters.sex = ''
+        this.filters.birthdate = ''
+        this.filters.registrationDate = ''
+        this.fetchVaccines()
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters;
+        this.showFilters = !this.showFilters
       },
       openVaccineForm() {
-        this.$refs.vaccineForm.open();
+        this.$refs.vaccineForm.open()
       },
       handleVaccineCreated() {
-        this.fetchVaccines();
+        this.fetchVaccines()
       },
       handleVaccineDeleted() {
-        this.fetchVaccines();
+        this.fetchVaccines()
       },
       showEllipsis(vaccineId) {
-        this.vaccines = this.vaccines.map(vaccine => vaccine.id === vaccineId ? { ...vaccine, showEllipsis: true } : vaccine);
+        this.vaccines = this.vaccines.map((vaccine) =>
+          vaccine.id === vaccineId ? { ...vaccine, showEllipsis: true } : vaccine
+        )
       },
       hideEllipsis(vaccineId) {
-        this.vaccines = this.vaccines.map(vaccine => vaccine.id === vaccineId ? { ...vaccine, showEllipsis: false, showOptions: false } : vaccine);
+        this.vaccines = this.vaccines.map((vaccine) =>
+          vaccine.id === vaccineId ? { ...vaccine, showEllipsis: false, showOptions: false } : vaccine
+        )
       },
       toggleOptions(vaccineId) {
-        this.vaccines = this.vaccines.map(vaccine => vaccine.id === vaccineId ? { ...vaccine, showOptions: !vaccine.showOptions } : vaccine);
-      },
-    },
-  });
+        this.vaccines = this.vaccines.map((vaccine) =>
+          vaccine.id === vaccineId ? { ...vaccine, showOptions: !vaccine.showOptions } : vaccine
+        )
+      }
+    }
+  })
 </script>
 
 <style scoped>

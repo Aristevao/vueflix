@@ -1,12 +1,11 @@
 <template>
-    <div>
-      <h1>Notificacoes</h1>
-    </div>
-  </template>
-  
-  <script>
+  <div>
+    <h1>Notificacoes</h1>
+  </div>
+</template>
+
+<script>
   export default {
-    name: 'Notificacoes',
-  };
-  </script>
-  
+    name: 'Notificacoes'
+  }
+</script>

@@ -11,27 +11,27 @@
       type: {
         type: String,
         default: 'primary',
-        validator: value => ['primary', 'secondary'].includes(value),
+        validator: (value) => ['primary', 'secondary'].includes(value)
       },
       disabled: {
         type: Boolean,
-        default: false,
-      },
+        default: false
+      }
     },
     computed: {
       buttonClass() {
         return {
           'button-3': this.type === 'primary',
-          'button-4': this.type === 'secondary',
-        };
-      },
-    },
+          'button-4': this.type === 'secondary'
+        }
+      }
+    }
     // methods: {
     //   handleClick(event) {
     //     this.$emit('click', event);
     //   },
     // },
-  };
+  }
 </script>
 
 <style scoped>
@@ -40,14 +40,15 @@
   .button-3 {
     appearance: none;
     background-color: #2ea44f;
-    border: 1px solid rgba(27, 31, 35, .15);
+    border: 1px solid rgba(27, 31, 35, 0.15);
     border-radius: 6px;
-    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+    box-shadow: rgba(27, 31, 35, 0.1) 0 1px 0;
     box-sizing: border-box;
     color: #fff;
     cursor: pointer;
     display: inline-block;
-    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji';
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
@@ -72,34 +73,37 @@
   }
 
   .button-3:focus {
-    box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+    box-shadow: rgba(46, 164, 79, 0.4) 0 0 0 3px;
     outline: none;
   }
 
   .button-3:disabled {
     background-color: #94d3a2;
-    border-color: rgba(27, 31, 35, .1);
-    color: rgba(255, 255, 255, .8);
+    border-color: rgba(27, 31, 35, 0.1);
+    color: rgba(255, 255, 255, 0.8);
     cursor: default;
   }
 
   .button-3:active {
     background-color: #298e46;
-    box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+    box-shadow: rgba(20, 70, 32, 0.2) 0 1px 0 inset;
   }
 
   /* Secondary button styles */
   .button-4 {
     appearance: none;
-    background-color: #FAFBFC;
+    background-color: #fafbfc;
     border: 1px solid rgba(27, 31, 35, 0.15);
     border-radius: 6px;
-    box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+    box-shadow:
+      rgba(27, 31, 35, 0.04) 0 1px 0,
+      rgba(255, 255, 255, 0.25) 0 1px 0 inset;
     box-sizing: border-box;
-    color: #24292E;
+    color: #24292e;
     cursor: pointer;
     display: inline-block;
-    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji';
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
@@ -116,20 +120,20 @@
   }
 
   .button-4:hover {
-    background-color: #F3F4F6;
+    background-color: #f3f4f6;
     text-decoration: none;
     transition-duration: 0.1s;
   }
 
   .button-4:disabled {
-    background-color: #FAFBFC;
+    background-color: #fafbfc;
     border-color: rgba(27, 31, 35, 0.15);
-    color: #959DA5;
+    color: #959da5;
     cursor: default;
   }
 
   .button-4:active {
-    background-color: #EDEFF2;
+    background-color: #edeff2;
     box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
     transition: none 0s;
   }

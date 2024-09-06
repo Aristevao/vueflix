@@ -5,9 +5,7 @@
       <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
       </CustomButton>
-      <button @click="openAnimalVaccineForm" class="add-new-button">
-        Add New
-      </button>
+      <button @click="openAnimalVaccineForm" class="add-new-button">Add New</button>
     </div>
 
     <div v-if="showFilters">
@@ -49,7 +47,9 @@
           <td class="name-column">{{ animalVaccine.animal.name }}</td>
           <td class="vaccine-column">{{ animalVaccine.vaccine.name }}</td>
           <td class="date-column">{{ formatDate(animalVaccine.applicationDate) }}</td>
-          <td class="next-date-column">{{ formatNextApplicationDates(animalVaccine.nextApplicationDates) }}</td>
+          <td class="next-date-column">
+            {{ formatNextApplicationDates(animalVaccine.nextApplicationDates) }}
+          </td>
           <td class="completed-column">{{ animalVaccine.completed ? 'Yes' : 'No' }}</td>
         </tr>
       </tbody>
@@ -60,18 +60,18 @@
 </template>
 
 <script>
-  import { defineComponent } from 'vue';
-  import apiClient from '../store/apiClient';
-  import Pagination from './Pagination.vue';
-  import CustomButton from './CustomButton.vue';
-  import AnimalVaccineForm from './AnimalVaccineForm.vue';
+  import { defineComponent } from 'vue'
+  import apiClient from '../store/apiClient'
+  import Pagination from './Pagination.vue'
+  import CustomButton from './CustomButton.vue'
+  import AnimalVaccineForm from './AnimalVaccineForm.vue'
 
   export default defineComponent({
     name: 'VaccineAnimal',
     components: {
       Pagination,
       CustomButton,
-      AnimalVaccineForm,
+      AnimalVaccineForm
     },
     data() {
       return {
@@ -81,14 +81,14 @@
         filters: {
           animalName: '',
           vaccineName: '',
-          completed: false,
+          completed: false
         },
         showFilters: false,
-        showAnimalVaccineForm: false,
-      };
+        showAnimalVaccineForm: false
+      }
     },
     mounted() {
-      this.fetchVaccines();
+      this.fetchVaccines()
     },
     methods: {
       async fetchVaccines() {
@@ -102,70 +102,84 @@
               vaccineName: this.filters.vaccineName,
               completed: this.filters.completed
             }
-          });
-          this.animalVaccines = response.data.content;
-          this.totalPages = response.data.totalPages;
+          })
+          this.animalVaccines = response.data.content
+          this.totalPages = response.data.totalPages
         } catch (error) {
-          console.error('Error fetching vaccines:', error);
+          console.error('Error fetching vaccines:', error)
         }
       },
 
       async openVaccineDetails(animalVaccineId) {
         try {
-          const response = await apiClient.get(`/animal/vaccine/${animalVaccineId}`);
-          this.$refs.animalVaccineForm.open(response.data);
+          const response = await apiClient.get(`/animal/vaccine/${animalVaccineId}`)
+          this.$refs.animalVaccineForm.open(response.data)
         } catch (error) {
-          console.error('Error fetching animalVaccine details:', error);
+          console.error('Error fetching animalVaccine details:', error)
         }
       },
 
       async deleteVaccine(animalVaccineId) {
         try {
-          await apiClient.delete(`/animal/vaccine/${animalVaccineId}`);
-          this.animalVaccines = this.animalVaccines.filter(animalVaccine => animalVaccine.id !== animalVaccineId);
+          await apiClient.delete(`/animal/vaccine/${animalVaccineId}`)
+          this.animalVaccines = this.animalVaccines.filter(
+            (animalVaccine) => animalVaccine.id !== animalVaccineId
+          )
         } catch (error) {
-          console.error('Error deleting animalVaccine:', error);
+          console.error('Error deleting animalVaccine:', error)
         }
       },
       handlePageChange(newPage) {
-        this.currentPage = newPage;
-        this.fetchVaccines();
+        this.currentPage = newPage
+        this.fetchVaccines()
       },
       clearFilters() {
-        this.filters.animalName = '';
-        this.filters.vaccineName = '';
-        this.filters.completed = false;
-        this.fetchVaccines();
+        this.filters.animalName = ''
+        this.filters.vaccineName = ''
+        this.filters.completed = false
+        this.fetchVaccines()
       },
       toggleFilters() {
-        this.showFilters = !this.showFilters;
+        this.showFilters = !this.showFilters
       },
       openAnimalVaccineForm() {
-        this.$refs.animalVaccineForm.open();
+        this.$refs.animalVaccineForm.open()
       },
       handleAnimalVaccineCreated() {
-        this.fetchVaccines();
+        this.fetchVaccines()
       },
       handleAnimalVaccineDeleted() {
-        this.fetchVaccines();
+        this.fetchVaccines()
       },
       showEllipsis(animalVaccineId) {
-        this.animalVaccines = this.animalVaccines.map(animalVaccine => animalVaccine.id === animalVaccineId ? { ...animalVaccine, showEllipsis: true } : animalVaccine);
+        this.animalVaccines = this.animalVaccines.map((animalVaccine) =>
+          animalVaccine.id === animalVaccineId
+            ? { ...animalVaccine, showEllipsis: true }
+            : animalVaccine
+        )
       },
       hideEllipsis(animalVaccineId) {
-        this.animalVaccines = this.animalVaccines.map(animalVaccine => animalVaccine.id === animalVaccineId ? { ...animalVaccine, showEllipsis: false, showOptions: false } : animalVaccine);
+        this.animalVaccines = this.animalVaccines.map((animalVaccine) =>
+          animalVaccine.id === animalVaccineId
+            ? { ...animalVaccine, showEllipsis: false, showOptions: false }
+            : animalVaccine
+        )
       },
       toggleOptions(animalVaccineId) {
-        this.animalVaccines = this.animalVaccines.map(animalVaccine => animalVaccine.id === animalVaccineId ? { ...animalVaccine, showOptions: !animalVaccine.showOptions } : animalVaccine);
+        this.animalVaccines = this.animalVaccines.map((animalVaccine) =>
+          animalVaccine.id === animalVaccineId
+            ? { ...animalVaccine, showOptions: !animalVaccine.showOptions }
+            : animalVaccine
+        )
       },
       formatDate(date) {
-        return new Intl.DateTimeFormat('pt-BR').format(new Date(date));
+        return new Intl.DateTimeFormat('pt-BR').format(new Date(date))
       },
       formatNextApplicationDates(dates) {
-        return dates.map(date => this.formatDate(date)).join(', ');
+        return dates.map((date) => this.formatDate(date)).join(', ')
       }
-    },
-  });
+    }
+  })
 </script>
 
 <style scoped>
