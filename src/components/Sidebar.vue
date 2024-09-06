@@ -72,6 +72,7 @@
           await apiClient.post('http://localhost:8080/api/digital-pec/logoff')
           localStorage.removeItem('authToken')
           localStorage.removeItem('name')
+          localStorage.removeItem('id')
           username.value = 'Guest'
           router.push({ name: 'Login' })
         } catch (error) {

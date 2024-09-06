@@ -150,6 +150,7 @@
 
         const decoded = jwtDecode(token)
         localStorage.setItem('name', decoded.name)
+        localStorage.setItem('id', decoded.id)
 
         username.value = decoded.name
 
