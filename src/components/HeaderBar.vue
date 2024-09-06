@@ -9,7 +9,7 @@
     <div class="right">
       <div class="user-info">
         <span class="username">{{ username }}</span>
-        <img src="@/assets/user.jpg" alt="User" class="user-picture" />
+        <img :src="userPicture" alt="User" class="user-picture" />
       </div>
     </div>
   </header>
@@ -26,10 +26,11 @@
         required: true
       }
     },
-    setup() {
+    setup(props) {
       const username = inject('username')
       return {
-        username
+        username,
+        userPicture: props.userPicture
       }
     }
   }

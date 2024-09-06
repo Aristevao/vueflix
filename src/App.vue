@@ -11,10 +11,12 @@
 </template>
 
 <script>
-  import { ref, computed, provide } from 'vue'
+  import { ref, computed, provide, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import Sidebar from './components/Sidebar.vue'
   import HeaderBar from './components/HeaderBar.vue'
+  import apiClient from './store/apiClient'
+  import defaultUserPicture from '@/assets/user.jpg' // Import the default image
 
   export default {
     name: 'App',
@@ -27,7 +29,7 @@
       const route = useRoute()
 
       const username = ref('Guest')
-      const userPicture = '@/assets/user.jpg'
+      const userPicture = ref(defaultUserPicture)
 
       const toggleSidebar = () => {
         collapsed.value = !collapsed.value
@@ -35,8 +37,31 @@
 
       const showHeaderAndSidebar = computed(() => route.name !== 'Login')
 
-      // Provide the username to child components
       provide('username', username)
+
+      const fetchUserData = async (userId) => {
+        try {
+          const response = await apiClient.get(`http://localhost:8080/api/digital-pec/user/${userId}`)
+          if (response.data) {
+            username.value = response.data.name
+            userPicture.value = `data:image/png;base64,${response.data.picture}`
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data:', error)
+        }
+      }
+
+      onMounted(() => {
+        const storedUsername = localStorage.getItem('name')
+        const storedUserId = localStorage.getItem('id')
+
+        if (storedUserId) {
+          username.value = storedUsername || 'Guest'
+          console.log("USER_ID: ", storedUserId);
+
+          fetchUserData(storedUserId)
+        }
+      })
 
       return {
         collapsed,
@@ -44,13 +69,6 @@
         username,
         userPicture,
         showHeaderAndSidebar
-      }
-    },
-    created() {
-      // Set the username from localStorage when the component is created
-      const storedUsername = localStorage.getItem('name')
-      if (storedUsername) {
-        this.username = storedUsername
       }
     }
   }
