@@ -240,8 +240,15 @@
 
   .button-group {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: center;
     margin-top: 20px;
+  }
+
+  .right-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
 
   .right-buttons button {
@@ -249,7 +256,7 @@
   }
 
   .delete-button {
-    margin-right: auto;
+    margin-right: 10px;
   }
 
   .modal-enter-active,
