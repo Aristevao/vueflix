@@ -2,10 +2,12 @@
   <div>
     <div class="header">
       <div class="title">Vaccines</div>
-      <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </CustomButton>
-      <button @click="openVaccineForm" class="add-new-button">Add New</button>
+      <div class="button-group">
+        <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </CustomButton>
+        <CustomButton @click="openVaccineForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+      </div>
     </div>
 
     <div v-if="showFilters">
@@ -183,9 +185,14 @@
     font-weight: bold;
   }
 
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .toggle-filters-button {
     margin-bottom: 10px;
-    /* margin-left: auto; Move filter button to the right; beside the "Add New". */
   }
 
   .filters {
