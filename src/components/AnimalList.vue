@@ -55,7 +55,6 @@
           <th class="sex-column">Sex</th>
           <th class="age-column">Age</th>
           <th class="registration-date-column">Registration Date</th>
-          <!-- <th class="registration-date-column">Action</th> -->
         </tr>
       </thead>
       <tbody>
@@ -65,20 +64,13 @@
             <img :src="animal.imageUrl || 'http://loremflickr.com/640/480/animals'" alt="Animal Image" width="50"
               height="50" />
           </td>
-          <td class="identification-column">{{ animal.identification }}</td>
+          <td class="identification-column">{{ formatIdentification(animal.identification) }}</td>
           <td class="name-column">{{ animal.name }}</td>
           <td class="specie-column">{{ animal.specie }}</td>
           <td class="breed-column">{{ animal.breed }}</td>
           <td class="sex-column">{{ animal.sex }}</td>
           <td class="age-column">{{ calculateAge(animal.birthdate) }}</td>
           <td class="registration-date-column">{{ animal.registrationDate }}</td>
-
-          <!-- <td v-if="true" @click="toggleOptions(animal.id)" class="ellipsis">...</td>
-
-          <div v-if="animal.showEllipsis" class="options">
-            <button @click="openAnimalDetails(animal.id)">Edit</button>
-            <button @click="deleteAnimal(animal.id)">Delete</button>
-          </div> -->
         </tr>
       </tbody>
     </table>
@@ -144,6 +136,12 @@
         } catch (error) {
           console.error('Failed to fetch animals:', error)
         }
+      },
+      formatIdentification(identification) {
+        if (!isNaN(identification)) {
+          return identification.toString().padStart(4, '0')
+        }
+        return identification
       },
       handlePageChange(newPage) {
         this.currentPage = newPage
