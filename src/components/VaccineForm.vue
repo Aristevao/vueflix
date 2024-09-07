@@ -25,13 +25,13 @@
           </div>
 
           <div class="button-group">
-            <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
+            <CustomButton type="secondary" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
               Delete
-            </button>
+            </CustomButton>
             <div class="right-buttons">
+              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
               <button type="submit">Save</button>
-              <button type="button" @click="cancelForm">Cancel</button>
             </div>
           </div>
         </form>
@@ -42,6 +42,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -49,6 +50,9 @@
         type: Object,
         default: () => ({})
       }
+    },
+    components: {
+      CustomButton
     },
     data() {
       return {
