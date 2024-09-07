@@ -2,10 +2,12 @@
   <div>
     <div class="header">
       <div class="title">Animais</div>
-      <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </CustomButton>
-      <button @click="openAnimalForm" class="add-new-button">Add New</button>
+      <div class="button-group">
+        <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </CustomButton>
+        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+      </div>
     </div>
 
     <div v-if="showFilters">
@@ -230,6 +232,12 @@
     font-family: sans-serif;
     font-size: 24px;
     font-weight: bold;
+  }
+
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .toggle-filters-button {
