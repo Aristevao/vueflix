@@ -31,7 +31,7 @@
             </CustomButton>
             <div class="right-buttons">
               <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <button type="submit">Save</button>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
             </div>
           </div>
         </form>
