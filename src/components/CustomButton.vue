@@ -22,7 +22,8 @@
       buttonClass() {
         return {
           'button-3': this.type === 'primary',
-          'button-4': this.type === 'secondary'
+          'button-4': this.type === 'secondary',
+          'button-5': this.type === 'red'
         }
       }
     }
@@ -148,5 +149,65 @@
 
   .button-4:-webkit-details-marker {
     display: none;
+  }
+
+  /* Red button styles */
+  .button-5 {
+    appearance: none;
+    background-color: #d73a49;
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, 0.1) 0 1px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji';
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    padding: 6px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .button-5:focus:not(:focus-visible):not(.focus-visible) {
+    box-shadow: none;
+    outline: none;
+  }
+
+  .button-5:hover {
+    background-color: #cb2431;
+  }
+
+  .button-5:focus {
+    box-shadow: rgba(215, 58, 73, 0.4) 0 0 0 3px;
+    outline: none;
+  }
+
+  .button-5:disabled {
+    background-color: #e996a5;
+    border-color: rgba(27, 31, 35, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: default;
+  }
+
+  .button-5:active {
+    background-color: #c22e3a;
+    box-shadow: rgba(156, 42, 53, 0.2) 0 1px 0 inset;
+  }
+
+  /* Additional styles for controls */
+  .controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
   }
 </style>

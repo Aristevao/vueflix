@@ -25,7 +25,7 @@
           </div>
 
           <div class="button-group">
-            <CustomButton type="secondary" class="delete-button" v-if="deleteButtonIsVisible"
+            <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
               Delete
             </CustomButton>
