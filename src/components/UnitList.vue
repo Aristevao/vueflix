@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="title">Animais</div>
-      <button @click="openUnitModal" class="add-new-button">Add New</button>
+      <CustomButton @click="openUnitModal" type="primary" class="toggle-filters-button">Add New</CustomButton>
     </div>
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
@@ -28,10 +28,12 @@
 <script>
   import apiClient from '../store/apiClient'
   import UnitModal from './UnitModal.vue'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     components: {
-      UnitModal
+      UnitModal,
+      CustomButton
     },
     data() {
       return {
