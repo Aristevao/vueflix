@@ -35,12 +35,12 @@
 
           <div class="form-group">
             <label>Birthdate:</label>
-            <input type="date" v-model="formData.birthdate" />
+            <input type="date" v-model="formData.birthdate" :max="today" />
           </div>
 
           <div class="form-group">
             <label>Registration Date:</label>
-            <input type="date" v-model="formData.registrationDate" />
+            <input type="date" v-model="formData.registrationDate" :max="today" />
           </div>
 
           <div class="form-group">
@@ -97,6 +97,7 @@
         isVisible: false,
         deleteButtonIsVisible: false,
         units: [],
+        today: new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }),
         formData: {
           id: null,
           name: '',
@@ -105,7 +106,7 @@
           breed: '',
           sex: '',
           birthdate: '',
-          registrationDate: '', // TODO: block future dates
+          registrationDate: '',
           description: '',
           unitId: '',
           picture: null
@@ -256,5 +257,5 @@
 </script>
 
 <style scoped>
-  @import "@/assets/form-styles.css";
+  @import "@/assets/form-styles.css"
 </style>

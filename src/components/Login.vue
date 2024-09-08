@@ -100,7 +100,6 @@
   const router = useRouter()
   const username = inject('username')
 
-  // Reactive states
   const isCreatingAccount = ref(false)
   const email = ref('')
   const password = ref('')
