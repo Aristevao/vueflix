@@ -1,9 +1,4 @@
-#VUEFLIX
-
-Basic Project from implemented in Trilha Vue.js.
-
-The information entered will be copied directly from the website
-https://www.themoviedb.org/
+#DigitalPec
 
 ## Recommended IDE
 

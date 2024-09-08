@@ -1,5 +1,5 @@
 {
-  "name": "vueflix",
+  "name": "digitalpec",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
     "jwt-decode": "^4.0.0",
     "vue": "^3.3.4",
     "vue-router": "^4.0.13",
-    "vueflix": "file:",
+    "digitalpec": "file:",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
