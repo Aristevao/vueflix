@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <div class="title">Animais</div>
+      <div class="title">Fazendas</div>
       <CustomButton @click="openUnitModal" type="primary" class="toggle-filters-button">Add New</CustomButton>
     </div>
     <div class="fazendas-list">

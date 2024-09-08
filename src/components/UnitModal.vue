@@ -4,43 +4,43 @@
       <span class="close" @click="close">&times;</span>
       <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
       <form @submitForm.prevent="submitForm">
-        <div>
+        <div class="form-group">
           <label for="name">Name</label>
           <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
         </div>
-        <div>
+        <div class="form-group">
           <label for="description">Description</label>
           <textarea v-model="localUnit.description" id="description" maxlength="500"></textarea>
         </div>
-        <div>
+        <div class="form-group">
           <label for="street">Street</label>
           <input type="text" v-model="localUnit.address.street" id="street" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="number">Number</label>
           <input type="text" v-model="localUnit.address.number" id="number" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="district">District</label>
           <input type="text" v-model="localUnit.address.district" id="district" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="complement">Complement</label>
           <input type="text" v-model="localUnit.address.complement" id="complement" />
         </div>
-        <div>
+        <div class="form-group">
           <label for="zipcode">Zipcode</label>
           <input type="text" v-model="localUnit.address.zipcode" id="zipcode" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="city">City</label>
           <input type="text" v-model="localUnit.address.city" id="city" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="state">State</label>
           <input type="text" v-model="localUnit.address.state" id="state" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="picture">Picture</label>
           <input type="file" @change="handleFileUpload" id="picture" />
         </div>
@@ -175,13 +175,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
   }
 
   .modal-content {
     background-color: white;
     padding: 20px;
-    border-radius: 5px;
-    width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
     position: relative;
   }
 
@@ -191,6 +194,25 @@
     right: 10px;
     font-size: 24px;
     cursor: pointer;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
   }
 
   .button-group {
@@ -212,5 +234,15 @@
 
   .delete-button {
     margin-right: 10px;
+  }
+
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: opacity 0.3s;
+  }
+
+  .modal-enter,
+  .modal-leave-to {
+    opacity: 0;
   }
 </style>
