@@ -20,19 +20,19 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null"
+    <UnitForm ref="unitForm" :unit="selectedUnit" @close="selectedUnit = null"
       @unit-created="fetchFazendasAfterAction" @unit-deleted="fetchFazendasAfterAction" />
   </div>
 </template>
 
 <script>
   import apiClient from '../store/apiClient'
-  import UnitModal from './UnitModal.vue'
+  import UnitForm from './UnitForm.vue'
   import CustomButton from './CustomButton.vue'
 
   export default {
     components: {
-      UnitModal,
+      UnitForm,
       CustomButton
     },
     data() {
@@ -71,14 +71,14 @@
         try {
           const response = await apiClient.get(`/unit/${id}`)
           this.selectedUnit = response.data
-          this.$refs.unitModal.open()
+          this.$refs.unitForm.open()
         } catch (error) {
           console.error('Error fetching unit details:', error)
         }
       },
       openUnitModal() {
         this.selectedUnit = null
-        this.$refs.unitModal.open()
+        this.$refs.unitForm.open()
       },
       fetchFazendasAfterAction() {
         this.fetchFazendas()
