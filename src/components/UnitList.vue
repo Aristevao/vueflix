@@ -20,8 +20,8 @@
         </div>
       </div>
     </div>
-    <UnitForm ref="unitForm" :unit="selectedUnit" @close="selectedUnit = null"
-      @unit-created="fetchFazendasAfterAction" @unit-deleted="fetchFazendasAfterAction" />
+    <UnitForm ref="unitForm" :unit="selectedUnit" @close="selectedUnit = null" @unit-created="fetchFazendasAfterAction"
+      @unit-deleted="fetchFazendasAfterAction" />
   </div>
 </template>
 
@@ -49,7 +49,12 @@
       async fetchFazendas() {
         try {
           const response = await apiClient.get('/unit')
-          this.fazendas = response.data.content
+          this.fazendas = response.data.content.map((fazenda) => {
+            if (fazenda.picture && !fazenda.picture.startsWith('data:image')) {
+              fazenda.picture = `data:image/jpeg;base64,${fazenda.picture}`
+            }
+            return fazenda
+          })
           this.fetchAnimalCounts()
         } catch (error) {
           console.error('Error fetching units:', error)

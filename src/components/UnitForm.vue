@@ -77,7 +77,8 @@
       return {
         visible: false,
         localUnit: this.getInitialUnit(),
-        file: null
+        file: null,
+        base64Picture: ''
       }
     },
     watch: {
@@ -126,7 +127,14 @@
         }
       },
       handleFileUpload(event) {
-        this.file = event.target.files[0]
+        const file = event.target.files[0]
+        if (file) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            this.base64Picture = reader.result.split(',')[1] // Convert to base64 and remove prefix
+          }
+          reader.readAsDataURL(file)
+        }
       },
       async submitForm() {
         const formData = new FormData()
@@ -139,8 +147,10 @@
         formData.append('address.zipcode', this.localUnit.address.zipcode)
         formData.append('address.city', this.localUnit.address.city)
         formData.append('address.state', this.localUnit.address.state)
-        if (this.file) {
-          formData.append('picture', this.file)
+
+        // Append base64 string if picture is provided
+        if (this.base64Picture) {
+          formData.append('picture', this.base64Picture)
         }
 
         const url = this.localUnit.id ? `/unit/${this.localUnit.id}` : '/unit'
@@ -178,5 +188,5 @@
 </script>
 
 <style scoped>
-  @import "@/assets/form-styles.css";
+  @import "@/assets/form-styles.css"
 </style>
