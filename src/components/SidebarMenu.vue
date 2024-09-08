@@ -62,7 +62,7 @@
     import apiClient from '../store/apiClient';
 
     export default {
-        name: 'Sidebar',
+        name: 'SidebarMenu',
         setup() {
             const router = useRouter();
             const username = inject('username');
