@@ -3,7 +3,7 @@
     <div class="modal-content">
       <span class="close" @click="close">&times;</span>
       <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
-      <form @submit.prevent="submit">
+      <form @submitForm.prevent="submitForm">
         <div>
           <label for="name">Name</label>
           <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
@@ -46,12 +46,12 @@
         </div>
 
         <div class="button-group">
-          <button class="delete-button" v-if="localUnit.id" type="button" @click="deleteUnit(localUnit.id)">
+          <CustomButton type="red" class="delete-button" v-if="localUnit.id" @click="deleteUnit(localUnit.id)">
             Delete
-          </button>
+          </CustomButton>
           <div class="right-buttons">
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
+            <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
           </div>
         </div>
       </form>
@@ -61,6 +61,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -68,6 +69,9 @@
         type: Object,
         default: null
       }
+    },
+    components: {
+      CustomButton
     },
     data() {
       return {
@@ -111,7 +115,7 @@
       handleFileUpload(event) {
         this.file = event.target.files[0]
       },
-      async submit() {
+      async submitForm() {
         const formData = new FormData()
         formData.append('name', this.localUnit.name)
         formData.append('description', this.localUnit.description)
@@ -191,8 +195,15 @@
 
   .button-group {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    align-items: center;
     margin-top: 20px;
+  }
+
+  .right-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
 
   .right-buttons button {
@@ -200,6 +211,6 @@
   }
 
   .delete-button {
-    margin-right: auto;
+    margin-right: 10px;
   }
 </style>
