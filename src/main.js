@@ -9,17 +9,17 @@ import UnitList from './components/UnitList.vue'
 import Animais from './components/AnimalList.vue'
 import VaccineList from './components/VaccineList.vue'
 import VaccineAnimal from './components/VaccineAnimal.vue'
-import Notificacoes from './components/Notificacoes.vue'
+import Notification from './components/NotificationList.vue'
 
 const routes = [
   { path: '/', name: 'Login', component: Login },
   { path: '/home', name: 'Home', component: Home },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/units', name: 'Units', component: UnitList },
-  { path: '/animals', name: 'Animals', component: Animais },
-  { path: '/vaccines', name: 'Vaccines', component: VaccineList },
+  { path: '/unit', name: 'Units', component: UnitList },
+  { path: '/animal', name: 'Animals', component: Animais },
+  { path: '/vaccine', name: 'Vaccines', component: VaccineList },
   { path: '/vaccineAnimal', name: 'VaccineAnimal', component: VaccineAnimal },
-  { path: '/notifications', name: 'Notifications', component: Notificacoes }
+  { path: '/notification', name: 'Notifications', component: Notification }
 ]
 
 const router = createRouter({

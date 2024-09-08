@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1>Notificacoes</h1>
+    <h1>Notificações</h1>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'Notificacoes'
+    name: 'NotificationList'
   }
 </script>
