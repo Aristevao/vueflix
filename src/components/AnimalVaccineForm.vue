@@ -30,13 +30,13 @@
 
           <div class="form-group">
             <label>Application Date:</label>
-            <input type="date" v-model="formData.applicationDate" />
+            <input type="date" v-model="formData.applicationDate" :max="today" />
           </div>
 
           <div class="form-group">
             <label>Next Application Dates:</label>
             <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="right-side-action-button">
-              <input type="date" v-model="formData.nextApplicationDates[index]" />
+              <input type="date" v-model="formData.nextApplicationDates[index]" :max="today" />
               <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
             </div>
             <button type="button" @click="addNextApplicationDate">Add Next Application Date</button>
@@ -72,6 +72,7 @@
         deleteButtonIsVisible: false,
         animals: [],
         vaccines: [],
+        today: new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }),
         formData: {
           id: null,
           animalId: null,
