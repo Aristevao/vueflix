@@ -4,42 +4,62 @@
       <div class="animal-form">
         <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-          <label>Name:</label>
-          <input v-model="formData.name" maxlength="80" />
+          <div class="form-group">
+            <label>Name:</label>
+            <input v-model="formData.name" maxlength="80" />
+          </div>
 
-          <label>Identification:</label>
-          <input v-model="formData.identification" required maxlength="80" />
+          <div class="form-group">
+            <label>Identification:</label>
+            <input v-model="formData.identification" required maxlength="80" />
+          </div>
 
-          <label>Specie:</label>
-          <input v-model="formData.specie" maxlength="80" />
+          <div class="form-group">
+            <label>Specie:</label>
+            <input v-model="formData.specie" maxlength="80" />
+          </div>
 
-          <label>Breed:</label>
-          <input v-model="formData.breed" maxlength="80" />
+          <div class="form-group">
+            <label>Breed:</label>
+            <input v-model="formData.breed" maxlength="80" />
+          </div>
 
-          <label>Sex:</label>
-          <select v-model="formData.sex">
-            <option>MALE</option>
-            <option>FEMALE</option>
-          </select>
+          <div class="form-group">
+            <label>Sex:</label>
+            <select v-model="formData.sex">
+              <option>MALE</option>
+              <option>FEMALE</option>
+            </select>
+          </div>
 
-          <label>Birthdate:</label>
-          <input type="date" v-model="formData.birthdate" />
+          <div class="form-group">
+            <label>Birthdate:</label>
+            <input type="date" v-model="formData.birthdate" />
+          </div>
 
-          <label>Registration Date:</label>
-          <input type="date" v-model="formData.registrationDate" />
+          <div class="form-group">
+            <label>Registration Date:</label>
+            <input type="date" v-model="formData.registrationDate" />
+          </div>
 
-          <label>Description:</label>
-          <textarea v-model="formData.description" maxlength="500"></textarea>
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea v-model="formData.description" maxlength="500"></textarea>
+          </div>
 
-          <label>Unit:</label>
-          <select v-model="formData.unitId" required>
-            <option v-for="unit in units" :key="unit.id" :value="unit.id">
-              {{ unit.name }}
-            </option>
-          </select>
+          <div class="form-group">
+            <label>Unit:</label>
+            <select v-model="formData.unitId" required>
+              <option v-for="unit in units" :key="unit.id" :value="unit.id">
+                {{ unit.name }}
+              </option>
+            </select>
+          </div>
 
-          <label>Picture:</label>
-          <input type="file" @change="handleFileUpload" />
+          <div class="form-group">
+            <label>Picture:</label>
+            <input type="file" @change="handleFileUpload" />
+          </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
@@ -229,9 +249,6 @@
 
 <style scoped>
   .animal-form-modal {
-    /* flex-direction: column;  */
-    /* row-gap: 1rem; */
-
     position: fixed;
     top: 0;
     left: 0;
@@ -251,6 +268,34 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
+    position: relative;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
   }
 
   .button-group {
