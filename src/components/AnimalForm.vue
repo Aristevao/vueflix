@@ -42,11 +42,14 @@
           <input type="file" @change="handleFileUpload" />
 
           <div class="button-group">
-            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">
+            <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
+              @click="deleteAnimal(formData.id)">
               Delete
-            </button>
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            </CustomButton>
+            <div class="right-buttons">
+              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+            </div>
           </div>
         </form>
       </div>
@@ -56,6 +59,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -63,6 +67,9 @@
         type: Object,
         default: () => ({})
       }
+    },
+    components: {
+      CustomButton
     },
     data() {
       return {
@@ -77,7 +84,7 @@
           breed: '',
           sex: '',
           birthdate: '',
-          registrationDate: '',
+          registrationDate: '', // TODO: block future dates
           description: '',
           unitId: '',
           picture: null
@@ -247,12 +254,24 @@
   }
 
   .button-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     margin-top: 20px;
-    text-align: right;
   }
 
-  .button-group button {
+  .right-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .right-buttons button {
     margin-left: 10px;
+  }
+
+  .delete-button {
+    margin-right: 10px;
   }
 
   .modal-enter-active,
