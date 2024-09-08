@@ -78,3 +78,14 @@
 .modal-leave-to {
     opacity: 0;
 }
+
+.right-side-action-button {
+display: flex;
+align-items: center;
+margin-bottom: 10px;
+}
+
+.right-side-action-button input {
+flex: 1;
+margin-right: 10px;
+}

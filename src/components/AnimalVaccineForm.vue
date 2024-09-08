@@ -35,7 +35,7 @@
 
           <div class="form-group">
             <label>Next Application Dates:</label>
-            <div v-for="(date, index) in formData.nextApplicationDates" :key="index">
+            <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="right-side-action-button">
               <input type="date" v-model="formData.nextApplicationDates[index]" />
               <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
             </div>

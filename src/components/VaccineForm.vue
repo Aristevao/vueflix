@@ -17,7 +17,7 @@
 
           <div class="form-group">
             <label>Species:</label>
-            <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
+            <div v-for="(specie, index) in formData.species" :key="index" class="right-side-action-button">
               <input v-model="specie.name" placeholder="Enter species name" />
               <button type="button" @click="removeSpecie(index)">Remove</button>
             </div>
@@ -182,15 +182,4 @@
 
 <style scoped>
   @import "@/assets/form-styles.css";
-
-  .species-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .species-group input {
-    flex: 1;
-    margin-right: 10px;
-  }
 </style>
