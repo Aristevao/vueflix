@@ -1,26 +1,28 @@
 <template>
   <div class="pagination">
-    <button @click="goToPage(1)" :disabled="currentPage === 1">First</button>
-    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
-    <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
-    <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">Last</button>
+    <button @click="goToPage(1)" :disabled="currentPage === 1">|&lt;&lt;</button>
+    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">&lt;</button>
+    <button v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="{ active: currentPage === page }">
+      {{ page }}
+    </button>
+    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">&gt;</button>
+    <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">&gt;&gt;|</button>
   </div>
 </template>
 
 <script>
   export default {
-    name: 'Pagination',
+    name: "Pagination",
     props: {
       currentPage: Number,
-      totalPages: Number
+      totalPages: Number,
     },
     methods: {
       goToPage(pageNumber) {
-        this.$emit('page-change', pageNumber)
-      }
-    }
-  }
+        this.$emit("page-change", pageNumber);
+      },
+    },
+  };
 </script>
 
 <style scoped>
@@ -28,34 +30,33 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    gap: 10px;
+    gap: 8px;
+    padding: 10px;
   }
 
   button {
-    margin: 0 5px;
-    padding: 8px 12px;
-    border: 1px solid #007bff;
+    padding: 6px 10px;
+    border: none;
     border-radius: 4px;
-    background-color: #ffffff;
-    color: #007bff;
-    font-size: 14px;
-    font-weight: 500;
+    background-color: #f1f1f1;
+    color: #333;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
   }
 
   button:hover:not(:disabled) {
-    background-color: #007bff;
-    color: #ffffff;
-    border-color: #0056b3;
+    background-color: #ddd;
   }
 
   button:disabled {
-    opacity: 0.5;
+    color: #999;
     cursor: not-allowed;
-    border-color: #cccccc;
-    background-color: #e9ecef;
-    color: #6c757d;
+  }
+
+  button.active {
+    background-color: #2c974b;
+    color: white;
+    font-weight: bold;
   }
 </style>
