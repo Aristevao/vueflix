@@ -1,7 +1,7 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="vaccine-form-modal" @click="handleBackgroundClick">
-      <div class="vaccine-form" @click.stop>
+    <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
+      <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
@@ -17,7 +17,7 @@
 
           <div class="form-group">
             <label>Species:</label>
-            <div v-for="(specie, index) in formData.species" :key="index" class="species-group">
+            <div v-for="(specie, index) in formData.species" :key="index" class="right-side-action-button">
               <input v-model="specie.name" placeholder="Enter species name" />
               <button type="button" @click="removeSpecie(index)">Remove</button>
             </div>
@@ -25,13 +25,13 @@
           </div>
 
           <div class="button-group">
-            <button class="delete-button" v-if="deleteButtonIsVisible" type="button"
+            <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
               Delete
-            </button>
+            </CustomButton>
             <div class="right-buttons">
-              <button type="submit">Save</button>
-              <button type="button" @click="cancelForm">Cancel</button>
+              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
             </div>
           </div>
         </form>
@@ -42,6 +42,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -49,6 +50,9 @@
         type: Object,
         default: () => ({})
       }
+    },
+    components: {
+      CustomButton
     },
     data() {
       return {
@@ -177,95 +181,5 @@
 </script>
 
 <style scoped>
-  .vaccine-form-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-
-  .vaccine-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 100%;
-    position: relative;
-  }
-
-  .close-button {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-
-  .species-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .species-group input {
-    flex: 1;
-    margin-right: 10px;
-  }
-
-  .button-group {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 20px;
-  }
-
-  .right-buttons {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
-  }
-
-  .right-buttons button {
-    margin-left: 10px;
-  }
-
-  .delete-button {
-    margin-right: 10px;
-  }
-
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .modal-enter,
-  .modal-leave-to {
-    opacity: 0;
-  }
+  @import "@/assets/form-styles.css";
 </style>

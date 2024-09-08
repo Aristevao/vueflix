@@ -13,7 +13,7 @@
 <script>
   import { ref, computed, provide } from 'vue'
   import { useRoute } from 'vue-router'
-  import Sidebar from './components/Sidebar.vue'
+  import Sidebar from './components/SidebarMenu.vue'
   import HeaderBar from './components/HeaderBar.vue'
 
   export default {

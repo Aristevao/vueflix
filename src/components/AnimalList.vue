@@ -2,38 +2,40 @@
   <div>
     <div class="header">
       <div class="title">Animais</div>
-      <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </CustomButton>
-      <button @click="openAnimalForm" class="add-new-button">Add New</button>
+      <div class="button-group">
+        <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </CustomButton>
+        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+      </div>
     </div>
 
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <input v-model="filters.identification" placeholder="Filter by ID" class="filter-input" />
+          <input v-model="filters.identification" placeholder="ID" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
+          <input v-model="filters.name" placeholder="Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.specie" placeholder="Filter by Species" class="filter-input" />
+          <input v-model="filters.specie" placeholder="Species" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.breed" placeholder="Filter by Breed" class="filter-input" />
+          <input v-model="filters.breed" placeholder="Breed" class="filter-input" />
         </div>
         <div class="filter-item">
           <select v-model="filters.sex" class="filter-input">
-            <option value="">Filter by Sex</option>
+            <option value="">Sex</option>
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
           </select>
         </div>
         <div class="filter-item">
-          <input v-model="filters.birthdate" placeholder="Filter by Age" class="filter-input" />
+          <input v-model="filters.birthdate" placeholder="Age" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.registrationDate" placeholder="Filter by Registration Date" class="filter-input" />
+          <input v-model="filters.registrationDate" placeholder="Registration Date" class="filter-input" />
         </div>
       </div>
       <div class="filter-buttons">
@@ -230,6 +232,12 @@
     font-family: sans-serif;
     font-size: 24px;
     font-weight: bold;
+  }
+
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .toggle-filters-button {

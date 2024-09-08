@@ -2,19 +2,21 @@
   <div>
     <div class="header">
       <div class="title">Aplicações</div>
-      <CustomButton @click="toggleFilters" type="primary" class="toggle-filters-button">
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </CustomButton>
-      <button @click="openAnimalVaccineForm" class="add-new-button">Add New</button>
+      <div class="button-group">
+        <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+        </CustomButton>
+        <CustomButton @click="openAnimalVaccineForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+      </div>
     </div>
 
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <input v-model="filters.animalName" placeholder="Filter by Animal Name" class="filter-input" />
+          <input v-model="filters.animalName" placeholder="Animal Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.vaccineName" placeholder="Filter by Vaccine Name" class="filter-input" />
+          <input v-model="filters.vaccineName" placeholder="Vaccine Name" class="filter-input" />
         </div>
         <div class="filter-item">
           <input v-model="filters.completed" type="checkbox" class="filter-checkbox" /> Completed
@@ -67,7 +69,7 @@
   import AnimalVaccineForm from './AnimalVaccineForm.vue'
 
   export default defineComponent({
-    name: 'VaccineAnimal',
+    name: 'AnimalVaccineList',
     components: {
       Pagination,
       CustomButton,
@@ -196,9 +198,14 @@
     font-weight: bold;
   }
 
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .toggle-filters-button {
     margin-bottom: 10px;
-    /* margin-left: auto; Move filter button to the right; beside the "Add New". */
   }
 
   .filters {

@@ -17,31 +17,31 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/units" active-class="active">
+                        <router-link to="/unit" active-class="active">
                             <img src="@/assets/fazendas.png" alt="Units" class="menu-icon" />
                             <span v-if="!isCollapsed">Fazendas</span>
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/animals" active-class="active">
+                        <router-link to="/animal" active-class="active">
                             <img src="@/assets/animais.png" alt="Animals" class="menu-icon" />
                             <span v-if="!isCollapsed">Animais</span>
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/vaccines" active-class="active">
+                        <router-link to="/vaccine" active-class="active">
                             <img src="@/assets/vacinas.png" alt="Vaccines" class="menu-icon" />
                             <span v-if="!isCollapsed">Vacinas</span>
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/vaccineAnimal" active-class="active">
-                            <img src="@/assets/calendario.png" alt="Calendar" class="menu-icon" />
-                            <span v-if="!isCollapsed">Calendário</span>
+                        <router-link to="/animalVaccine" active-class="active">
+                            <img src="@/assets/calendario.png" alt="AnimalVaccine" class="menu-icon" />
+                            <span v-if="!isCollapsed">Aplicações</span>
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/notifications" active-class="active">
+                        <router-link to="/notification" active-class="active">
                             <img src="@/assets/notificacoes.png" alt="Notifications" class="menu-icon" />
                             <span v-if="!isCollapsed">Notificações</span>
                         </router-link>
@@ -62,7 +62,7 @@
     import apiClient from '../store/apiClient';
 
     export default {
-        name: 'Sidebar',
+        name: 'SidebarMenu',
         setup() {
             const router = useRouter();
             const username = inject('username');

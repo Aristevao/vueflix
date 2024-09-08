@@ -13,10 +13,10 @@
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <input v-model="filters.name" placeholder="Filter by Name" class="filter-input" />
+          <input v-model="filters.name" placeholder="Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.description" placeholder="Filter by Description" class="filter-input" />
+          <input v-model="filters.description" placeholder="Description" class="filter-input" />
         </div>
       </div>
       <div class="filter-buttons">

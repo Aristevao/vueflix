@@ -1,52 +1,76 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="animal-form-modal">
-      <div class="animal-form">
+    <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
+      <div class="entity-form" @click.stop>
+        <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-          <label>Name:</label>
-          <input v-model="formData.name" maxlength="80" />
+          <div class="form-group">
+            <label>Name:</label>
+            <input v-model="formData.name" maxlength="80" />
+          </div>
 
-          <label>Identification:</label>
-          <input v-model="formData.identification" required maxlength="80" />
+          <div class="form-group">
+            <label>Identification:</label>
+            <input v-model="formData.identification" required maxlength="80" />
+          </div>
 
-          <label>Specie:</label>
-          <input v-model="formData.specie" maxlength="80" />
+          <div class="form-group">
+            <label>Specie:</label>
+            <input v-model="formData.specie" maxlength="80" />
+          </div>
 
-          <label>Breed:</label>
-          <input v-model="formData.breed" maxlength="80" />
+          <div class="form-group">
+            <label>Breed:</label>
+            <input v-model="formData.breed" maxlength="80" />
+          </div>
 
-          <label>Sex:</label>
-          <select v-model="formData.sex">
-            <option>MALE</option>
-            <option>FEMALE</option>
-          </select>
+          <div class="form-group">
+            <label>Sex:</label>
+            <select v-model="formData.sex">
+              <option>MALE</option>
+              <option>FEMALE</option>
+            </select>
+          </div>
 
-          <label>Birthdate:</label>
-          <input type="date" v-model="formData.birthdate" />
+          <div class="form-group">
+            <label>Birthdate:</label>
+            <input type="date" v-model="formData.birthdate" :max="today" />
+          </div>
 
-          <label>Registration Date:</label>
-          <input type="date" v-model="formData.registrationDate" />
+          <div class="form-group">
+            <label>Registration Date:</label>
+            <input type="date" v-model="formData.registrationDate" :max="today" />
+          </div>
 
-          <label>Description:</label>
-          <textarea v-model="formData.description" maxlength="500"></textarea>
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea v-model="formData.description" maxlength="500"></textarea>
+          </div>
 
-          <label>Unit:</label>
-          <select v-model="formData.unitId" required>
-            <option v-for="unit in units" :key="unit.id" :value="unit.id">
-              {{ unit.name }}
-            </option>
-          </select>
+          <div class="form-group">
+            <label>Unit:</label>
+            <select v-model="formData.unitId" required>
+              <option v-for="unit in units" :key="unit.id" :value="unit.id">
+                {{ unit.name }}
+              </option>
+            </select>
+          </div>
 
-          <label>Picture:</label>
-          <input type="file" @change="handleFileUpload" />
+          <div class="form-group">
+            <label>Picture:</label>
+            <input type="file" @change="handleFileUpload" />
+          </div>
 
           <div class="button-group">
-            <button v-if="deleteButtonIsVisible" type="button" @click="deleteAnimal(formData.id)">
+            <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
+              @click="deleteAnimal(formData.id)">
               Delete
-            </button>
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            </CustomButton>
+            <div class="right-buttons">
+              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+            </div>
           </div>
         </form>
       </div>
@@ -56,6 +80,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -64,11 +89,15 @@
         default: () => ({})
       }
     },
+    components: {
+      CustomButton
+    },
     data() {
       return {
         isVisible: false,
         deleteButtonIsVisible: false,
         units: [],
+        today: new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }),
         formData: {
           id: null,
           name: '',
@@ -138,9 +167,16 @@
         this.resetForm()
         document.removeEventListener('keydown', this.handleKeydown)
       },
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
       handleKeydown(event) {
         if (event.key === 'Escape') {
           this.close()
+        } else if (event.key === 'Enter') {
+          this.submitForm()
         }
       },
       fetchUnits() {
@@ -221,47 +257,5 @@
 </script>
 
 <style scoped>
-  .animal-form-modal {
-    /* flex-direction: column;  */
-    /* row-gap: 1rem; */
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-
-  .animal-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 100%;
-  }
-
-  .button-group {
-    margin-top: 20px;
-    text-align: right;
-  }
-
-  .button-group button {
-    margin-left: 10px;
-  }
-
-  .modal-enter-active,
-  .modal-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .modal-enter,
-  .modal-leave-to {
-    opacity: 0;
-  }
+  @import "@/assets/form-styles.css"
 </style>

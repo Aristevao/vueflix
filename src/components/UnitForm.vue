@@ -1,57 +1,57 @@
 <template>
-  <div v-if="visible" class="modal">
-    <div class="modal-content">
-      <span class="close" @click="close">&times;</span>
+  <div v-if="visible" class="entity-form-modal" @click="handleBackgroundClick">
+    <div class="entity-form" @click.stop>
+      <span class="close-button" @click="close">&times;</span>
       <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
-      <form @submit.prevent="submit">
-        <div>
+      <form @submitForm.prevent="submitForm">
+        <div class="form-group">
           <label for="name">Name</label>
           <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
         </div>
-        <div>
+        <div class="form-group">
           <label for="description">Description</label>
           <textarea v-model="localUnit.description" id="description" maxlength="500"></textarea>
         </div>
-        <div>
+        <div class="form-group">
           <label for="street">Street</label>
           <input type="text" v-model="localUnit.address.street" id="street" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="number">Number</label>
           <input type="text" v-model="localUnit.address.number" id="number" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="district">District</label>
           <input type="text" v-model="localUnit.address.district" id="district" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="complement">Complement</label>
           <input type="text" v-model="localUnit.address.complement" id="complement" />
         </div>
-        <div>
+        <div class="form-group">
           <label for="zipcode">Zipcode</label>
           <input type="text" v-model="localUnit.address.zipcode" id="zipcode" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="city">City</label>
           <input type="text" v-model="localUnit.address.city" id="city" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="state">State</label>
           <input type="text" v-model="localUnit.address.state" id="state" required />
         </div>
-        <div>
+        <div class="form-group">
           <label for="picture">Picture</label>
           <input type="file" @change="handleFileUpload" id="picture" />
         </div>
 
         <div class="button-group">
-          <button class="delete-button" v-if="localUnit.id" type="button" @click="deleteUnit(localUnit.id)">
+          <CustomButton type="red" class="delete-button" v-if="localUnit.id" @click="deleteUnit(localUnit.id)">
             Delete
-          </button>
+          </CustomButton>
           <div class="right-buttons">
-            <button type="submit">Save</button>
-            <button type="button" @click="cancelForm">Cancel</button>
+            <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
+            <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
           </div>
         </div>
       </form>
@@ -61,6 +61,7 @@
 
 <script>
   import apiClient from '../store/apiClient'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     props: {
@@ -68,6 +69,9 @@
         type: Object,
         default: null
       }
+    },
+    components: {
+      CustomButton
     },
     data() {
       return {
@@ -103,15 +107,28 @@
       },
       open() {
         this.visible = true
+        document.addEventListener('keydown', this.handleKeydown)
       },
       close() {
         this.visible = false
         this.$emit('close')
       },
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
+      handleKeydown(event) {
+        if (event.key === 'Escape') {
+          this.close()
+        } else if (event.key === 'Enter') {
+          this.submitForm()
+        }
+      },
       handleFileUpload(event) {
         this.file = event.target.files[0]
       },
-      async submit() {
+      async submitForm() {
         const formData = new FormData()
         formData.append('name', this.localUnit.name)
         formData.append('description', this.localUnit.description)
@@ -161,45 +178,5 @@
 </script>
 
 <style scoped>
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 500px;
-    position: relative;
-  }
-
-  .close {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 24px;
-    cursor: pointer;
-  }
-
-  .button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-
-  .right-buttons button {
-    margin-left: 10px;
-  }
-
-  .delete-button {
-    margin-right: auto;
-  }
+  @import "@/assets/form-styles.css";
 </style>

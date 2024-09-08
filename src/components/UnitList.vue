@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="header">
-      <div class="title">Animais</div>
-      <button @click="openUnitModal" class="add-new-button">Add New</button>
+      <div class="title">Fazendas</div>
+      <CustomButton @click="openUnitModal" type="primary" class="toggle-filters-button">Add New</CustomButton>
     </div>
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">
@@ -20,18 +20,20 @@
         </div>
       </div>
     </div>
-    <UnitModal ref="unitModal" :unit="selectedUnit" @close="selectedUnit = null"
+    <UnitForm ref="unitForm" :unit="selectedUnit" @close="selectedUnit = null"
       @unit-created="fetchFazendasAfterAction" @unit-deleted="fetchFazendasAfterAction" />
   </div>
 </template>
 
 <script>
   import apiClient from '../store/apiClient'
-  import UnitModal from './UnitModal.vue'
+  import UnitForm from './UnitForm.vue'
+  import CustomButton from './CustomButton.vue'
 
   export default {
     components: {
-      UnitModal
+      UnitForm,
+      CustomButton
     },
     data() {
       return {
@@ -69,14 +71,14 @@
         try {
           const response = await apiClient.get(`/unit/${id}`)
           this.selectedUnit = response.data
-          this.$refs.unitModal.open()
+          this.$refs.unitForm.open()
         } catch (error) {
           console.error('Error fetching unit details:', error)
         }
       },
       openUnitModal() {
         this.selectedUnit = null
-        this.$refs.unitModal.open()
+        this.$refs.unitForm.open()
       },
       fetchFazendasAfterAction() {
         this.fetchFazendas()
