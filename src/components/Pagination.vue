@@ -1,12 +1,20 @@
 <template>
   <div class="pagination">
-    <button @click="goToPage(1)" :disabled="currentPage === 1">|&lt;&lt;</button>
-    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">&lt;</button>
+    <button @click="goToPage(1)" :disabled="currentPage === 1">
+      <i class="fa fa-angle-double-left"></i>
+    </button>
+    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1">
+      <i class="fa fa-angle-left"></i>
+    </button>
     <button v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="{ active: currentPage === page }">
       {{ page }}
     </button>
-    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">&gt;</button>
-    <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">&gt;&gt;|</button>
+    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages">
+      <i class="fa fa-angle-right"></i>
+    </button>
+    <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages">
+      <i class="fa fa-angle-double-right"></i>
+    </button>
   </div>
 </template>
 
