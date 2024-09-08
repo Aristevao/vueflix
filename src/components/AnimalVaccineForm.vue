@@ -3,7 +3,7 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
+        <h2>{{ formData.id ? 'Edit Application' : 'Create New Application' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
             <label>Animal:</label>
@@ -36,7 +36,7 @@
           <div class="form-group">
             <label>Next Application Dates:</label>
             <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="right-side-action-button">
-              <input type="date" v-model="formData.nextApplicationDates[index]" :max="today" />
+              <input type="date" v-model="formData.nextApplicationDates[index]" :min="today" />
               <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
             </div>
             <button type="button" @click="addNextApplicationDate">Add Next Application Date</button>
