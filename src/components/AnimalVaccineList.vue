@@ -83,7 +83,7 @@
         filters: {
           animalName: '',
           vaccineName: '',
-          completed: false
+          completed: null
         },
         showFilters: false,
         showAnimalVaccineForm: false
