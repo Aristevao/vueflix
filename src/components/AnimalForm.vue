@@ -1,7 +1,8 @@
 <template>
   <transition name="modal">
-    <div v-if="isVisible" class="entity-form-modal">
-      <div class="entity-form">
+    <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
+      <div class="entity-form" @click.stop>
+        <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
@@ -165,9 +166,16 @@
         this.resetForm()
         document.removeEventListener('keydown', this.handleKeydown)
       },
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
       handleKeydown(event) {
         if (event.key === 'Escape') {
           this.close()
+        } else if (event.key === 'Enter') {
+          this.submitForm()
         }
       },
       fetchUnits() {

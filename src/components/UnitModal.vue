@@ -1,6 +1,6 @@
 <template>
-  <div v-if="visible" class="entity-form-modal">
-    <div class="entity-form">
+  <div v-if="visible" class="entity-form-modal" @click="handleBackgroundClick">
+    <div class="entity-form" @click.stop>
       <span class="close-button" @click="close">&times;</span>
       <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
       <form @submitForm.prevent="submitForm">
@@ -107,10 +107,23 @@
       },
       open() {
         this.visible = true
+        document.addEventListener('keydown', this.handleKeydown)
       },
       close() {
         this.visible = false
         this.$emit('close')
+      },
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
+      handleKeydown(event) {
+        if (event.key === 'Escape') {
+          this.close()
+        } else if (event.key === 'Enter') {
+          this.submitForm()
+        }
       },
       handleFileUpload(event) {
         this.file = event.target.files[0]

@@ -129,6 +129,20 @@
         }
       },
 
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
+
+      handleKeydown(event) {
+        if (event.key === 'Escape') {
+          this.close()
+        } else if (event.key === 'Enter') {
+          this.submitForm()
+        }
+      },
+
       async submitForm() {
         const payload = {
           animal: { id: this.formData.animalId },
