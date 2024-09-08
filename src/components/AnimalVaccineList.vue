@@ -69,7 +69,7 @@
   import AnimalVaccineForm from './AnimalVaccineForm.vue'
 
   export default defineComponent({
-    name: 'VaccineAnimal',
+    name: 'AnimalVaccineList',
     components: {
       Pagination,
       CustomButton,

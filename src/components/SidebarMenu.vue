@@ -35,9 +35,9 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/vaccineAnimal" active-class="active">
-                            <img src="@/assets/calendario.png" alt="Calendar" class="menu-icon" />
-                            <span v-if="!isCollapsed">Calendário</span>
+                        <router-link to="/animalVaccine" active-class="active">
+                            <img src="@/assets/calendario.png" alt="AnimalVaccine" class="menu-icon" />
+                            <span v-if="!isCollapsed">Aplicações</span>
                         </router-link>
                     </li>
                     <li>
