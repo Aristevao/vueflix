@@ -13,10 +13,10 @@
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <input v-model="filters.animalName" placeholder="Filter by Animal Name" class="filter-input" />
+          <input v-model="filters.animalName" placeholder="Animal Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.vaccineName" placeholder="Filter by Vaccine Name" class="filter-input" />
+          <input v-model="filters.vaccineName" placeholder="Vaccine Name" class="filter-input" />
         </div>
         <div class="filter-item">
           <input v-model="filters.completed" type="checkbox" class="filter-checkbox" /> Completed
