@@ -63,8 +63,7 @@
         <tr v-for="animal in animals" :key="animal.id" @click="openAnimalDetails(animal.id)"
           @mouseover="showEllipsis(animal.id)" @mouseleave="hideEllipsis(animal.id)">
           <td class="image-column">
-            <img :src="animal.imageUrl || 'http://loremflickr.com/640/480/animals'" alt="Animal Image" width="50"
-              height="50" />
+            <img :src="getAnimalImage(animal)" alt="Animal Image" width="50" height="50" />
           </td>
           <td class="identification-column">{{ formatIdentification(animal.identification) }}</td>
           <td class="name-column">{{ animal.name }}</td>
@@ -87,6 +86,7 @@
   import Pagination from './Pagination.vue'
   import CustomButton from './CustomButton.vue'
   import AnimalForm from './AnimalForm.vue'
+  import defaultAnimalImage from '@/assets/default-animal.png'
 
   export default defineComponent({
     name: 'AnimalList',
@@ -138,6 +138,9 @@
         } catch (error) {
           console.error('Failed to fetch animals:', error)
         }
+      },
+      getAnimalImage(animal) {
+        return animal.picture ? `data:image/png;base64,${animal.picture}` : defaultAnimalImage
       },
       formatIdentification(identification) {
         if (!isNaN(identification)) {

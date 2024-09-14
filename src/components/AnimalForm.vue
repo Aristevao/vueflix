@@ -4,7 +4,7 @@
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
-        <form @submit.prevent="submitForm" enctype="multipart/form-data">
+        <form @submit.prevent="submitForm">
           <div class="form-group">
             <label>Name:</label>
             <input v-model="formData.name" maxlength="80" />
@@ -58,8 +58,8 @@
           </div>
 
           <div class="form-group">
-            <label>Picture:</label>
-            <input type="file" @change="handleFileUpload" />
+            <label for="picture">Picture:</label>
+            <input type="file" @change="handleFileUpload" id="picture" />
           </div>
 
           <div class="button-group">
@@ -79,18 +79,18 @@
 </template>
 
 <script>
-  import apiClient from '../store/apiClient'
-  import CustomButton from './CustomButton.vue'
+  import apiClient from '../store/apiClient';
+  import CustomButton from './CustomButton.vue';
 
   export default {
     props: {
       animalData: {
         type: Object,
-        default: () => ({})
-      }
+        default: () => ({}),
+      },
     },
     components: {
-      CustomButton
+      CustomButton,
     },
     data() {
       return {
@@ -109,9 +109,10 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null
-        }
-      }
+          picture: null,
+        },
+        base64Picture: '',
+      };
     },
     watch: {
       animalData: {
@@ -129,20 +130,20 @@
               registrationDate: newValue.registrationDate || '',
               description: newValue.description || '',
               unitId: newValue.unit ? newValue.unit.id : '',
-              picture: null
-            }
+              picture: null,
+            };
           }
-        }
-      }
+        },
+      },
     },
     methods: {
       open(animal) {
-        this.isVisible = true
-        this.fetchUnits()
-        document.addEventListener('keydown', this.handleKeydown)
+        this.isVisible = true;
+        this.fetchUnits();
+        document.addEventListener('keydown', this.handleKeydown);
 
         if (animal) {
-          this.deleteButtonIsVisible = true
+          this.deleteButtonIsVisible = true;
 
           this.formData = {
             id: animal.id,
@@ -155,60 +156,68 @@
             registrationDate: animal.registrationDate,
             description: animal.description,
             unitId: animal.unit.id,
-            picture: null
-          }
+            picture: animal.picture,
+          };
         } else {
-          this.resetForm()
+          this.resetForm();
         }
       },
       close() {
-        this.isVisible = false
-        this.deleteButtonIsVisible = false
-        this.resetForm()
-        document.removeEventListener('keydown', this.handleKeydown)
+        this.isVisible = false;
+        this.deleteButtonIsVisible = false;
+        this.resetForm();
+        document.removeEventListener('keydown', this.handleKeydown);
       },
       handleBackgroundClick(event) {
         if (event.target === event.currentTarget) {
-          this.close()
+          this.close();
         }
       },
       handleKeydown(event) {
         if (event.key === 'Escape') {
-          this.close()
+          this.close();
         } else if (event.key === 'Enter') {
-          this.submitForm()
+          this.submitForm();
         }
       },
       fetchUnits() {
         apiClient
           .get('/unit/list')
           .then((response) => {
-            this.units = response.data
+            this.units = response.data;
           })
           .catch((error) => {
-            console.error('Error fetching units:', error)
-          })
+            console.error('Error fetching units:', error);
+          });
       },
       handleFileUpload(event) {
-        this.formData.picture = event.target.files[0]
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.base64Picture = reader.result.split(',')[1]; // Convert to base64 and remove prefix
+          };
+          reader.readAsDataURL(file);
+        }
       },
       async submitForm() {
-        const formData = new FormData()
-        formData.append('name', this.formData.name)
-        formData.append('identification', this.formData.identification)
-        formData.append('specie', this.formData.specie)
-        formData.append('breed', this.formData.breed)
-        formData.append('sex', this.formData.sex)
-        formData.append('birthdate', this.formData.birthdate)
-        formData.append('registrationDate', this.formData.registrationDate)
-        formData.append('description', this.formData.description)
-        formData.append('unit.id', this.formData.unitId)
-        if (this.formData.picture) {
-          formData.append('picture', this.formData.picture)
+        const formData = new FormData();
+        formData.append('name', this.formData.name);
+        formData.append('identification', this.formData.identification);
+        formData.append('specie', this.formData.specie);
+        formData.append('breed', this.formData.breed);
+        formData.append('sex', this.formData.sex);
+        formData.append('birthdate', this.formData.birthdate);
+        formData.append('registrationDate', this.formData.registrationDate);
+        formData.append('description', this.formData.description);
+        formData.append('unit.id', this.formData.unitId);
+
+        if (this.base64Picture) {
+          formData.append('picture', this.base64Picture);
         }
 
-        const url = this.formData.id ? `/animal/${this.formData.id}` : '/animal'
-        const method = this.formData.id ? 'put' : 'post'
+        const url = this.formData.id ? `/animal/${this.formData.id}` : '/animal';
+        const method = this.formData.id ? 'put' : 'post';
 
         try {
           const response = await apiClient({
@@ -216,26 +225,26 @@
             url,
             data: formData,
             headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          })
-          this.$emit('animal-created', response.data)
-          this.close()
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          this.$emit('animal-created', response.data);
+          this.close();
         } catch (error) {
-          console.error('Error creating animal:', error)
+          console.error('Error creating animal:', error);
         }
       },
       async deleteAnimal(animalId) {
         try {
-          await apiClient.delete(`/animal/${animalId}`)
-          this.$emit('animal-deleted', animalId)
-          this.close()
+          await apiClient.delete(`/animal/${animalId}`);
+          this.$emit('animal-deleted', animalId);
+          this.close();
         } catch (error) {
-          console.error('Error deleting animal:', error)
+          console.error('Error deleting animal:', error);
         }
       },
       cancelForm() {
-        this.close()
+        this.close();
       },
       resetForm() {
         this.formData = {
@@ -249,13 +258,14 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null
-        }
-      }
-    }
-  }
+          picture: null,
+        };
+        this.base64Picture = '';
+      },
+    },
+  };
 </script>
 
 <style scoped>
-  @import "@/assets/form-styles.css"
+  @import "@/assets/form-styles.css";
 </style>
