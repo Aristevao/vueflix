@@ -34,6 +34,7 @@
           <th class="title-column">Title</th>
           <th class="message-column">Message</th>
           <th class="date-column">Date</th>
+          <th class="action-column">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -41,10 +42,9 @@
           <td class="title-column">{{ notification.title }}</td>
           <td class="message-column">{{ notification.message }}</td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
-          <td>
-            <CustomButton v-if="!notification.isRead" @click="markAsRead(notification.id)" type="secondary">
-              Mark as Read
-            </CustomButton>
+          <td class="action-column">
+            <i v-if="!notification.isRead" class="fa fa-check mark-read-icon" @click="markAsRead(notification.id)"
+              title="Mark as Read"></i>
           </td>
         </tr>
       </tbody>
@@ -141,6 +141,8 @@
 </script>
 
 <style scoped>
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -203,5 +205,20 @@
 
   .date-column {
     width: 20%;
+  }
+
+  .action-column {
+    width: 10%;
+    text-align: center;
+  }
+
+  .mark-read-icon {
+    color: #4caf50;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+
+  .mark-read-icon:hover {
+    color: #388e3c;
   }
 </style>
