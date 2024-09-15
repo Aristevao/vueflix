@@ -50,11 +50,11 @@
 
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
 
-    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+    <div v-if="showModal" class="modal-overlay" @click="close">
       <div class="modal-content" @click.stop>
         <h3>{{ selectedNotification.title }}</h3>
         <p>{{ selectedNotification.message }}</p>
-        <button @click="closeModal">Close</button>
+        <button @click="close">Close</button>
       </div>
     </div>
   </div>
@@ -106,7 +106,7 @@
       },
       async markAsRead(notificationId) {
         try {
-          await apiClient.post(`/notification/${notificationId}/markAsRead`)
+          await apiClient.patch(`/notification/${notificationId}/markAsRead`)
           this.fetchNotifications()
         } catch (error) {
           console.error('Error marking notification as read:', error)
@@ -114,7 +114,7 @@
       },
       async markAllAsRead() {
         try {
-          await apiClient.post('/notification/markAllAsRead')
+          await apiClient.patch('/notification/markAllAsRead')
           this.fetchNotifications()
         } catch (error) {
           console.error('Error marking all notifications as read:', error)
@@ -148,13 +148,26 @@
         return message.length > 45 ? message.substring(0, 45) + '...' : message
       },
       openNotificationModal(notification) {
+        this.markAsRead(notification.id)
+
         this.selectedNotification = notification
         this.showModal = true
+        document.addEventListener('keydown', this.handleKeydown)
       },
-      closeModal() {
+      close() {
         this.showModal = false
         this.selectedNotification = null
       },
+      handleBackgroundClick(event) {
+        if (event.target === event.currentTarget) {
+          this.close()
+        }
+      },
+      handleKeydown(event) {
+        if (event.key === 'Escape' || event.key === 'Enter') {
+          this.close()
+        }
+      }
     },
   })
 </script>
