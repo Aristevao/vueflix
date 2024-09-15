@@ -35,12 +35,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.isRead }">
+        <tr v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.isRead }"
+          @click="openNotificationModal(notification)">
           <td class="title-column">{{ notification.title }}</td>
-          <td class="message-column">{{ notification.message }}</td>
+          <td class="message-column">{{ truncateMessage(notification.message) }}</td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
           <td class="action-column">
-            <i v-if="!notification.isRead" class="fa fa-check mark-read-icon" @click="markAsRead(notification.id)"
+            <i v-if="!notification.isRead" class="fa fa-check mark-read-icon" @click.stop="markAsRead(notification.id)"
               title="Mark as Read"></i>
           </td>
         </tr>
@@ -48,6 +49,14 @@
     </table>
 
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
+
+    <div v-if="showModal" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <h3>{{ selectedNotification.title }}</h3>
+        <p>{{ selectedNotification.message }}</p>
+        <button @click="closeModal">Close</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,6 +81,8 @@
           isRead: '',
         },
         showFilters: false,
+        showModal: false,
+        selectedNotification: null,
       }
     },
     mounted() {
@@ -132,6 +143,17 @@
       },
       toggleFilters() {
         this.showFilters = !this.showFilters
+      },
+      truncateMessage(message) {
+        return message.length > 45 ? message.substring(0, 45) + '...' : message
+      },
+      openNotificationModal(notification) {
+        this.selectedNotification = notification
+        this.showModal = true
+      },
+      closeModal() {
+        this.showModal = false
+        this.selectedNotification = null
       },
     },
   })
@@ -198,6 +220,9 @@
 
   .message-column {
     width: 40%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .date-column {
@@ -221,5 +246,29 @@
 
   .unread {
     font-weight: bold;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+  }
+
+  .modal-content button {
+    margin-top: 10px;
   }
 </style>
