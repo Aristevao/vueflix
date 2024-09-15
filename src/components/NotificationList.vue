@@ -13,9 +13,6 @@
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <label><input type="radio" v-model="filters.isRead" value="">All</label>
-        </div>
-        <div class="filter-item">
           <label><input type="radio" v-model="filters.isRead" :value="false">Unread</label>
         </div>
         <div class="filter-item">
