@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="notification in notifications" :key="notification.id">
+        <tr v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.isRead }">
           <td class="title-column">{{ notification.title }}</td>
           <td class="message-column">{{ notification.message }}</td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
@@ -217,5 +217,9 @@
 
   .mark-read-icon:hover {
     color: #388e3c;
+  }
+
+  .unread {
+    font-weight: bold;
   }
 </style>
