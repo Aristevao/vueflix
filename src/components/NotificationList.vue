@@ -6,17 +6,20 @@
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
           {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
         </CustomButton>
-        <CustomButton @click="markAllAsRead" type="primary" class="mark-all-read-button">Mark All as Read</CustomButton>
+        <CustomButton @click="markAllAsRead" type="primary" class="mark-all-read-button">
+          Mark All as Read
+        </CustomButton>
       </div>
     </div>
 
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <label><input type="radio" v-model="filters.isRead" :value="false">Unread</label>
-        </div>
-        <div class="filter-item">
-          <label><input type="radio" v-model="filters.isRead" :value="true">Read</label>
+          <select v-model="filterStatus" class="filter-input">
+            <option value="">All</option>
+            <option value="true">Read</option>
+            <option value="false">Unread</option>
+          </select>
         </div>
       </div>
       <div class="filter-buttons">
@@ -31,18 +34,24 @@
           <th class="title-column">Title</th>
           <th class="message-column">Message</th>
           <th class="date-column">Date</th>
-          <th class="action-column">Action</th>
+          <th class="read-column">Action</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.isRead }"
           @click="openNotificationModal(notification)">
           <td class="title-column">{{ notification.title }}</td>
-          <td class="message-column">{{ truncateMessage(notification.message) }}</td>
+          <td class="message-column">
+            <div class="message-text">
+              {{ truncateMessage(notification.message) }}
+            </div>
+          </td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
-          <td class="action-column">
-            <i v-if="!notification.isRead" class="fa fa-check mark-read-icon" @click.stop="markAsRead(notification.id)"
-              title="Mark as Read"></i>
+          <td class="read-column">
+            <span @click.stop="markAsRead(notification.id)">
+              <i class="fa fa-check-circle"
+                :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }"></i>
+            </span>
           </td>
         </tr>
       </tbody>
@@ -50,13 +59,7 @@
 
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-change="handlePageChange" />
 
-    <div v-if="showModal" class="modal-overlay" @click="close">
-      <div class="modal-content" @click.stop>
-        <h3>{{ selectedNotification.title }}</h3>
-        <p>{{ selectedNotification.message }}</p>
-        <CustomButton type="secondary" class="right-buttons" @click="close">Close</CustomButton>
-      </div>
-    </div>
+    <NotificationModal v-if="showModal" :notification="selectedNotification" @close="showModal = false" />
   </div>
 </template>
 
@@ -65,24 +68,24 @@
   import apiClient from '../store/apiClient'
   import Pagination from './Pagination.vue'
   import CustomButton from './CustomButton.vue'
+  import NotificationModal from './NotificationModal.vue'
 
   export default defineComponent({
     name: 'NotificationList',
     components: {
       Pagination,
       CustomButton,
+      NotificationModal
     },
     data() {
       return {
         notifications: [],
         currentPage: 1,
         totalPages: 0,
-        filters: {
-          isRead: '',
-        },
+        filterStatus: '',
         showFilters: false,
         showModal: false,
-        selectedNotification: null,
+        selectedNotification: null
       }
     },
     mounted() {
@@ -95,8 +98,9 @@
             params: {
               page: this.currentPage - 1,
               size: 10,
-              isRead: this.filters.isRead,
-            },
+              sort: 'createdAt,desc',
+              isRead: this.filterStatus
+            }
           })
           this.notifications = response.data.content
           this.totalPages = response.data.totalPages
@@ -107,7 +111,9 @@
       async markAsRead(notificationId) {
         try {
           await apiClient.patch(`/notification/${notificationId}/markAsRead`)
-          this.fetchNotifications()
+          this.notifications = this.notifications.map(notification =>
+            notification.id === notificationId ? { ...notification, isRead: true } : notification
+          )
         } catch (error) {
           console.error('Error marking notification as read:', error)
         }
@@ -115,66 +121,51 @@
       async markAllAsRead() {
         try {
           await apiClient.patch('/notification/markAllAsRead')
-          this.fetchNotifications()
+          this.notifications = this.notifications.map(notification => ({ ...notification, isRead: true }))
         } catch (error) {
           console.error('Error marking all notifications as read:', error)
         }
+      },
+      formatDate(date) {
+        return new Date(date).toLocaleString('pt-BR', { timeZone: 'UTC', hour12: false })
+      },
+      truncateMessage(message) {
+        return message.length > 100 ? `${message.substring(0, 100)}...` : message
+      },
+      openNotificationModal(notification) {
+        this.selectedNotification = notification
+        this.showModal = true
+        if (!notification.isRead) {
+          this.markAsRead(notification.id)
+        }
+        document.addEventListener('keydown', this.handleKeydown)
+      },
+      clearFilters() {
+        this.filterStatus = ''
+        this.fetchNotifications()
       },
       handlePageChange(newPage) {
         this.currentPage = newPage
         this.fetchNotifications()
       },
-      formatDate(dateString) {
-        const date = new Date(dateString)
-        const day = date.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        })
-        const time = date.toLocaleTimeString('pt-BR', {
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-        return `${day} ${time}`
-      },
-      clearFilters() {
-        this.filters.isRead = ''
-        this.fetchNotifications()
-      },
       toggleFilters() {
         this.showFilters = !this.showFilters
       },
-      truncateMessage(message) {
-        return message.length > 45 ? message.substring(0, 45) + '...' : message
-      },
-      openNotificationModal(notification) {
-        this.markAsRead(notification.id)
-
-        this.selectedNotification = notification
-        this.showModal = true
-        document.addEventListener('keydown', this.handleKeydown)
-      },
-      close() {
-        this.showModal = false
-        this.selectedNotification = null
-      },
       handleBackgroundClick(event) {
         if (event.target === event.currentTarget) {
-          this.close()
+          this.showModal = false
         }
       },
       handleKeydown(event) {
         if (event.key === 'Escape' || event.key === 'Enter') {
-          this.close()
+          this.showModal = false
         }
       }
-    },
+    }
   })
 </script>
 
 <style scoped>
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-
   .header {
     display: flex;
     justify-content: space-between;
@@ -191,18 +182,35 @@
   .button-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 4px;
+  }
+
+  .toggle-filters-button {
+    margin-bottom: 10px;
+  }
+
+  .mark-all-read-button {
+    margin-bottom: 10px;
   }
 
   .filters {
     margin-bottom: 10px;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
+    justify-content: left;
   }
 
   .filter-item {
     display: flex;
     align-items: center;
+  }
+
+  .filter-input {
+    width: 100%;
+    max-width: 150px;
+    padding: 5px;
+    box-sizing: border-box;
   }
 
   .filter-buttons {
@@ -213,7 +221,8 @@
 
   .notification-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0px 0;
     font-family: sans-serif;
   }
 
@@ -227,67 +236,27 @@
     background-color: #f9f9f9;
   }
 
-  .title-column {
-    width: 30%;
-  }
-
-  .message-column {
-    width: 40%;
-    white-space: nowrap;
+  .notification-table .message-column .message-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .date-column {
-    width: 20%;
-  }
-
-  .action-column {
-    width: 10%;
-    text-align: center;
-  }
-
-  .mark-read-icon {
-    color: #4caf50;
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-
-  .mark-read-icon:hover {
-    color: #388e3c;
-  }
-
-  .unread {
+  .notification-table .unread {
     font-weight: bold;
   }
 
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .read-icon {
+    color: green;
   }
 
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 80%;
-    max-width: 600px;
+  .unread-icon {
+    color: red;
   }
 
-  .modal-content button {
-    margin-top: 10px;
-  }
-
-  .right-buttons {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
+  .notification-table .date-column {
+    width: 150px;
   }
 </style>
