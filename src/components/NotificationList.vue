@@ -54,7 +54,7 @@
       <div class="modal-content" @click.stop>
         <h3>{{ selectedNotification.title }}</h3>
         <p>{{ selectedNotification.message }}</p>
-        <button @click="close">Close</button>
+        <CustomButton type="secondary" class="right-buttons" @click="close">Close</CustomButton>
       </div>
     </div>
   </div>
@@ -283,5 +283,11 @@
 
   .modal-content button {
     margin-top: 10px;
+  }
+
+  .right-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
   }
 </style>
