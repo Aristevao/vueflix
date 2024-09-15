@@ -182,7 +182,7 @@
   .button-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 15px;
   }
 
   .toggle-filters-button {
