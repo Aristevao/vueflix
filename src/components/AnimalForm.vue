@@ -58,9 +58,10 @@
           </div>
 
           <div class="form-group">
-            <label for="picture">Foto</label>
-            <input type="file" @change="handleFileUpload" id="picture" />
+            <label>Foto</label>
           </div>
+          <label ref="fileLabel" for="fileInput" class="file-label">{{ fileLabelText }}</label>
+          <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
@@ -112,6 +113,7 @@
           picture: null,
         },
         base64Picture: '',
+        fileLabelText: 'Selecionar Foto', // Default label text
       };
     },
     watch: {
@@ -135,6 +137,17 @@
           }
         },
       },
+    },
+    mounted() {
+      const fileInput = this.$refs.fileInput;
+      const fileLabel = this.$refs.fileLabel;
+
+      if (fileInput) {
+        fileInput.addEventListener("change", () => {
+          const fileName = fileInput.files[0]?.name || "No file chosenssdasd";
+          fileLabel.textContent = fileName;
+        });
+      }
     },
     methods: {
       open(animal) {
@@ -161,12 +174,39 @@
         } else {
           this.resetForm();
         }
+
+        // Reset the file input and label when modal is opened
+        this.$nextTick(() => {
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
       close() {
         this.isVisible = false;
         this.deleteButtonIsVisible = false;
         this.resetForm();
-        document.removeEventListener('keydown', this.handleKeydown);
+
+        this.$nextTick(() => {
+          // Reset the file input and label text when closing the modal
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
       handleBackgroundClick(event) {
         if (event.target === event.currentTarget) {
@@ -179,6 +219,10 @@
         } else if (event.key === 'Enter') {
           this.submitForm();
         }
+      },
+      updateFileLabel(event) {
+        const fileName = event.target.files[0]?.name || 'Nenhum arquivo escolhido';
+        this.fileLabelText = fileName;
       },
       fetchUnits() {
         apiClient
@@ -261,6 +305,20 @@
           picture: null,
         };
         this.base64Picture = '';
+
+        this.$nextTick(() => {
+          // Clear file input and label text
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
     },
   };
@@ -268,4 +326,24 @@
 
 <style scoped>
   @import "@/assets/form-styles.css";
+
+  .file-input {
+    display: none;
+    /* Hide default file input */
+  }
+
+  .file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .file-label:hover {
+    background-color: #0056b3;
+  }
+
 </style>
