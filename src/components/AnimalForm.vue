@@ -63,6 +63,11 @@
           <label ref="fileLabel" for="fileInput" class="file-label">{{ fileLabelText }}</label>
           <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
 
+          <!-- Previsualização da imagem -->
+          <div v-if="base64Picture || formData.picture" class="image-preview">
+            <img :src="'data:image/png;base64,' + (base64Picture || formData.picture)" alt="Pré-visualização" />
+          </div>
+
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteAnimal(formData.id)">
@@ -110,9 +115,9 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null,
+          picture: null, // A imagem inicial pode vir aqui
         },
-        base64Picture: '',
+        base64Picture: '', // A imagem base64 que será exibida na pré-visualização
         fileLabelText: 'Selecionar Foto', // Default label text
       };
     },
@@ -132,8 +137,9 @@
               registrationDate: newValue.registrationDate || '',
               description: newValue.description || '',
               unitId: newValue.unit ? newValue.unit.id : '',
-              picture: null,
+              picture: newValue.picture || null, // Definindo a imagem inicial aqui
             };
+            this.base64Picture = ''; // Resetando a imagem base64
           }
         },
       },
@@ -144,7 +150,7 @@
 
       if (fileInput) {
         fileInput.addEventListener("change", () => {
-          const fileName = fileInput.files[0]?.name || "No file chosenssdasd";
+          const fileName = fileInput.files[0]?.name || "Nenhum arquivo escolhido";
           fileLabel.textContent = fileName;
         });
       }
@@ -223,6 +229,7 @@
       updateFileLabel(event) {
         const fileName = event.target.files[0]?.name || 'Nenhum arquivo escolhido';
         this.fileLabelText = fileName;
+        this.handleFileUpload(event);
       },
       fetchUnits() {
         apiClient
@@ -256,8 +263,11 @@
         formData.append('description', this.formData.description);
         formData.append('unit.id', this.formData.unitId);
 
+        // Append the picture, if selected
         if (this.base64Picture) {
           formData.append('picture', this.base64Picture);
+        } else if (this.formData.picture) {
+          formData.append('picture', this.formData.picture);
         }
 
         const url = this.formData.id ? `/animal/${this.formData.id}` : '/animal';
@@ -329,7 +339,6 @@
 
   .file-input {
     display: none;
-    /* Hide default file input */
   }
 
   .file-label {
@@ -346,4 +355,15 @@
     background-color: #0056b3;
   }
 
+  .image-preview {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 </style>
