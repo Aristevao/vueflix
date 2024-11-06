@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="header">
-      <div class="title">Vaccines</div>
+      <div class="title">Vacinas</div>
       <div class="button-group">
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+          {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
-        <CustomButton @click="openVaccineForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+        <CustomButton @click="openVaccineForm" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
       </div>
     </div>
 
@@ -16,12 +16,12 @@
           <input v-model="filters.name" placeholder="Name" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.description" placeholder="Description" class="filter-input" />
+          <input v-model="filters.description" placeholder="Descrição" class="filter-input" />
         </div>
       </div>
       <div class="filter-buttons">
-        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
-        <CustomButton @click="fetchVaccines" type="primary">Apply Filters</CustomButton>
+        <CustomButton @click="clearFilters" type="secondary">Limpar Filtros</CustomButton>
+        <CustomButton @click="fetchVaccines" type="primary">Aplicar Filtros</CustomButton>
       </div>
     </div>
 
@@ -30,9 +30,9 @@
     <table class="vaccine-table">
       <thead>
         <tr>
-          <th class="name-column">Name</th>
-          <th class="species-column">Species</th>
-          <th class="description-column">Description</th>
+          <th class="name-column">Nome</th>
+          <th class="species-column">Categorias</th>
+          <th class="description-column">Descrição</th>
         </tr>
       </thead>
       <tbody>

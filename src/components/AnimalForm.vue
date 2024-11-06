@@ -3,53 +3,53 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
+        <h2>{{ formData.id ? 'Editar Animal' : 'Criar Novo Animal' }}</h2>
         <form @submit.prevent="submitForm">
           <div class="form-group">
-            <label>Name:</label>
+            <label>Nome</label>
             <input v-model="formData.name" maxlength="80" />
           </div>
 
           <div class="form-group">
-            <label>Identification:</label>
+            <label>Identificador</label>
             <input v-model="formData.identification" required maxlength="80" />
           </div>
 
           <div class="form-group">
-            <label>Specie:</label>
+            <label>Categoria</label>
             <input v-model="formData.specie" maxlength="80" />
           </div>
 
           <div class="form-group">
-            <label>Breed:</label>
+            <label>Raça</label>
             <input v-model="formData.breed" maxlength="80" />
           </div>
 
           <div class="form-group">
-            <label>Sex:</label>
+            <label>Sexo</label>
             <select v-model="formData.sex">
-              <option>MALE</option>
-              <option>FEMALE</option>
+              <option>Macho</option>
+              <option>Fêmea</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label>Birthdate:</label>
+            <label>Data de Nascimento</label>
             <input type="date" v-model="formData.birthdate" :max="today" />
           </div>
 
           <div class="form-group">
-            <label>Registration Date:</label>
+            <label>Data de Registro</label>
             <input type="date" v-model="formData.registrationDate" :max="today" />
           </div>
 
           <div class="form-group">
-            <label>Description:</label>
+            <label>Descrição</label>
             <textarea v-model="formData.description" maxlength="500"></textarea>
           </div>
 
           <div class="form-group">
-            <label>Unit:</label>
+            <label>Fazenda</label>
             <select v-model="formData.unitId" required>
               <option v-for="unit in units" :key="unit.id" :value="unit.id">
                 {{ unit.name }}
@@ -58,18 +58,18 @@
           </div>
 
           <div class="form-group">
-            <label for="picture">Picture:</label>
+            <label for="picture">Foto</label>
             <input type="file" @change="handleFileUpload" id="picture" />
           </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteAnimal(formData.id)">
-              Delete
+              Remover
             </CustomButton>
             <div class="right-buttons">
-              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+              <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
             </div>
           </div>
         </form>

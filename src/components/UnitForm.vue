@@ -2,46 +2,46 @@
   <div v-if="visible" class="entity-form-modal" @click="handleBackgroundClick">
     <div class="entity-form" @click.stop>
       <span class="close-button" @click="close">&times;</span>
-      <h2>{{ localUnit.id ? 'Edit' : 'Add' }} Unit</h2>
+      <h2>{{ localUnit.id ? 'Editar' : 'Adicionar' }} Fazenda</h2>
       <form @submitForm.prevent="submitForm">
         <div class="form-group">
-          <label for="name">Name</label>
+          <label for="name">Nome</label>
           <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
         </div>
         <div class="form-group">
-          <label for="description">Description</label>
+          <label for="description">Descrição</label>
           <textarea v-model="localUnit.description" id="description" maxlength="500"></textarea>
         </div>
         <div class="form-group">
-          <label for="street">Street</label>
+          <label for="street">Rua</label>
           <input type="text" v-model="localUnit.address.street" id="street" required />
         </div>
         <div class="form-group">
-          <label for="number">Number</label>
+          <label for="number">Número</label>
           <input type="text" v-model="localUnit.address.number" id="number" required />
         </div>
         <div class="form-group">
-          <label for="district">District</label>
+          <label for="district">Bairro</label>
           <input type="text" v-model="localUnit.address.district" id="district" required />
         </div>
         <div class="form-group">
-          <label for="complement">Complement</label>
+          <label for="complement">Complemento</label>
           <input type="text" v-model="localUnit.address.complement" id="complement" />
         </div>
         <div class="form-group">
-          <label for="zipcode">Zipcode</label>
+          <label for="zipcode">CEP</label>
           <input type="text" v-model="localUnit.address.zipcode" id="zipcode" required />
         </div>
         <div class="form-group">
-          <label for="city">City</label>
+          <label for="city">Cidade</label>
           <input type="text" v-model="localUnit.address.city" id="city" required />
         </div>
         <div class="form-group">
-          <label for="state">State</label>
+          <label for="state">Estado</label>
           <input type="text" v-model="localUnit.address.state" id="state" required />
         </div>
         <div class="form-group">
-          <label for="picture">Picture</label>
+          <label for="picture">Foto</label>
           <input type="file" @change="handleFileUpload" id="picture" />
         </div>
 
@@ -50,8 +50,8 @@
             Delete
           </CustomButton>
           <div class="right-buttons">
-            <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-            <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+            <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+            <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
           </div>
         </div>
       </form>

@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <h2 v-if="!isCreatingAccount">Login</h2>
-    <h3 v-if="isCreatingAccount">Create Account</h3>
+    <h3 v-if="isCreatingAccount">Criar Conta</h3>
 
     <!-- Login Form -->
     <form v-if="!isCreatingAccount" @submit.prevent="login">
@@ -11,7 +11,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Password:</label>
+        <label for="password">Senha:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
 
@@ -21,35 +21,35 @@
     <!-- Create Account Form -->
     <form v-if="isCreatingAccount" @submit.prevent="createAccount">
       <div class="form-group">
-        <label for="name">Name:</label>
+        <label for="name">Nome </label>
         <input type="text" id="name" v-model="newUser.name" required maxlength="80" />
         <small v-if="validationErrors.name">{{ validationErrors.name }}</small>
       </div>
 
       <div class="form-group">
-        <label for="newEmail">E-mail:</label>
+        <label for="newEmail">E-mail </label>
         <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" />
         <small v-if="validationErrors.email">{{ validationErrors.email }}</small>
       </div>
 
       <div class="form-group">
-        <label for="phone">Phone:</label>
+        <label for="phone">Telefone </label>
         <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16" />
         <small v-if="validationErrors.phone">{{ validationErrors.phone }}</small>
       </div>
 
       <div class="form-group">
-        <label for="birthdate">Birthdate:</label>
+        <label for="birthdate">Data de nascimento </label>
         <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
       </div>
 
       <div class="form-group">
-        <label for="newPassword">Password:</label>
+        <label for="newPassword">Senha </label>
         <input type="password" id="newPassword" v-model="newUser.password" required />
       </div>
 
       <div class="form-group">
-        <label>Choose a Preset Profile Picture:</label>
+        <label>Escolha uma foto predefinida </label>
         <div class="preset-images">
           <div v-for="(image, index) in presetImages" :key="index" class="preset-image-container">
             <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
@@ -61,7 +61,7 @@
       </div>
 
       <div class="form-group">
-        <label for="upload-picture">Or Upload Your Own Profile Picture:</label>
+        <label for="upload-picture">Ou escolha uma foto própria</label>
         <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
       </div>
 
@@ -70,14 +70,14 @@
           class="profile-picture-preview" />
       </div>
 
-      <button type="submit">Create Account</button>
+      <button type="submit">Criar Conta</button>
     </form>
 
     <!-- Actions -->
     <div class="actions">
-      <button @click="recoverPassword" v-if="!isCreatingAccount">Recover Password</button>
+      <button @click="recoverPassword" v-if="!isCreatingAccount">Recuperar Senha</button>
       <button @click="toggleForm">
-        {{ isCreatingAccount ? 'Back to Login' : 'Create an Account' }}
+        {{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta' }}
       </button>
     </div>
   </div>

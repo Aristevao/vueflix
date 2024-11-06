@@ -3,10 +3,10 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Application' : 'Create New Application' }}</h2>
+        <h2>{{ formData.id ? 'Editar Aplicação' : 'Criar Nova Aplicação' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
-            <label>Animal:</label>
+            <label>Animal</label>
             <select v-model="formData.animalId" required>
               <option v-for="animal in animals" :key="animal.id" :value="animal.id">
                 {{ animal.name }}
@@ -15,7 +15,7 @@
           </div>
 
           <div class="form-group">
-            <label>Vaccine:</label>
+            <label>Vacina</label>
             <select v-model="formData.vaccineId" required>
               <option v-for="vaccine in vaccines" :key="vaccine.id" :value="vaccine.id">
                 {{ vaccine.name }}
@@ -24,32 +24,32 @@
           </div>
 
           <div class="form-completed">
-            <label>Completed:</label>
+            <label>Completo</label>
             <input type="checkbox" v-model="formData.completed" />
           </div>
 
           <div class="form-group">
-            <label>Application Date:</label>
+            <label>Data de Aplicação</label>
             <input type="date" v-model="formData.applicationDate" :max="today" />
           </div>
 
           <div class="form-group">
-            <label>Next Application Dates:</label>
+            <label>Próximas Aplicações</label>
             <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="right-side-action-button">
               <input type="date" v-model="formData.nextApplicationDates[index]" :min="today" />
-              <button type="button" @click="removeNextApplicationDate(index)">Remove</button>
+              <button type="button" @click="removeNextApplicationDate(index)">Remover</button>
             </div>
-            <button type="button" @click="addNextApplicationDate">Add Next Application Date</button>
+            <button type="button" @click="addNextApplicationDate">Adicionar</button>
           </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
-              Delete
+              Remover
             </CustomButton>
             <div class="right-buttons">
-              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+              <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
             </div>
           </div>
         </form>

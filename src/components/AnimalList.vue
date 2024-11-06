@@ -4,9 +4,9 @@
       <div class="title">Animais</div>
       <div class="button-group">
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+          {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
-        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
       </div>
     </div>
 
@@ -16,31 +16,31 @@
           <input v-model="filters.identification" placeholder="ID" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.name" placeholder="Name" class="filter-input" />
+          <input v-model="filters.name" placeholder="Nome" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.specie" placeholder="Species" class="filter-input" />
+          <input v-model="filters.specie" placeholder="Categoria" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.breed" placeholder="Breed" class="filter-input" />
+          <input v-model="filters.breed" placeholder="Raça" class="filter-input" />
         </div>
         <div class="filter-item">
           <select v-model="filters.sex" class="filter-input">
-            <option value="">Sex</option>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
+            <option value="">Sexo</option>
+            <option value="MALE">Macho</option>
+            <option value="FEMALE">Fêmea</option>
           </select>
         </div>
         <div class="filter-item">
-          <input v-model="filters.birthdate" placeholder="Age" class="filter-input" />
+          <input v-model="filters.birthdate" placeholder="Idade" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.registrationDate" placeholder="Registration Date" class="filter-input" />
+          <input v-model="filters.registrationDate" placeholder="Data de Registro" class="filter-input" />
         </div>
       </div>
       <div class="filter-buttons">
-        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
-        <CustomButton @click="fetchAnimals" type="primary">Apply Filters</CustomButton>
+        <CustomButton @click="clearFilters" type="secondary">Limpar Filtros</CustomButton>
+        <CustomButton @click="fetchAnimals" type="primary">Aplicar Filtros</CustomButton>
       </div>
     </div>
 
@@ -51,12 +51,12 @@
         <tr>
           <th class="image-column"></th>
           <th class="identification-column">ID</th>
-          <th class="name-column">Name</th>
-          <th class="specie-column">Specie</th>
-          <th class="breed-column">Breed</th>
-          <th class="sex-column">Sex</th>
-          <th class="age-column">Age</th>
-          <th class="registration-date-column">Registration Date</th>
+          <th class="name-column">Nome</th>
+          <th class="specie-column">Categoria</th>
+          <th class="breed-column">Raça</th>
+          <th class="sex-column">Sexo</th>
+          <th class="age-column">Idade</th>
+          <th class="registration-date-column">Data de Registro</th>
         </tr>
       </thead>
       <tbody>
@@ -160,7 +160,7 @@
         if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
           age--
         }
-        return `${age} year${age !== 1 ? 's' : ''}`
+        return `${age} ano${age !== 1 ? 's' : ''}`
       },
       clearFilters() {
         this.filters.identification = ''

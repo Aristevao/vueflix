@@ -4,10 +4,10 @@
       <div class="title">Notifications</div>
       <div class="button-group">
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+          {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
         <CustomButton @click="markAllAsRead" type="primary" class="mark-all-read-button">
-          Mark All as Read
+          Marcar Todas como Lida
         </CustomButton>
       </div>
     </div>
@@ -16,25 +16,25 @@
       <div class="filters">
         <div class="filter-item">
           <select v-model="filterStatus" class="filter-input">
-            <option value="">All</option>
-            <option value="true">Read</option>
-            <option value="false">Unread</option>
+            <option value="">Todas</option>
+            <option value="true">Lidas</option>
+            <option value="false">Não lidas</option>
           </select>
         </div>
       </div>
       <div class="filter-buttons">
-        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
-        <CustomButton @click="fetchNotifications" type="primary">Apply Filters</CustomButton>
+        <CustomButton @click="clearFilters" type="secondary">Limpar Filtros</CustomButton>
+        <CustomButton @click="fetchNotifications" type="primary">Aplicar Filtros</CustomButton>
       </div>
     </div>
 
     <table class="notification-table">
       <thead>
         <tr>
-          <th class="title-column">Title</th>
-          <th class="message-column">Message</th>
-          <th class="date-column">Date</th>
-          <th class="read-column">Action</th>
+          <th class="title-column">Título</th>
+          <th class="message-column">Mensagem</th>
+          <th class="date-column">Data</th>
+          <th class="read-column">Ação</th>
         </tr>
       </thead>
       <tbody>

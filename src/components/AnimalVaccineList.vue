@@ -4,27 +4,27 @@
       <div class="title">Aplicações</div>
       <div class="button-group">
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+          {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
-        <CustomButton @click="openAnimalVaccineForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+        <CustomButton @click="openAnimalVaccineForm" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
       </div>
     </div>
 
     <div v-if="showFilters">
       <div class="filters">
         <div class="filter-item">
-          <input v-model="filters.animalName" placeholder="Animal Name" class="filter-input" />
+          <input v-model="filters.animalName" placeholder="Nome do animal" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.vaccineName" placeholder="Vaccine Name" class="filter-input" />
+          <input v-model="filters.vaccineName" placeholder="Nome da vacina" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.completed" type="checkbox" class="filter-checkbox" /> Completed
+          <input v-model="filters.completed" type="checkbox" class="filter-checkbox" /> Completa
         </div>
       </div>
       <div class="filter-buttons">
-        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
-        <CustomButton @click="fetchVaccines" type="primary">Apply Filters</CustomButton>
+        <CustomButton @click="clearFilters" type="secondary">Limpar Filtros</CustomButton>
+        <CustomButton @click="fetchVaccines" type="primary">Aplicar Filtros</CustomButton>
       </div>
     </div>
 
@@ -34,11 +34,11 @@
     <table class="animalVaccine-table">
       <thead>
         <tr>
-          <th class="name-column">Animal Name</th>
-          <th class="vaccine-column">Vaccine Name</th>
-          <th class="date-column">Application Date</th>
-          <th class="next-date-column">Next Application Dates</th>
-          <th class="completed-column">Completed</th>
+          <th class="name-column">Animal</th>
+          <th class="vaccine-column">Vacina</th>
+          <th class="date-column">Data de Aplicação</th>
+          <th class="next-date-column">Próximas Aplicações</th>
+          <th class="completed-column">Completo</th>
         </tr>
       </thead>
 
@@ -52,7 +52,7 @@
           <td class="next-date-column">
             {{ formatNextApplicationDates(animalVaccine.nextApplicationDates) }}
           </td>
-          <td class="completed-column">{{ animalVaccine.completed ? 'Yes' : 'No' }}</td>
+          <td class="completed-column">{{ animalVaccine.completed ? 'Sim' : 'Não' }}</td>
         </tr>
       </tbody>
     </table>

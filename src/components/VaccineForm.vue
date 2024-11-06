@@ -3,35 +3,35 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
+        <h2>{{ formData.id ? 'Editar Vacina' : 'Criar Nova Vacina' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
           <div class="form-group">
-            <label>Name:</label>
+            <label>Name</label>
             <input v-model="formData.name" maxlength="80" required />
           </div>
 
           <div class="form-group">
-            <label>Description:</label>
+            <label>Descrição</label>
             <textarea v-model="formData.description" maxlength="500"></textarea>
           </div>
 
           <div class="form-group">
-            <label>Species:</label>
+            <label>Categorias</label>
             <div v-for="(specie, index) in formData.species" :key="index" class="right-side-action-button">
-              <input v-model="specie.name" placeholder="Enter species name" />
-              <button type="button" @click="removeSpecie(index)">Remove</button>
+              <input v-model="specie.name" placeholder="Digite o nome da categoria" />
+              <button type="button" @click="removeSpecie(index)">Remover</button>
             </div>
-            <button type="button" @click="addSpecie">Add Species</button>
+            <button type="button" @click="addSpecie">Adicionar </button>
           </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
-              Delete
+              Remover
             </CustomButton>
             <div class="right-buttons">
-              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+              <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
             </div>
           </div>
         </form>
