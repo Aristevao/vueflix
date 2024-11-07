@@ -40,14 +40,20 @@
           <label for="state">Estado</label>
           <input type="text" v-model="localUnit.address.state" id="state" required />
         </div>
+
         <div class="form-group">
           <label for="picture">Foto</label>
-          <input type="file" @change="handleFileUpload" id="picture" />
+        </div>
+        <label ref="fileLabel" for="fileInput" class="file-label">{{ fileLabelText }}</label>
+        <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
+
+        <div v-if="base64Picture || localUnit.picture" class="image-preview">
+          <img :src="'data:image/png;base64,' + (base64Picture || localUnit.picture)" alt="Pré-visualização" />
         </div>
 
         <div class="button-group">
           <CustomButton type="red" class="delete-button" v-if="localUnit.id" @click="deleteUnit(localUnit.id)">
-            Delete
+            Remover
           </CustomButton>
           <div class="right-buttons">
             <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
@@ -78,7 +84,8 @@
         visible: false,
         localUnit: this.getInitialUnit(),
         file: null,
-        base64Picture: ''
+        base64Picture: '',
+        fileLabelText: 'Selecionar Foto' // Texto inicial do botão de upload
       }
     },
     watch: {
@@ -87,6 +94,17 @@
         handler(newVal) {
           this.localUnit = newVal ? { ...this.getInitialUnit(), ...newVal } : this.getInitialUnit()
         }
+      }
+    },
+    mounted() {
+      const fileInput = this.$refs.fileInput;
+      const fileLabel = this.$refs.fileLabel;
+
+      if (fileInput) {
+        fileInput.addEventListener("change", () => {
+          const fileName = fileInput.files[0]?.name || "Nenhum arquivo escolhido";
+          fileLabel.textContent = fileName;
+        });
       }
     },
     methods: {
@@ -109,6 +127,10 @@
       open() {
         this.visible = true
         document.addEventListener('keydown', this.handleKeydown)
+
+        // Redefine o rótulo do botão de arquivo e a imagem de pré-visualização ao abrir o formulário
+        this.fileLabelText = this.localUnit.picture ? 'Imagem Carregada' : 'Selecionar Foto';
+        this.base64Picture = ''; // Limpa a imagem base64 temporária, mantendo a original da unidade, se houver
       },
       close() {
         this.visible = false
@@ -126,12 +148,19 @@
           this.submitForm()
         }
       },
+      // Atualiza o texto do botão e a imagem ao selecionar o arquivo
+      updateFileLabel(event) {
+        const fileName = event.target.files[0]?.name || 'Nenhum arquivo escolhido';
+        this.fileLabelText = fileName;
+        this.handleFileUpload(event);
+      },
+      // Manipula o upload da imagem e converte para base64
       handleFileUpload(event) {
         const file = event.target.files[0]
         if (file) {
           const reader = new FileReader()
           reader.onload = () => {
-            this.base64Picture = reader.result.split(',')[1] // Convert to base64 and remove prefix
+            this.base64Picture = reader.result.split(',')[1] // Converte para base64 e remove o prefixo
           }
           reader.readAsDataURL(file)
         }
@@ -148,7 +177,7 @@
         formData.append('address.city', this.localUnit.address.city)
         formData.append('address.state', this.localUnit.address.state)
 
-        // Append base64 string if picture is provided
+        // Adiciona a imagem base64, se estiver disponível
         if (this.base64Picture) {
           formData.append('picture', this.base64Picture)
         }
@@ -181,6 +210,9 @@
         }
       },
       cancelForm() {
+        this.localUnit = this.unit ? { ...this.getInitialUnit(), ...this.unit } : this.getInitialUnit();
+        this.base64Picture = ''; // Limpa a imagem temporária
+
         this.close()
       }
     }
@@ -188,5 +220,35 @@
 </script>
 
 <style scoped>
-  @import "@/assets/form-styles.css"
+  @import "@/assets/form-styles.css";
+
+  .file-input {
+    display: none;
+  }
+
+  .file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .file-label:hover {
+    background-color: #0056b3;
+  }
+
+  .image-preview {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 </style>

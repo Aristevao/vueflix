@@ -28,8 +28,8 @@
           <div class="form-group">
             <label>Sexo</label>
             <select v-model="formData.sex">
-              <option>Macho</option>
-              <option>Fêmea</option>
+              <option>MALE</option>
+              <option>FEMALE</option>
             </select>
           </div>
 
