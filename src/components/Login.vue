@@ -70,6 +70,15 @@
           class="profile-picture-preview" />
       </div>
 
+      <div class="form-group">
+        <input type="checkbox" id="acceptedPrivacyPolicy" v-model="newUser.acceptedPrivacyPolicy" />
+        <label for="acceptedPrivacyPolicy">
+          Li e concordo com a
+          <a href="https://drive.google.com/file/d/10l5TX2mPbcODZOpJKUoYDwSiVrbj3hQa/view?usp=drive_link" target="_blank">política de privacidade</a>
+        </label>
+        <small v-if="validationErrors.acceptedPrivacyPolicy"><br>{{ validationErrors.acceptedPrivacyPolicy }}</small>
+      </div>
+      
       <button type="submit">Criar Conta</button>
     </form>
 
@@ -109,7 +118,8 @@
     phone: '',
     birthdate: '1990-01-01',
     picture: '',
-    password: ''
+    password: '',
+    acceptedPrivacyPolicy: true
   })
   const formattedPhone = ref('')
   const validationErrors = ref({})
@@ -166,10 +176,10 @@
       try {
         newUser.value.phone = unformatPhone(formattedPhone.value)
         await axios.post('http://localhost:8080/api/digital-pec/user', newUser.value)
-        alert('Account created successfully!')
+        alert('Conta criada com sucesso!')
         toggleForm()
       } catch (error) {
-        console.error('Account creation failed:', error)
+        console.error('Falha na criação da conta:', error)
       }
     }
   }
@@ -190,17 +200,20 @@
     validationErrors.value = {}
 
     if (!newUser.value.name || newUser.value.name.length > 80) {
-      validationErrors.value.name = 'Name is required and must be at most 80 characters.'
+      validationErrors.value.name = 'O nome é obrigatório e deve ter no máximo 80 caracteres.'
     }
     if (
       !newUser.value.email ||
       !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newUser.value.email) ||
       newUser.value.email.length > 320
     ) {
-      validationErrors.value.email = 'Valid email is required and must be at most 320 characters.'
+      validationErrors.value.email = 'O e-mail é obrigatório e deve ter no máximo 320 caracteres.'
     }
     if (newUser.value.phone && newUser.value.phone.length > 12) {
-      validationErrors.value.phone = 'Phone number must be at most 12 digits.'
+      validationErrors.value.phone = 'Telefone deve ter no máximo 12 dígitos.'
+    }
+    if (!newUser.value.acceptedPrivacyPolicy) {
+      validationErrors.value.acceptedPrivacyPolicy = ' É necessário aceitar a política de privacidade.'
     }
 
     return Object.keys(validationErrors.value).length === 0
