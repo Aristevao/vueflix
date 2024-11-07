@@ -69,9 +69,9 @@
           <td class="name-column">{{ animal.name }}</td>
           <td class="specie-column">{{ animal.specie }}</td>
           <td class="breed-column">{{ animal.breed }}</td>
-          <td class="sex-column">{{ animal.sex }}</td>
+          <td class="sex-column">{{ formatSex(animal.sex) }}</td>
           <td class="age-column">{{ calculateAge(animal.birthdate) }}</td>
-          <td class="registration-date-column">{{ animal.registrationDate }}</td>
+          <td class="registration-date-column">{{ formatDate(animal.registrationDate) }}</td>
         </tr>
       </tbody>
     </table>
@@ -152,15 +152,19 @@
         this.currentPage = newPage
         this.fetchAnimals()
       },
+      formatSex(sex) {
+        return sex === 'MALE' ? 'Macho' : sex === 'FEMALE' ? 'Fêmea' : ''
+      },
       calculateAge(birthdate) {
-        const birthDate = new Date(birthdate)
-        const today = new Date()
-        let age = today.getFullYear() - birthDate.getFullYear()
-        const monthDifference = today.getMonth() - birthDate.getMonth()
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-          age--
-        }
-        return `${age} ano${age !== 1 ? 's' : ''}`
+        const birthDate = new Date(birthdate);
+        const today = new Date();
+        const timeDifference = today - birthDate;
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        return `${daysDifference} dia${daysDifference !== 1 ? 's' : ''}`;
+      },
+      formatDate(date) {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(date).toLocaleDateString('pt-BR', options);
       },
       clearFilters() {
         this.filters.identification = ''
