@@ -6,7 +6,8 @@
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
           {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
-        <CustomButton @click="openAnimalVaccineForm" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
+        <CustomButton @click="openAnimalVaccineForm" type="primary" class="toggle-filters-button">Adicionar Novo
+        </CustomButton>
       </div>
     </div>
 
@@ -52,7 +53,12 @@
           <td class="next-date-column">
             {{ formatNextApplicationDates(animalVaccine.nextApplicationDates) }}
           </td>
-          <td class="completed-column">{{ animalVaccine.completed ? 'Sim' : 'Não' }}</td>
+          <td class="completed-column">
+            <span :class="{ 'completed-icon': animalVaccine.completed, 'incomplete-icon': !animalVaccine.completed }">
+              <i class="fa" :class="animalVaccine.completed ? 'fa-check-circle' : 'fa-times-circle'"></i>
+              {{ animalVaccine.completed ? 'Sim' : 'Não' }}
+            </span>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -292,21 +298,8 @@
     text-align: left;
   }
 
-  .animalVaccine-table th {
-    /* background-color: #f2f2f2; */
-  }
-
   .animalVaccine-table tr:nth-child(even) {
     background-color: #f9f9f9;
-  }
-
-  .animalVaccine-table img {
-    border-radius: 17%;
-  }
-
-  .imdescription-column {
-    width: 50px;
-    text-align: center;
   }
 
   .name-column {
@@ -328,5 +321,13 @@
   .completed-column {
     width: 80px;
     text-align: center;
+  }
+
+  .completed-icon {
+    color: green;
+  }
+
+  .incomplete-icon {
+    color: red;
   }
 </style>

@@ -48,9 +48,10 @@
           </td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
           <td class="read-column">
-            <span @click.stop="markAsRead(notification.id)">
+            <span @click.stop="markAsRead(notification.id)" :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }">
               <i class="fa fa-check-circle"
                 :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }"></i>
+                {{ notification.isRead ? 'Lida' : 'Não lida' }}
             </span>
           </td>
         </tr>
@@ -267,5 +268,10 @@
 
   .notification-table .date-column {
     width: 150px;
+  }
+
+  .read-column {
+    width: 101px;
+    text-align: center;
   }
 </style>
