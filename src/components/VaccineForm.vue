@@ -5,23 +5,29 @@
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Editar Vacina' : 'Criar Nova Vacina' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-          <div class="form-group">
-            <label>Name</label>
-            <input v-model="formData.name" maxlength="80" required />
-          </div>
-
-          <div class="form-group">
-            <label>Descrição</label>
-            <textarea v-model="formData.description" maxlength="500"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Categorias</label>
-            <div v-for="(specie, index) in formData.species" :key="index" class="right-side-action-button">
-              <input v-model="specie.name" placeholder="Digite o nome da categoria" />
-              <button type="button" @click="removeSpecie(index)">Remover</button>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input v-model="formData.name" maxlength="80" required class="form-control" id="name" />
             </div>
-            <button type="button" @click="addSpecie">Adicionar </button>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Descrição</label>
+              <textarea v-model="formData.description" maxlength="500" class="form-control" id="description"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="species" class="form-label">Categorias</label>
+              <br>
+              <div v-for="(specie, index) in formData.species" :key="index" class="mb-2">
+                <div class="d-flex align-items-center">
+                  <input v-model="specie.name" placeholder="Digite o nome da categoria" class="form-control me-2" />
+                  <button type="button" @click="removeSpecie(index)" class="btn btn btn-light btn-sm p-0"
+                    style="width: 20px; height: 20px; font-size: 16px; line-height: 16px;">&times;</button>
+                </div>
+              </div>
+              <button type="button" @click="addSpecie" class="btn btn-light btn-sm">Adicionar</button>
+            </div>
           </div>
 
           <div class="button-group">

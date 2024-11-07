@@ -4,56 +4,66 @@
       <span class="close-button" @click="close">&times;</span>
       <h2>{{ localUnit.id ? 'Editar' : 'Adicionar' }} Fazenda</h2>
       <form @submitForm.prevent="submitForm">
-        <div class="form-group">
-          <label for="name">Nome</label>
-          <input type="text" v-model="localUnit.name" id="name" required maxlength="100" />
-        </div>
-        <div class="form-group">
-          <label for="description">Descrição</label>
-          <textarea v-model="localUnit.description" id="description" maxlength="500"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="street">Rua</label>
-          <input type="text" v-model="localUnit.address.street" id="street" required />
-        </div>
-        <div class="form-group">
-          <label for="number">Número</label>
-          <input type="text" v-model="localUnit.address.number" id="number" required />
-        </div>
-        <div class="form-group">
-          <label for="district">Bairro</label>
-          <input type="text" v-model="localUnit.address.district" id="district" required />
-        </div>
-        <div class="form-group">
-          <label for="complement">Complemento</label>
-          <input type="text" v-model="localUnit.address.complement" id="complement" />
-        </div>
-        <div class="form-group">
-          <label for="zipcode">CEP</label>
-          <input type="text" v-model="localUnit.address.zipcode" id="zipcode" required />
-        </div>
-        <div class="form-group">
-          <label for="city">Cidade</label>
-          <input type="text" v-model="localUnit.address.city" id="city" required />
-        </div>
-        <div class="form-group">
-          <label for="state">Estado</label>
-          <input type="text" v-model="localUnit.address.state" id="state" required />
-        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nome</label>
+            <input type="text" v-model="localUnit.name" id="name" class="form-control" required maxlength="100" />
+          </div>
 
-        <div class="form-group">
-          <label for="picture">Foto</label>
-        </div>
-        <label ref="fileLabel" for="fileInput" class="file-label">{{ fileLabelText }}</label>
-        <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
+          <div class="mb-3">
+            <label for="description" class="form-label">Descrição</label>
+            <textarea v-model="localUnit.description" id="description" class="form-control" maxlength="500"></textarea>
+          </div>
 
-        <div v-if="base64Picture || localUnit.picture" class="image-preview">
-          <img :src="'data:image/png;base64,' + (base64Picture || localUnit.picture)" alt="Pré-visualização" />
+          <div class="mb-3">
+            <label for="street" class="form-label">Rua</label>
+            <input type="text" v-model="localUnit.address.street" id="street" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="number" class="form-label">Número</label>
+            <input type="text" v-model="localUnit.address.number" id="number" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="district" class="form-label">Bairro</label>
+            <input type="text" v-model="localUnit.address.district" id="district" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="complement" class="form-label">Complemento</label>
+            <input type="text" v-model="localUnit.address.complement" id="complement" class="form-control" />
+          </div>
+
+          <div class="mb-3">
+            <label for="zipcode" class="form-label">CEP</label>
+            <input type="text" v-model="localUnit.address.zipcode" id="zipcode" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="city" class="form-label">Cidade</label>
+            <input type="text" v-model="localUnit.address.city" id="city" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="state" class="form-label">Estado</label>
+            <input type="text" v-model="localUnit.address.state" id="state" class="form-control" required />
+          </div>
+
+          <div class="mb-3">
+            <label ref="fileLabel" for="fileInput" class="btn btn-light">{{ fileLabelText }}</label>
+            <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
+          </div>
+
+          <div v-if="base64Picture || localUnit.picture" class="image-preview text-center">
+            <img :src="'data:image/png;base64,' + (base64Picture || localUnit.picture)" alt="Pré-visualização"
+              class="img-fluid rounded" />
+          </div>
         </div>
 
         <div class="button-group">
           <CustomButton type="red" class="delete-button" v-if="localUnit.id" @click="deleteUnit(localUnit.id)">
-            Remover
+            Deletar
           </CustomButton>
           <div class="right-buttons">
             <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
@@ -224,20 +234,6 @@
 
   .file-input {
     display: none;
-  }
-
-  .file-label {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-  }
-
-  .file-label:hover {
-    background-color: #0056b3;
   }
 
   .image-preview {

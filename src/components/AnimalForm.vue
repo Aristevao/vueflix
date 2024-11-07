@@ -5,67 +5,68 @@
         <span class="close-button" @click="close">&times;</span>
         <h2>{{ formData.id ? 'Editar Animal' : 'Criar Novo Animal' }}</h2>
         <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label>Nome</label>
-            <input v-model="formData.name" maxlength="80" />
-          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nome</label>
+              <input v-model="formData.name" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Identificador</label>
-            <input v-model="formData.identification" required maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Identificador</label>
+              <input v-model="formData.identification" required maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Categoria</label>
-            <input v-model="formData.specie" maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Categoria</label>
+              <input v-model="formData.specie" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Raça</label>
-            <input v-model="formData.breed" maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Raça</label>
+              <input v-model="formData.breed" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Sexo</label>
-            <select v-model="formData.sex">
-              <option>MALE</option>
-              <option>FEMALE</option>
-            </select>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Sexo</label>
+              <select v-model="formData.sex" class="form-select">
+                <option>MALE</option>
+                <option>FEMALE</option>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label>Data de Nascimento</label>
-            <input type="date" v-model="formData.birthdate" :max="today" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Data de Nascimento</label>
+              <input type="date" v-model="formData.birthdate" :max="today" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Data de Registro</label>
-            <input type="date" v-model="formData.registrationDate" :max="today" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Data de Registro</label>
+              <input type="date" v-model="formData.registrationDate" :max="today" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Descrição</label>
-            <textarea v-model="formData.description" maxlength="500"></textarea>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <textarea v-model="formData.description" maxlength="500" class="form-control"></textarea>
+            </div>
 
-          <div class="form-group">
-            <label>Fazenda</label>
-            <select v-model="formData.unitId" required>
-              <option v-for="unit in units" :key="unit.id" :value="unit.id">
-                {{ unit.name }}
-              </option>
-            </select>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Fazenda</label>
+              <select v-model="formData.unitId" required class="form-select">
+                <option v-for="unit in units" :key="unit.id" :value="unit.id">
+                  {{ unit.name }}
+                </option>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label>Foto</label>
-          </div>
-          <label ref="fileLabel" for="fileInput" class="file-label">{{ fileLabelText }}</label>
-          <input ref="fileInput" type="file" id="fileInput" class="file-input" @change="updateFileLabel" />
+            <div class="mb-3">
+              <label ref="fileLabel" for="fileInput" class="btn btn-light">{{ fileLabelText }}</label>
+              <input ref="fileInput" type="file" id="fileInput" class="file-input d-none" @change="updateFileLabel" />
+            </div>
 
-          <!-- Previsualização da imagem -->
-          <div v-if="base64Picture || formData.picture" class="image-preview">
-            <img :src="'data:image/png;base64,' + (base64Picture || formData.picture)" alt="Pré-visualização" />
+            <div v-if="base64Picture || formData.picture" class="text-center mb-3">
+              <img :src="'data:image/png;base64,' + (base64Picture || formData.picture)" alt="Pré-visualização"
+                class="img-fluid rounded" />
+            </div>
           </div>
 
           <div class="button-group">
@@ -339,20 +340,6 @@
 
   .file-input {
     display: none;
-  }
-
-  .file-label {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-  }
-
-  .file-label:hover {
-    background-color: #0056b3;
   }
 
   .image-preview {

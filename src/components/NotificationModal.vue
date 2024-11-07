@@ -1,8 +1,8 @@
 <template>
-    <div class="modal" v-if="notification">
+    <div class="modal" v-if="notification" @click="handleBackgroundClick">
         <div class="modal-content">
             <span class="close" @click="$emit('close')">&times;</span>
-            <h2>{{ notification.title }}</h2>
+            <h4>{{ notification.title }}</h4>
             <p>{{ notification.message }}</p>
             <p><strong>Date:</strong> {{ formatDate(notification.createdAt) }}</p>
         </div>
@@ -17,6 +17,11 @@
         methods: {
             formatDate(date) {
                 return new Date(date).toLocaleString('pt-BR', { timeZone: 'UTC', hour12: false })
+            },
+            handleBackgroundClick(event) {
+                if (event.target === event.currentTarget) {
+                    this.$emit('close')
+                }
             }
         }
     }
