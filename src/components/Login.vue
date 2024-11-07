@@ -1,93 +1,98 @@
 <template>
-  <div class="login-container">
-    <h2 v-if="!isCreatingAccount">Login</h2>
-    <h3 v-if="isCreatingAccount">Criar Conta</h3>
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 500px;">
+      <h2 v-if="!isCreatingAccount" class="text-center">Login</h2>
+      <h3 v-if="isCreatingAccount" class="text-center">Criar Conta</h3>
 
-    <!-- Login Form -->
-    <form v-if="!isCreatingAccount" @submit.prevent="login">
-      <div class="form-group">
-        <label for="email">E-mail:</label>
-        <input type="email" id="email" v-model="email" required />
-      </div>
+      <!-- Login Form -->
+      <form v-if="!isCreatingAccount" @submit.prevent="login">
+        <div class="form-group mb-3">
+          <label for="email">E-mail:</label>
+          <input type="email" id="email" v-model="email" required class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label for="password">Senha:</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
+        <div class="form-group mb-3">
+          <label for="password">Senha:</label>
+          <input type="password" id="password" v-model="password" required class="form-control" />
+        </div>
 
-      <button type="submit">Login</button>
-    </form>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+      </form>
 
-    <!-- Create Account Form -->
-    <form v-if="isCreatingAccount" @submit.prevent="createAccount">
-      <div class="form-group">
-        <label for="name">Nome </label>
-        <input type="text" id="name" v-model="newUser.name" required maxlength="80" />
-        <small v-if="validationErrors.name">{{ validationErrors.name }}</small>
-      </div>
+      <!-- Create Account Form -->
+      <form v-if="isCreatingAccount" @submit.prevent="createAccount">
+        <div class="form-group mb-3">
+          <label for="name">Nome</label>
+          <input type="text" id="name" v-model="newUser.name" required maxlength="80" class="form-control" />
+          <small v-if="validationErrors.name" class="text-danger">{{ validationErrors.name }}</small>
+        </div>
 
-      <div class="form-group">
-        <label for="newEmail">E-mail </label>
-        <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" />
-        <small v-if="validationErrors.email">{{ validationErrors.email }}</small>
-      </div>
+        <div class="form-group mb-3">
+          <label for="newEmail">E-mail</label>
+          <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" class="form-control" />
+          <small v-if="validationErrors.email" class="text-danger">{{ validationErrors.email }}</small>
+        </div>
 
-      <div class="form-group">
-        <label for="phone">Telefone </label>
-        <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16" />
-        <small v-if="validationErrors.phone">{{ validationErrors.phone }}</small>
-      </div>
+        <div class="form-group mb-3">
+          <label for="phone">Telefone</label>
+          <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16"
+            class="form-control" />
+          <small v-if="validationErrors.phone" class="text-danger">{{ validationErrors.phone }}</small>
+        </div>
 
-      <div class="form-group">
-        <label for="birthdate">Data de nascimento </label>
-        <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
-      </div>
+        <div class="form-group mb-3">
+          <label for="birthdate">Data de nascimento</label>
+          <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label for="newPassword">Senha </label>
-        <input type="password" id="newPassword" v-model="newUser.password" required />
-      </div>
+        <div class="form-group mb-3">
+          <label for="newPassword">Senha</label>
+          <input type="password" id="newPassword" v-model="newUser.password" required class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label>Escolha uma foto predefinida </label>
-        <div class="preset-images">
-          <div v-for="(image, index) in presetImages" :key="index" class="preset-image-container">
-            <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
-            <label :for="'preset-' + index">
-              <img :src="image.src" :alt="image.label" class="preset-image" />
-            </label>
+        <div class="form-group mb-3">
+          <label>Escolha uma foto predefinida</label>
+          <div class="d-flex justify-content-around">
+            <div v-for="(image, index) in presetImages" :key="index" class="text-center">
+              <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
+              <label :for="'preset-' + index">
+                <img :src="image.src" :alt="image.label" class="rounded-circle img-thumbnail" width="64" height="64" />
+              </label>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="upload-picture">Ou escolha uma foto própria</label>
-        <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
-      </div>
+        <div class="form-group mb-3">
+          <label for="upload-picture">Ou escolha uma foto própria</label>
+          <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" class="form-control" />
+        </div>
 
-      <div class="preview" v-if="newUser.picture">
-        <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
-          class="profile-picture-preview" />
-      </div>
+        <div class="mb-3 text-center" v-if="newUser.picture">
+          <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
+            class="rounded-circle img-thumbnail" width="64" height="64" />
+        </div>
 
-      <div class="form-group">
-        <input type="checkbox" id="acceptedPrivacyPolicy" v-model="newUser.acceptedPrivacyPolicy" />
-        <label for="acceptedPrivacyPolicy">
-          Li e concordo com a
-          <a href="https://drive.google.com/file/d/10l5TX2mPbcODZOpJKUoYDwSiVrbj3hQa/view?usp=drive_link" target="_blank">política de privacidade</a>
-        </label>
-        <small v-if="validationErrors.acceptedPrivacyPolicy"><br>{{ validationErrors.acceptedPrivacyPolicy }}</small>
-      </div>
-      
-      <button type="submit">Criar Conta</button>
-    </form>
+        <div class="form-check mb-3">
+          <input type="checkbox" id="acceptedPrivacyPolicy" v-model="newUser.acceptedPrivacyPolicy"
+            class="form-check-input" />
+          <label for="acceptedPrivacyPolicy" class="form-check-label">
+            Li e concordo com a
+            <a href="https://drive.google.com/file/d/10l5TX2mPbcODZOpJKUoYDwSiVrbj3hQa/view?usp=drive_link"
+              target="_blank">política de privacidade</a>
+          </label>
+          <small v-if="validationErrors.acceptedPrivacyPolicy" class="text-danger d-block">{{
+            validationErrors.acceptedPrivacyPolicy }}</small>
+        </div>
 
-    <!-- Actions -->
-    <div class="actions">
-      <button @click="recoverPassword" v-if="!isCreatingAccount">Recuperar Senha</button>
-      <button @click="toggleForm">
-        {{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta' }}
-      </button>
+        <button type="submit" class="btn btn-success w-100 mb-3">Criar Conta</button>
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-between">
+        <button @click="recoverPassword" v-if="!isCreatingAccount" class="btn btn-link">Recuperar Senha</button>
+        <button @click="toggleForm" class="btn btn-secondary">{{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta'
+          }}</button>
+      </div>
     </div>
   </div>
 </template>
@@ -247,76 +252,17 @@
   }
 
   const recoverPassword = () => {
-    alert('Recover Password clicked')
+    alert('Para recuperar sua senha, entre em contato com o administrador do sistema.')
   }
 </script>
 
 <style scoped>
-  .login-container {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+  .container {
+    min-height: 100vh;
   }
 
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .actions {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  button {
-    padding: 8px 12px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-
-  small {
-    color: red;
-  }
-
-  .preset-images {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* Three columns per row */
-    gap: 10px;
-    /* Space between images */
-    margin-bottom: 15px;
-  }
-
-  .preset-image-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .preset-image {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid #ddd;
-    margin-top: 5px;
-  }
-
-  .profile-picture-preview {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
+  .card {
+    width: 100%;
+    max-width: 500px;
   }
 </style>
