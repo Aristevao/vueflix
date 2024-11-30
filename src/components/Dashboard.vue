@@ -215,11 +215,12 @@
 
       // Função para obter o nome do dia da semana
       const getDayOfWeek = (dateStr) => {
+        const [day, month, year] = dateStr.split("-");
+        const date = new Date(`${year}-${month}-${day}`);
         const daysOfWeek = [
-          "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
-          "Quinta-feira", "Sexta-feira", "Sábado"
+          "domingo", "segunda-feira", "terça-feira", "quarta-feira",
+          "quinta-feira", "sexta-feira", "sábado"
         ];
-        const date = new Date(dateStr);
         return daysOfWeek[date.getDay()];
       };
 
@@ -320,7 +321,7 @@
           weather.value.currentWeatherCode = currentWeather.weathercode;
 
           weather.value.forecast = forecast.time.slice(1, 4).map((dateStr, index) => ({
-            dayOfWeek: new Date(dateStr).toLocaleDateString("pt-BR", { weekday: "long" }),
+            dayOfWeek: getDayOfWeek(dateStr),
             date: formatDate(dateStr),
             maxTemperature: Math.round(forecast.temperature_2m_max[index]),
             minTemperature: Math.round(forecast.temperature_2m_min[index]),
