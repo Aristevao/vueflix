@@ -213,16 +213,14 @@
         }
       };
 
-      // Função para obter o nome do dia da semana
-      const getDayOfWeek = (dateStr) => {
-        const [day, month, year] = dateStr.split("-");
-        const date = new Date(`${year}-${month}-${day}`);
-        const daysOfWeek = [
-          "domingo", "segunda-feira", "terça-feira", "quarta-feira",
-          "quinta-feira", "sexta-feira", "sábado"
-        ];
-        return daysOfWeek[date.getDay()];
-      };
+      function getDayOfWeek(data) {
+        const dayOfWeek = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+        const date = new Date(data);
+        date.setDate(date.getDate() + 1);
+
+        return dayOfWeek[date.getDay()];
+      }
 
       function formatDate(inputDate) {
         // Ensure the input is in the format "yyyy-MM-dd"
@@ -267,7 +265,6 @@
 
         return weatherIcons[weathercode] || "fas fa-question-circle"; // Default icon for unknown codes
       };
-
 
       const getWeatherDescriptionFromCode = (weathercode) => {
         const weatherDescriptions = {
@@ -329,8 +326,6 @@
             description: getWeatherDescriptionFromCode(forecast.weathercode[index]),
             icon: getWeatherIconFromCode(forecast.weathercode[index]),
           }));
-
-          console.log(weather.value.forecast);
 
           loadingWeather.value = false;
         } catch (error) {
