@@ -28,7 +28,7 @@
 
       <!-- Card: Informação Climática -->
       <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center" @click="toggleForecast">
           <div class="card-body">
             <h5 class="card-title">Clima</h5>
             <p v-if="loadingWeather" class="card-text">Carregando...</p>
@@ -37,12 +37,13 @@
               {{ weather.description }}<br />
               <strong>{{ weather.temperature }}°C</strong>
             </p>
-            <!-- <div v-for="(forecast, index) in weather.forecast" :key="index">
-              <p>{{ forecast.date }}:</p>
+            <!-- Exibição da previsão quando o estado 'showForecast' for verdadeiro -->
+            <div v-if="showForecast" v-for="(forecast, index) in weather.forecast" :key="index">
+              <p><strong>{{ forecast.date }}:</strong></p>
               <p>Max: {{ forecast.maxTemperature }}°C</p>
               <p>Min: {{ forecast.minTemperature }}°C</p>
               <p>Precipitação: {{ forecast.precipitation }} mm</p>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -114,6 +115,9 @@
       const loadingWeather = ref(true);
       const errorWeather = ref(false);
 
+      // Estado para controlar a exibição da previsão
+      const showForecast = ref(false);
+
       // Função para buscar o clima
       const fetchWeather = async () => {
         try {
@@ -148,6 +152,10 @@
         }
       };
 
+      // Função para alternar a exibição da previsão
+      const toggleForecast = () => {
+        showForecast.value = !showForecast.value;
+      };
 
       // Função para buscar dados de espécies
       const fetchAnimalCategories = async () => {
@@ -275,6 +283,8 @@
         weather,
         loadingWeather,
         errorWeather,
+        showForecast,
+        toggleForecast,
       };
     },
   };
