@@ -1,6 +1,12 @@
 <template>
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card p-4 shadow" style="width: 100%; max-width: 500px;">
+      <!-- Ícone e Texto de Marketing -->
+      <div class="marketing-section text-center mb-4">
+        <img src="@\assets\logo.png" alt="Logo" class="icon" />
+        <p class="marketing-text">Conecte-se com facilidade e aproveite todos os benefícios do nosso sistema!</p>
+      </div>
+
       <h2 v-if="!isCreatingAccount" class="text-center">Login</h2>
       <h3 v-if="isCreatingAccount" class="text-center">Criar Conta</h3>
 
@@ -16,7 +22,7 @@
           <input type="password" id="password" v-model="password" required class="form-control" />
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+        <button type="submit" class="btn btn-success w-100 mb-3">Login</button>
       </form>
 
       <!-- Create Account Form -->
@@ -90,7 +96,7 @@
       <!-- Actions -->
       <div class="d-flex justify-content-between">
         <button @click="recoverPassword" v-if="!isCreatingAccount" class="btn btn-link">Recuperar Senha</button>
-        <button @click="toggleForm" class="btn btn-secondary">{{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta'
+        <button @click="toggleForm" class="btn btn-link">{{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta'
           }}</button>
       </div>
     </div>
@@ -259,10 +265,68 @@
 <style scoped>
   .container {
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .card {
     width: 100%;
     max-width: 500px;
+    border-radius: 10px;
+  }
+
+  .marketing-section {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .icon {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 10px;
+  }
+
+  .marketing-text {
+    font-size: 18px;
+    color: #070707;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  h2,
+  h3 {
+    color: #333;
+  }
+
+  .form-control {
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 12px 0;
+  }
+
+  .btn-link {
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+  }
+
+  .form-check-label {
+    font-size: 14px;
+  }
+
+  .form-check-input {
+    margin-top: 0.3rem;
   }
 </style>

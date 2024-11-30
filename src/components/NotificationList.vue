@@ -48,10 +48,11 @@
           </td>
           <td class="date-column">{{ formatDate(notification.createdAt) }}</td>
           <td class="read-column">
-            <span @click.stop="markAsRead(notification.id)" :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }">
+            <span @click.stop="markAsRead(notification.id)"
+              :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }">
               <i class="fa fa-check-circle"
                 :class="{ 'read-icon': notification.isRead, 'unread-icon': !notification.isRead }"></i>
-                {{ notification.isRead ? 'Lida' : 'Não lida' }}
+              {{ notification.isRead ? 'Lida' : 'Não lida' }}
             </span>
           </td>
         </tr>
@@ -86,11 +87,21 @@
         filterStatus: '',
         showFilters: false,
         showModal: false,
-        selectedNotification: null
+        selectedNotification: null,
+        intervalId: null
       }
     },
     mounted() {
       this.fetchNotifications()
+
+      // Set up the interval to refresh notifications every 10 seconds
+      this.intervalId = setInterval(this.fetchNotifications, 10000)
+    },
+    unmounted() {
+      // Clear the interval when the component is destroyed
+      if (this.intervalId) {
+        clearInterval(this.intervalId)
+      }
     },
     methods: {
       async fetchNotifications() {
