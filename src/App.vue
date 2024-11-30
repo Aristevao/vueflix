@@ -79,6 +79,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* background-color: rgba(6, 172, 0, 0.418); */
   }
 
   router-view {

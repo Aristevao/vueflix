@@ -3,35 +3,41 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Vaccine' : 'Create New Vaccine' }}</h2>
+        <h2>{{ formData.id ? 'Editar Vacina' : 'Criar Nova Vacina' }}</h2>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
-          <div class="form-group">
-            <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" required />
-          </div>
-
-          <div class="form-group">
-            <label>Description:</label>
-            <textarea v-model="formData.description" maxlength="500"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Species:</label>
-            <div v-for="(specie, index) in formData.species" :key="index" class="right-side-action-button">
-              <input v-model="specie.name" placeholder="Enter species name" />
-              <button type="button" @click="removeSpecie(index)">Remove</button>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input v-model="formData.name" maxlength="80" required class="form-control" id="name" />
             </div>
-            <button type="button" @click="addSpecie">Add Species</button>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Descrição</label>
+              <textarea v-model="formData.description" maxlength="500" class="form-control" id="description"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="species" class="form-label">Categorias</label>
+              <br>
+              <div v-for="(specie, index) in formData.species" :key="index" class="mb-2">
+                <div class="d-flex align-items-center">
+                  <input v-model="specie.name" placeholder="Digite o nome da categoria" class="form-control me-2" />
+                  <button type="button" @click="removeSpecie(index)" class="btn btn btn-light btn-sm p-0"
+                    style="width: 20px; height: 20px; font-size: 16px; line-height: 16px;">&times;</button>
+                </div>
+              </div>
+              <button type="button" @click="addSpecie" class="btn btn-light btn-sm">Adicionar</button>
+            </div>
           </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteVaccine(formData.id)">
-              Delete
+              Remover
             </CustomButton>
             <div class="right-buttons">
-              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+              <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
             </div>
           </div>
         </form>

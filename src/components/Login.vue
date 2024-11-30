@@ -1,84 +1,104 @@
 <template>
-  <div class="login-container">
-    <h2 v-if="!isCreatingAccount">Login</h2>
-    <h3 v-if="isCreatingAccount">Create Account</h3>
-
-    <!-- Login Form -->
-    <form v-if="!isCreatingAccount" @submit.prevent="login">
-      <div class="form-group">
-        <label for="email">E-mail:</label>
-        <input type="email" id="email" v-model="email" required />
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 500px;">
+      <!-- Ícone e Texto de Marketing -->
+      <div class="marketing-section text-center mb-4">
+        <img src="@\assets\logo.png" alt="Logo" class="icon" />
+        <p class="marketing-text">Conecte-se com facilidade e aproveite todos os benefícios do nosso sistema!</p>
       </div>
 
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
+      <h2 v-if="!isCreatingAccount" class="text-center">Login</h2>
+      <h3 v-if="isCreatingAccount" class="text-center">Criar Conta</h3>
 
-      <button type="submit">Login</button>
-    </form>
+      <!-- Login Form -->
+      <form v-if="!isCreatingAccount" @submit.prevent="login">
+        <div class="form-group mb-3">
+          <label for="email">E-mail:</label>
+          <input type="email" id="email" v-model="email" required class="form-control" />
+        </div>
 
-    <!-- Create Account Form -->
-    <form v-if="isCreatingAccount" @submit.prevent="createAccount">
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="newUser.name" required maxlength="80" />
-        <small v-if="validationErrors.name">{{ validationErrors.name }}</small>
-      </div>
+        <div class="form-group mb-3">
+          <label for="password">Senha:</label>
+          <input type="password" id="password" v-model="password" required class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label for="newEmail">E-mail:</label>
-        <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" />
-        <small v-if="validationErrors.email">{{ validationErrors.email }}</small>
-      </div>
+        <button type="submit" class="btn btn-success w-100 mb-3">Login</button>
+      </form>
 
-      <div class="form-group">
-        <label for="phone">Phone:</label>
-        <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16" />
-        <small v-if="validationErrors.phone">{{ validationErrors.phone }}</small>
-      </div>
+      <!-- Create Account Form -->
+      <form v-if="isCreatingAccount" @submit.prevent="createAccount">
+        <div class="form-group mb-3">
+          <label for="name">Nome</label>
+          <input type="text" id="name" v-model="newUser.name" required maxlength="80" class="form-control" />
+          <small v-if="validationErrors.name" class="text-danger">{{ validationErrors.name }}</small>
+        </div>
 
-      <div class="form-group">
-        <label for="birthdate">Birthdate:</label>
-        <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" />
-      </div>
+        <div class="form-group mb-3">
+          <label for="newEmail">E-mail</label>
+          <input type="email" id="newEmail" v-model="newUser.email" required maxlength="320" class="form-control" />
+          <small v-if="validationErrors.email" class="text-danger">{{ validationErrors.email }}</small>
+        </div>
 
-      <div class="form-group">
-        <label for="newPassword">Password:</label>
-        <input type="password" id="newPassword" v-model="newUser.password" required />
-      </div>
+        <div class="form-group mb-3">
+          <label for="phone">Telefone</label>
+          <input type="tel" id="phone" v-model="formattedPhone" @input="applyPhoneMask" maxlength="16"
+            class="form-control" />
+          <small v-if="validationErrors.phone" class="text-danger">{{ validationErrors.phone }}</small>
+        </div>
 
-      <div class="form-group">
-        <label>Choose a Preset Profile Picture:</label>
-        <div class="preset-images">
-          <div v-for="(image, index) in presetImages" :key="index" class="preset-image-container">
-            <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
-            <label :for="'preset-' + index">
-              <img :src="image.src" :alt="image.label" class="preset-image" />
-            </label>
+        <div class="form-group mb-3">
+          <label for="birthdate">Data de nascimento</label>
+          <input type="date" id="birthdate" v-model="newUser.birthdate" :max="today" class="form-control" />
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="newPassword">Senha</label>
+          <input type="password" id="newPassword" v-model="newUser.password" required class="form-control" />
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Escolha uma foto predefinida</label>
+          <div class="d-flex justify-content-around">
+            <div v-for="(image, index) in presetImages" :key="index" class="text-center">
+              <input type="radio" :id="'preset-' + index" :value="image.base64" v-model="newUser.picture" />
+              <label :for="'preset-' + index">
+                <img :src="image.src" :alt="image.label" class="rounded-circle img-thumbnail" width="64" height="64" />
+              </label>
+            </div>
           </div>
         </div>
+
+        <div class="form-group mb-3">
+          <label for="upload-picture">Ou escolha uma foto própria</label>
+          <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" class="form-control" />
+        </div>
+
+        <div class="mb-3 text-center" v-if="newUser.picture">
+          <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
+            class="rounded-circle img-thumbnail" width="64" height="64" />
+        </div>
+
+        <div class="form-check mb-3">
+          <input type="checkbox" id="acceptedPrivacyPolicy" v-model="newUser.acceptedPrivacyPolicy"
+            class="form-check-input" />
+          <label for="acceptedPrivacyPolicy" class="form-check-label">
+            Li e concordo com a
+            <a href="https://drive.google.com/file/d/10l5TX2mPbcODZOpJKUoYDwSiVrbj3hQa/view?usp=drive_link"
+              target="_blank">política de privacidade</a>
+          </label>
+          <small v-if="validationErrors.acceptedPrivacyPolicy" class="text-danger d-block">{{
+            validationErrors.acceptedPrivacyPolicy }}</small>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 mb-3">Criar Conta</button>
+      </form>
+
+      <!-- Actions -->
+      <div class="d-flex justify-content-between">
+        <button @click="recoverPassword" v-if="!isCreatingAccount" class="btn btn-link">Recuperar Senha</button>
+        <button @click="toggleForm" class="btn btn-link">{{ isCreatingAccount ? 'Voltar ao Login' : 'Criar Conta'
+          }}</button>
       </div>
-
-      <div class="form-group">
-        <label for="upload-picture">Or Upload Your Own Profile Picture:</label>
-        <input type="file" id="upload-picture" @change="handleFileUpload" accept="image/*" />
-      </div>
-
-      <div class="preview" v-if="newUser.picture">
-        <img :src="'data:image/png;base64,' + newUser.picture" alt="Selected Profile Picture"
-          class="profile-picture-preview" />
-      </div>
-
-      <button type="submit">Create Account</button>
-    </form>
-
-    <!-- Actions -->
-    <div class="actions">
-      <button @click="recoverPassword" v-if="!isCreatingAccount">Recover Password</button>
-      <button @click="toggleForm">
-        {{ isCreatingAccount ? 'Back to Login' : 'Create an Account' }}
-      </button>
     </div>
   </div>
 </template>
@@ -109,7 +129,8 @@
     phone: '',
     birthdate: '1990-01-01',
     picture: '',
-    password: ''
+    password: '',
+    acceptedPrivacyPolicy: true
   })
   const formattedPhone = ref('')
   const validationErrors = ref({})
@@ -152,7 +173,7 @@
 
         username.value = decoded.name
 
-        router.push({ name: 'Home' })
+        router.push({ name: 'Dashboard' })
       } else {
         console.error('Authorization token not found in headers')
       }
@@ -166,10 +187,10 @@
       try {
         newUser.value.phone = unformatPhone(formattedPhone.value)
         await axios.post('http://localhost:8080/api/digital-pec/user', newUser.value)
-        alert('Account created successfully!')
+        alert('Conta criada com sucesso!')
         toggleForm()
       } catch (error) {
-        console.error('Account creation failed:', error)
+        console.error('Falha na criação da conta:', error)
       }
     }
   }
@@ -190,17 +211,20 @@
     validationErrors.value = {}
 
     if (!newUser.value.name || newUser.value.name.length > 80) {
-      validationErrors.value.name = 'Name is required and must be at most 80 characters.'
+      validationErrors.value.name = 'O nome é obrigatório e deve ter no máximo 80 caracteres.'
     }
     if (
       !newUser.value.email ||
       !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newUser.value.email) ||
       newUser.value.email.length > 320
     ) {
-      validationErrors.value.email = 'Valid email is required and must be at most 320 characters.'
+      validationErrors.value.email = 'O e-mail é obrigatório e deve ter no máximo 320 caracteres.'
     }
     if (newUser.value.phone && newUser.value.phone.length > 12) {
-      validationErrors.value.phone = 'Phone number must be at most 12 digits.'
+      validationErrors.value.phone = 'Telefone deve ter no máximo 12 dígitos.'
+    }
+    if (!newUser.value.acceptedPrivacyPolicy) {
+      validationErrors.value.acceptedPrivacyPolicy = ' É necessário aceitar a política de privacidade.'
     }
 
     return Object.keys(validationErrors.value).length === 0
@@ -234,76 +258,75 @@
   }
 
   const recoverPassword = () => {
-    alert('Recover Password clicked')
+    alert('Para recuperar sua senha, entre em contato com o administrador do sistema.')
   }
 </script>
 
 <style scoped>
-  .login-container {
-    width: 300px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-  }
-
-  .form-group {
-    margin-bottom: 15px;
-  }
-
-  .actions {
-    margin-top: 15px;
+  .container {
+    min-height: 100vh;
     display: flex;
-    justify-content: space-between;
-  }
-
-  button {
-    padding: 8px 12px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-
-  small {
-    color: red;
-  }
-
-  .preset-images {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* Three columns per row */
-    gap: 10px;
-    /* Space between images */
-    margin-bottom: 15px;
-  }
-
-  .preset-image-container {
-    display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
   }
 
-  .preset-image {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid #ddd;
-    margin-top: 5px;
+  .card {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
   }
 
-  .profile-picture-preview {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
+  .marketing-section {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .icon {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 10px;
+  }
+
+  .marketing-text {
+    font-size: 18px;
+    color: #070707;
+    font-weight: bold;
+    margin-bottom: 0;
+  }
+
+  h2,
+  h3 {
+    color: #333;
+  }
+
+  .form-control {
+    margin-bottom: 15px;
+  }
+
+  .btn {
+    font-size: 16px;
+    padding: 12px 0;
+  }
+
+  .btn-link {
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+  }
+
+  .form-check-label {
+    font-size: 14px;
+  }
+
+  .form-check-input {
+    margin-top: 0.3rem;
   }
 </style>

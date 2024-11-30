@@ -66,10 +66,10 @@
         setup() {
             const router = useRouter();
             const username = inject('username');
-            const isCollapsed = ref(false); // Renamed for clarity
+            const isCollapsed = ref(false); 
 
             const toggleSidebar = () => {
-                isCollapsed.value = !isCollapsed.value; // Toggle the sidebar collapse state
+                isCollapsed.value = !isCollapsed.value;
             };
 
             const logout = async () => {
@@ -108,7 +108,7 @@
     }
 
     .sidebar.collapsed {
-        width: 40px;
+        width: 80px;
     }
 
     .toggle-btn {

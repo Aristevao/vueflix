@@ -2,7 +2,7 @@
   <div>
     <div class="header">
       <div class="title">Fazendas</div>
-      <CustomButton @click="openUnitModal" type="primary" class="toggle-filters-button">Add New</CustomButton>
+      <CustomButton @click="openUnitModal" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
     </div>
     <div class="fazendas-list">
       <div v-for="fazenda in fazendas" :key="fazenda.id" class="fazenda-card" @click="openModal(fazenda.id)">

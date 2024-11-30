@@ -3,73 +3,80 @@
     <div v-if="isVisible" class="entity-form-modal" @click="handleBackgroundClick">
       <div class="entity-form" @click.stop>
         <span class="close-button" @click="close">&times;</span>
-        <h2>{{ formData.id ? 'Edit Animal' : 'Create New Animal' }}</h2>
+        <h2>{{ formData.id ? 'Editar Animal' : 'Criar Novo Animal' }}</h2>
         <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label>Name:</label>
-            <input v-model="formData.name" maxlength="80" />
-          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nome</label>
+              <input v-model="formData.name" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Identification:</label>
-            <input v-model="formData.identification" required maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Identificador</label>
+              <input v-model="formData.identification" required maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Specie:</label>
-            <input v-model="formData.specie" maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Categoria</label>
+              <input v-model="formData.specie" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Breed:</label>
-            <input v-model="formData.breed" maxlength="80" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Raça</label>
+              <input v-model="formData.breed" maxlength="80" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Sex:</label>
-            <select v-model="formData.sex">
-              <option>MALE</option>
-              <option>FEMALE</option>
-            </select>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Sexo</label>
+              <select v-model="formData.sex" class="form-select">
+                <option>MALE</option>
+                <option>FEMALE</option>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label>Birthdate:</label>
-            <input type="date" v-model="formData.birthdate" :max="today" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Data de Nascimento</label>
+              <input type="date" v-model="formData.birthdate" :max="today" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Registration Date:</label>
-            <input type="date" v-model="formData.registrationDate" :max="today" />
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Data de Registro</label>
+              <input type="date" v-model="formData.registrationDate" :max="today" class="form-control" />
+            </div>
 
-          <div class="form-group">
-            <label>Description:</label>
-            <textarea v-model="formData.description" maxlength="500"></textarea>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <textarea v-model="formData.description" maxlength="500" class="form-control"></textarea>
+            </div>
 
-          <div class="form-group">
-            <label>Unit:</label>
-            <select v-model="formData.unitId" required>
-              <option v-for="unit in units" :key="unit.id" :value="unit.id">
-                {{ unit.name }}
-              </option>
-            </select>
-          </div>
+            <div class="mb-3">
+              <label class="form-label">Fazenda</label>
+              <select v-model="formData.unitId" required class="form-select">
+                <option v-for="unit in units" :key="unit.id" :value="unit.id">
+                  {{ unit.name }}
+                </option>
+              </select>
+            </div>
 
-          <div class="form-group">
-            <label for="picture">Picture:</label>
-            <input type="file" @change="handleFileUpload" id="picture" />
+            <div class="mb-3">
+              <label ref="fileLabel" for="fileInput" class="btn btn-light">{{ fileLabelText }}</label>
+              <input ref="fileInput" type="file" id="fileInput" class="file-input d-none" @change="updateFileLabel" />
+            </div>
+
+            <div v-if="base64Picture || formData.picture" class="text-center mb-3">
+              <img :src="'data:image/png;base64,' + (base64Picture || formData.picture)" alt="Pré-visualização"
+                class="img-fluid rounded" />
+            </div>
           </div>
 
           <div class="button-group">
             <CustomButton type="red" class="delete-button" v-if="deleteButtonIsVisible"
               @click="deleteAnimal(formData.id)">
-              Delete
+              Remover
             </CustomButton>
             <div class="right-buttons">
-              <CustomButton type="secondary" @click="cancelForm">Cancel</CustomButton>
-              <CustomButton type="primary" class="save-button" @click="submitForm">Save</CustomButton>
+              <CustomButton type="secondary" @click="cancelForm">Cancelar</CustomButton>
+              <CustomButton type="primary" class="save-button" @click="submitForm">Salvar</CustomButton>
             </div>
           </div>
         </form>
@@ -109,9 +116,10 @@
           registrationDate: '',
           description: '',
           unitId: '',
-          picture: null,
+          picture: null, // A imagem inicial pode vir aqui
         },
-        base64Picture: '',
+        base64Picture: '', // A imagem base64 que será exibida na pré-visualização
+        fileLabelText: 'Selecionar Foto', // Default label text
       };
     },
     watch: {
@@ -130,11 +138,23 @@
               registrationDate: newValue.registrationDate || '',
               description: newValue.description || '',
               unitId: newValue.unit ? newValue.unit.id : '',
-              picture: null,
+              picture: newValue.picture || null, // Definindo a imagem inicial aqui
             };
+            this.base64Picture = ''; // Resetando a imagem base64
           }
         },
       },
+    },
+    mounted() {
+      const fileInput = this.$refs.fileInput;
+      const fileLabel = this.$refs.fileLabel;
+
+      if (fileInput) {
+        fileInput.addEventListener("change", () => {
+          const fileName = fileInput.files[0]?.name || "Nenhum arquivo escolhido";
+          fileLabel.textContent = fileName;
+        });
+      }
     },
     methods: {
       open(animal) {
@@ -161,12 +181,39 @@
         } else {
           this.resetForm();
         }
+
+        // Reset the file input and label when modal is opened
+        this.$nextTick(() => {
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
       close() {
         this.isVisible = false;
         this.deleteButtonIsVisible = false;
         this.resetForm();
-        document.removeEventListener('keydown', this.handleKeydown);
+
+        this.$nextTick(() => {
+          // Reset the file input and label text when closing the modal
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
       handleBackgroundClick(event) {
         if (event.target === event.currentTarget) {
@@ -179,6 +226,11 @@
         } else if (event.key === 'Enter') {
           this.submitForm();
         }
+      },
+      updateFileLabel(event) {
+        const fileName = event.target.files[0]?.name || 'Nenhum arquivo escolhido';
+        this.fileLabelText = fileName;
+        this.handleFileUpload(event);
       },
       fetchUnits() {
         apiClient
@@ -212,8 +264,11 @@
         formData.append('description', this.formData.description);
         formData.append('unit.id', this.formData.unitId);
 
+        // Append the picture, if selected
         if (this.base64Picture) {
           formData.append('picture', this.base64Picture);
+        } else if (this.formData.picture) {
+          formData.append('picture', this.formData.picture);
         }
 
         const url = this.formData.id ? `/animal/${this.formData.id}` : '/animal';
@@ -261,6 +316,20 @@
           picture: null,
         };
         this.base64Picture = '';
+
+        this.$nextTick(() => {
+          // Clear file input and label text
+          const fileInput = this.$refs.fileInput;
+          const fileLabel = this.$refs.fileLabel;
+
+          if (fileInput) {
+            fileInput.value = ''; // Clear the file input value
+          }
+
+          if (fileLabel) {
+            fileLabel.textContent = 'Selecionar Foto'; // Reset the label text to default
+          }
+        });
       },
     },
   };
@@ -268,4 +337,20 @@
 
 <style scoped>
   @import "@/assets/form-styles.css";
+
+  .file-input {
+    display: none;
+  }
+
+  .image-preview {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 </style>

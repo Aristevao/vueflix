@@ -4,9 +4,9 @@
       <div class="title">Animais</div>
       <div class="button-group">
         <CustomButton @click="toggleFilters" type="secondary" class="toggle-filters-button">
-          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+          {{ showFilters ? 'Esconder Filtros' : 'Exibir Filtros' }}
         </CustomButton>
-        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Add New</CustomButton>
+        <CustomButton @click="openAnimalForm" type="primary" class="toggle-filters-button">Adicionar Novo</CustomButton>
       </div>
     </div>
 
@@ -16,31 +16,31 @@
           <input v-model="filters.identification" placeholder="ID" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.name" placeholder="Name" class="filter-input" />
+          <input v-model="filters.name" placeholder="Nome" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.specie" placeholder="Species" class="filter-input" />
+          <input v-model="filters.specie" placeholder="Categoria" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.breed" placeholder="Breed" class="filter-input" />
+          <input v-model="filters.breed" placeholder="Raça" class="filter-input" />
         </div>
         <div class="filter-item">
           <select v-model="filters.sex" class="filter-input">
-            <option value="">Sex</option>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
+            <option value="">Sexo</option>
+            <option value="MALE">Macho</option>
+            <option value="FEMALE">Fêmea</option>
           </select>
         </div>
         <div class="filter-item">
-          <input v-model="filters.birthdate" placeholder="Age" class="filter-input" />
+          <input v-model="filters.birthdate" placeholder="Idade" class="filter-input" />
         </div>
         <div class="filter-item">
-          <input v-model="filters.registrationDate" placeholder="Registration Date" class="filter-input" />
+          <input v-model="filters.registrationDate" placeholder="Data de Registro" class="filter-input" />
         </div>
       </div>
       <div class="filter-buttons">
-        <CustomButton @click="clearFilters" type="secondary">Clear Filters</CustomButton>
-        <CustomButton @click="fetchAnimals" type="primary">Apply Filters</CustomButton>
+        <CustomButton @click="clearFilters" type="secondary">Limpar Filtros</CustomButton>
+        <CustomButton @click="fetchAnimals" type="primary">Aplicar Filtros</CustomButton>
       </div>
     </div>
 
@@ -51,12 +51,12 @@
         <tr>
           <th class="image-column"></th>
           <th class="identification-column">ID</th>
-          <th class="name-column">Name</th>
-          <th class="specie-column">Specie</th>
-          <th class="breed-column">Breed</th>
-          <th class="sex-column">Sex</th>
-          <th class="age-column">Age</th>
-          <th class="registration-date-column">Registration Date</th>
+          <th class="name-column">Nome</th>
+          <th class="specie-column">Categoria</th>
+          <th class="breed-column">Raça</th>
+          <th class="sex-column">Sexo</th>
+          <th class="age-column">Idade</th>
+          <th class="registration-date-column">Data de Registro</th>
         </tr>
       </thead>
       <tbody>
@@ -69,9 +69,9 @@
           <td class="name-column">{{ animal.name }}</td>
           <td class="specie-column">{{ animal.specie }}</td>
           <td class="breed-column">{{ animal.breed }}</td>
-          <td class="sex-column">{{ animal.sex }}</td>
+          <td class="sex-column">{{ formatSex(animal.sex) }}</td>
           <td class="age-column">{{ calculateAge(animal.birthdate) }}</td>
-          <td class="registration-date-column">{{ animal.registrationDate }}</td>
+          <td class="registration-date-column">{{ formatDate(animal.registrationDate) }}</td>
         </tr>
       </tbody>
     </table>
@@ -152,15 +152,19 @@
         this.currentPage = newPage
         this.fetchAnimals()
       },
+      formatSex(sex) {
+        return sex === 'MALE' ? 'Macho' : sex === 'FEMALE' ? 'Fêmea' : ''
+      },
       calculateAge(birthdate) {
-        const birthDate = new Date(birthdate)
-        const today = new Date()
-        let age = today.getFullYear() - birthDate.getFullYear()
-        const monthDifference = today.getMonth() - birthDate.getMonth()
-        if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-          age--
-        }
-        return `${age} year${age !== 1 ? 's' : ''}`
+        const birthDate = new Date(birthdate);
+        const today = new Date();
+        const timeDifference = today - birthDate;
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        return `${daysDifference} dia${daysDifference !== 1 ? 's' : ''}`;
+      },
+      formatDate(date) {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(date).toLocaleDateString('pt-BR', options);
       },
       clearFilters() {
         this.filters.identification = ''
