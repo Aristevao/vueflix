@@ -39,7 +39,7 @@
             </p>
             <!-- Exibição da previsão quando o estado 'showForecast' for verdadeiro -->
             <div v-if="showForecast" v-for="(forecast, index) in weather.forecast" :key="index">
-              <p><strong>{{ forecast.date }}:</strong></p>
+              <p><strong>{{ forecast.dayOfWeek }} - {{ forecast.date }}:</strong></p>
               <p>Max: {{ forecast.maxTemperature }}°C</p>
               <p>Min: {{ forecast.minTemperature }}°C</p>
               <p>Precipitação: {{ forecast.precipitation }} mm</p>
@@ -118,13 +118,23 @@
       // Estado para controlar a exibição da previsão
       const showForecast = ref(false);
 
+      // Função para obter o nome do dia da semana
+      const getDayOfWeek = (dateStr) => {
+        const daysOfWeek = [
+          "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
+          "Quinta-feira", "Sexta-feira", "Sábado"
+        ];
+        const date = new Date(dateStr);
+        return daysOfWeek[date.getDay()];
+      };
+
       // Função para buscar o clima
       const fetchWeather = async () => {
         try {
           const latitude = -22.35694;
           const longitude = -47.38416;
 
-          // API gratuita Open-Meteo com previsão para os próximos 3 dias
+          // API correta sem o campo 'time' na consulta 'daily'
           const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=America/Sao_Paulo`;
 
           const response = await axios.get(apiUrl);
@@ -135,14 +145,16 @@
           weather.value.description = "Temperatura atual";
           weather.value.temperature = Math.round(currentWeather.temperature);
 
-          // Agora mapeamos os dados corretamente, sem usar 'timezone'
-          // Vamos adicionar manualmente as datas para cada previsão
-          weather.value.forecast = forecast.temperature_2m_max.slice(0, 3).map((_, index) => ({
-            date: forecast.timezone, // Data está agora disponível na chave 'timezone'
-            maxTemperature: Math.round(forecast.temperature_2m_max[index]), // Temperatura máxima
-            minTemperature: Math.round(forecast.temperature_2m_min[index]), // Temperatura mínima
-            precipitation: forecast.precipitation_sum[index] || 0, // Precipitação
-          }));
+          // Mapear corretamente os dados
+          weather.value.forecast = forecast.time.slice(0, 3).map((dateStr, index) => {
+            return {
+              dayOfWeek: getDayOfWeek(dateStr), // Usando o 'dateStr' para obter o dia da semana
+              date: dateStr, // Agora usamos a data real
+              maxTemperature: Math.round(forecast.temperature_2m_max[index]), // Temperatura máxima
+              minTemperature: Math.round(forecast.temperature_2m_min[index]), // Temperatura mínima
+              precipitation: forecast.precipitation_sum[index] || 0, // Precipitação
+            };
+          });
 
           loadingWeather.value = false;
         } catch (err) {
@@ -151,6 +163,8 @@
           loadingWeather.value = false;
         }
       };
+
+
 
       // Função para alternar a exibição da previsão
       const toggleForecast = () => {
