@@ -173,7 +173,7 @@
 
         username.value = decoded.name
 
-        router.push({ name: 'Home' })
+        router.push({ name: 'Dashboard' })
       } else {
         console.error('Authorization token not found in headers')
       }
