@@ -31,24 +31,25 @@
         <div class="card text-center" @click="toggleForecast">
           <div class="card-body">
             <h5 class="card-title">Clima</h5>
+
+            <!-- Loading state -->
             <p v-if="loadingWeather" class="card-text">Carregando...</p>
+
+            <!-- Error state -->
             <p v-else-if="errorWeather" class="card-text text-danger">Erro ao carregar clima</p>
+
+            <!-- Weather information -->
             <p v-else>
+              <!-- Weather Icon -->
+              <i :class="getWeatherIconFromCode(weather.currentWeatherCode)" class="weather-icon"></i>
               {{ weather.description }}<br />
               <strong>{{ weather.temperature }}°C</strong>
             </p>
-            <!-- Exibição da previsão -->
+
+            <!-- Weather Forecast -->
             <div v-if="showForecast" v-for="(forecast, index) in weather.forecast" :key="index">
-              <p>
-                <strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong>
-              </p>
-              <p>
-                <span v-if="forecast.description.includes('Sunny')">☀️</span>
-                <span v-else-if="forecast.description.includes('Cloudy')">☁️</span>
-                <span v-else-if="forecast.description.includes('Rain')">🌧️</span>
-                {{ forecast.description }}
-              </p>
-              <p>Descrição: {{ forecast.description }}</p>
+              <p> <strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong> </p>
+              <i :class="forecast.icon" class="weather-icon"></i>{{ forecast.description }}
               <p>Max: {{ forecast.maxTemperature }}°C</p>
               <p>Min: {{ forecast.minTemperature }}°C</p>
               <p>Precipitação: {{ forecast.precipitation }} mm</p>
@@ -118,13 +119,13 @@
 
       const weather = ref({
         description: "",
+        icon: "",
         temperature: null,
-        forecast: [], // Previsão para os próximos 3 dias
+        currentWeatherCode: null,
+        forecast: [],
       });
       const loadingWeather = ref(true);
       const errorWeather = ref(false);
-
-      // Estado para controlar a exibição da previsão
       const showForecast = ref(false);
 
       // Função para alternar a exibição da previsão
@@ -235,6 +236,38 @@
         return `${day}-${month}`;
       }
 
+      // Function to get the weather icon class based on weather code
+      const getWeatherIconFromCode = (weathercode) => {
+        const weatherIcons = {
+          0: "fas fa-sun", // Clear sky
+          1: "fas fa-cloud-sun", // Partly cloudy
+          2: "fas fa-cloud-sun", // Partly cloudy
+          3: "fas fa-cloud", // Overcast
+          45: "fas fa-smog", // Fog
+          48: "fas fa-smog", // Fog
+          51: "fas fa-cloud-rain", // Light drizzle
+          53: "fas fa-cloud-showers-heavy", // Moderate drizzle
+          55: "fas fa-cloud-showers-heavy", // Heavy drizzle
+          61: "fas fa-cloud-rain", // Light rain
+          63: "fas fa-cloud-showers-heavy", // Moderate rain
+          65: "fas fa-cloud-showers-heavy", // Heavy rain
+          66: "fas fa-snowflake", // Light freezing rain
+          67: "fas fa-snowflake", // Heavy freezing rain
+          71: "fas fa-snowflake", // Light snow
+          73: "fas fa-snowflake", // Moderate snow
+          75: "fas fa-snowflake", // Heavy snow
+          80: "fas fa-cloud-showers-heavy", // Light rain showers
+          81: "fas fa-cloud-showers-heavy", // Moderate rain showers
+          82: "fas fa-cloud-showers-heavy", // Heavy rain showers
+          95: "fas fa-bolt", // Thunderstorm
+          96: "fas fa-cloud-bolt", // Thunderstorm with light hail
+          99: "fas fa-cloud-bolt", // Thunderstorm with heavy hail
+        };
+
+        return weatherIcons[weathercode] || "fas fa-question-circle"; // Default icon for unknown codes
+      };
+
+
       const getWeatherDescriptionFromCode = (weathercode) => {
         const weatherDescriptions = {
           0: "Céu limpo",
@@ -265,7 +298,6 @@
         return weatherDescriptions[weathercode] || "Condição desconhecida";
       };
 
-      // Função para buscar o clima
       const fetchWeather = async () => {
         try {
           const latitude = -22.35694;
@@ -274,28 +306,34 @@
           const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=America/Sao_Paulo`;
 
           const response = await axios.get(apiUrl);
+
           const currentWeather = response.data.current_weather;
           const forecast = response.data.daily;
 
-          // Map current weather description
-          weather.value.description = getWeatherDescriptionFromCode(currentWeather.weathercode);
-          weather.value.temperature = Math.round(currentWeather.temperature);
+          if (!currentWeather || currentWeather.weathercode === undefined) {
+            throw new Error("Current weather data is missing!");
+          }
 
-          // Map forecast descriptions if weathercode is available
-          weather.value.forecast = forecast.time.slice(0, 3).map((dateStr, index) => {
-            return {
-              dayOfWeek: getDayOfWeek(dateStr),
-              date: formatDate(dateStr),
-              maxTemperature: Math.round(forecast.temperature_2m_max[index]),
-              minTemperature: Math.round(forecast.temperature_2m_min[index]),
-              precipitation: forecast.precipitation_sum[index] || 0,
-              description: getWeatherDescriptionFromCode(forecast.weathercode[index] || null),
-            };
-          });
+          weather.value.description = getWeatherDescriptionFromCode(currentWeather.weathercode);
+          weather.value.icon = getWeatherIconFromCode(currentWeather.weathercode);
+          weather.value.temperature = Math.round(currentWeather.temperature);
+          weather.value.currentWeatherCode = currentWeather.weathercode;
+
+          weather.value.forecast = forecast.time.slice(1, 4).map((dateStr, index) => ({
+            dayOfWeek: new Date(dateStr).toLocaleDateString("pt-BR", { weekday: "long" }),
+            date: formatDate(dateStr),
+            maxTemperature: Math.round(forecast.temperature_2m_max[index]),
+            minTemperature: Math.round(forecast.temperature_2m_min[index]),
+            precipitation: forecast.precipitation_sum[index] || 0,
+            description: getWeatherDescriptionFromCode(forecast.weathercode[index]),
+            icon: getWeatherIconFromCode(forecast.weathercode[index]),
+          }));
+
+          console.log(weather.value.forecast);
 
           loadingWeather.value = false;
-        } catch (err) {
-          console.error("Erro ao buscar dados de clima:", err);
+        } catch (error) {
+          console.error(error);
           errorWeather.value = true;
           loadingWeather.value = false;
         }
@@ -348,8 +386,23 @@
         loadingWeather,
         errorWeather,
         showForecast,
+        getWeatherIconFromCode,
         toggleForecast,
       };
     },
   };
 </script>
+
+<style scoped>
+  .weather-icon {
+    font-size: 1.5rem;
+    margin-right: 8px;
+    color: #007bff;
+    /* Example: Blue for all weather icons */
+  }
+
+  .card .weather-icon {
+    font-size: 1.6rem;
+    /* Larger icons for the main card */
+  }
+</style>
