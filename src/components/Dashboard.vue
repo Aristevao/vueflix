@@ -37,6 +37,12 @@
               {{ weather.description }}<br />
               <strong>{{ weather.temperature }}°C</strong>
             </p>
+            <!-- <div v-for="(forecast, index) in weather.forecast" :key="index">
+              <p>{{ forecast.date }}:</p>
+              <p>Max: {{ forecast.maxTemperature }}°C</p>
+              <p>Min: {{ forecast.minTemperature }}°C</p>
+              <p>Precipitação: {{ forecast.precipitation }} mm</p>
+            </div> -->
           </div>
         </div>
       </div>
@@ -103,9 +109,10 @@
       const weather = ref({
         description: "",
         temperature: null,
+        forecast: [], // Previsão para os próximos 3 dias
       });
       const loadingWeather = ref(true);
-      const errorWeather = ref(false)
+      const errorWeather = ref(false);
 
       // Função para buscar o clima
       const fetchWeather = async () => {
@@ -113,15 +120,26 @@
           const latitude = -22.35694;
           const longitude = -47.38416;
 
-          // API gratuita Open-Meteo
-          const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+          // API gratuita Open-Meteo com previsão para os próximos 3 dias
+          const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=America/Sao_Paulo`;
 
           const response = await axios.get(apiUrl);
-          const data = response.data.current_weather;
+          const currentWeather = response.data.current_weather;
+          const forecast = response.data.daily;
 
           // Atualizar os dados do clima
           weather.value.description = "Temperatura atual";
-          weather.value.temperature = Math.round(data.temperature);
+          weather.value.temperature = Math.round(currentWeather.temperature);
+
+          // Agora mapeamos os dados corretamente, sem usar 'timezone'
+          // Vamos adicionar manualmente as datas para cada previsão
+          weather.value.forecast = forecast.temperature_2m_max.slice(0, 3).map((_, index) => ({
+            date: forecast.timezone, // Data está agora disponível na chave 'timezone'
+            maxTemperature: Math.round(forecast.temperature_2m_max[index]), // Temperatura máxima
+            minTemperature: Math.round(forecast.temperature_2m_min[index]), // Temperatura mínima
+            precipitation: forecast.precipitation_sum[index] || 0, // Precipitação
+          }));
+
           loadingWeather.value = false;
         } catch (err) {
           console.error("Erro ao buscar dados de clima:", err);
