@@ -63,7 +63,13 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Vacas no Curral</h5>
-            <p class="card-text display-4">{{ cowsInCorral }}</p>
+            <p v-if="loadingCorral" class="card-text">Carregando...</p>
+            <p v-else-if="errorCorral" class="card-text text-danger">Erro ao carregar</p>
+            <p v-else>
+              <strong>Dentro:</strong> {{ corralStatus.totalInside }}<br />
+              <strong>Fora:</strong> {{ corralStatus.totalOutside }}<br />
+              <strong>Total:</strong> {{ corralStatus.animalsQuantity }}
+            </p>
           </div>
         </div>
       </div>
@@ -103,8 +109,33 @@
       const loadingFarms = ref(true);
       const errorFarms = ref(false);
 
-      // Outros estados
-      const cowsInCorral = ref(10);
+      const corralStatus = ref({
+        totalOutside: 0,
+        totalInside: 0,
+        animalsQuantity: 0,
+      });
+      const loadingCorral = ref(true);
+      const errorCorral = ref(false);
+
+      const fetchCorralStatus = async () => {
+        loadingCorral.value = true;
+        errorCorral.value = false;
+
+        try {
+          const response = await apiClient.get("/animal/status");
+          const data = await response.data;
+          corralStatus.value = {
+            totalOutside: data.totalOutside,
+            totalInside: data.totalInside,
+            animalsQuantity: data.animalsQuantity,
+          };
+        } catch (error) {
+          console.error("Error fetching corral status:", error);
+          errorCorral.value = true;
+        } finally {
+          loadingCorral.value = false;
+        }
+      };
 
       // Estados para o gráfico
       const loadingChart = ref(true);
@@ -343,6 +374,7 @@
         fetchWeather();
         fetchAnimalCount();
         fetchFarmCount();
+        fetchCorralStatus();
 
         // Gráfico de rosca
         const ctx = document.getElementById("pieChart").getContext("2d");
@@ -374,7 +406,6 @@
         farms,
         loadingFarms,
         errorFarms,
-        cowsInCorral,
         animalCategories,
         loadingChart,
         errorChart,
@@ -384,6 +415,9 @@
         showForecast,
         getWeatherIconFromCode,
         toggleForecast,
+        corralStatus,
+        loadingCorral,
+        errorCorral,
       };
     },
   };
