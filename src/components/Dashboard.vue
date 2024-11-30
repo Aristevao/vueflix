@@ -60,7 +60,7 @@
 
       <!-- Card: Vacas no Curral -->
       <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center h-100 vacas-card">
           <div class="card-body">
             <h5 class="card-title">Vacas no Curral</h5>
             <p v-if="loadingCorral" class="card-text">Carregando...</p>
@@ -434,5 +434,12 @@
   .card .weather-icon {
     font-size: 1.6rem;
     /* Larger icons for the main card */
+  }
+
+  .vacas-card {
+    min-height: 131.19px;
+    /* Altura mínima reduzida */
+    max-height: 133.19px;
+    /* Opcional: limite máximo */
   }
 </style>
