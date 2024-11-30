@@ -37,9 +37,18 @@
               {{ weather.description }}<br />
               <strong>{{ weather.temperature }}°C</strong>
             </p>
-            <!-- Exibição da previsão quando o estado 'showForecast' for verdadeiro -->
+            <!-- Exibição da previsão -->
             <div v-if="showForecast" v-for="(forecast, index) in weather.forecast" :key="index">
-              <p><strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong></p>
+              <p>
+                <strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong>
+              </p>
+              <p>
+                <span v-if="forecast.description.includes('Sunny')">☀️</span>
+                <span v-else-if="forecast.description.includes('Cloudy')">☁️</span>
+                <span v-else-if="forecast.description.includes('Rain')">🌧️</span>
+                {{ forecast.description }}
+              </p>
+              <p>Descrição: {{ forecast.description }}</p>
               <p>Max: {{ forecast.maxTemperature }}°C</p>
               <p>Min: {{ forecast.minTemperature }}°C</p>
               <p>Precipitação: {{ forecast.precipitation }} mm</p>
@@ -226,31 +235,61 @@
         return `${day}-${month}`;
       }
 
+      const getWeatherDescriptionFromCode = (weathercode) => {
+        const weatherDescriptions = {
+          0: "Céu limpo",
+          1: "Parcialmente nublado",
+          2: "Parcialmente nublado",
+          3: "Encoberto",
+          45: "Neblina",
+          48: "Neblina",
+          51: "Garoa leve",
+          53: "Garoa moderada",
+          55: "Garoa intensa",
+          61: "Chuva leve",
+          63: "Chuva moderada",
+          65: "Chuva intensa",
+          66: "Chuva congelante leve",
+          67: "Chuva congelante intensa",
+          71: "Neve leve",
+          73: "Neve moderada",
+          75: "Neve intensa",
+          80: "Pancadas de chuva leve",
+          81: "Pancadas de chuva moderada",
+          82: "Pancadas de chuva forte",
+          95: "Tempestade",
+          96: "Tempestade com granizo leve",
+          99: "Tempestade com granizo forte",
+        };
+
+        return weatherDescriptions[weathercode] || "Condição desconhecida";
+      };
+
       // Função para buscar o clima
       const fetchWeather = async () => {
         try {
           const latitude = -22.35694;
           const longitude = -47.38416;
 
-          // API correta sem o campo 'time' na consulta 'daily'
-          const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=America/Sao_Paulo`;
+          const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=America/Sao_Paulo`;
 
           const response = await axios.get(apiUrl);
           const currentWeather = response.data.current_weather;
           const forecast = response.data.daily;
 
-          // Atualizar os dados do clima
-          weather.value.description = "Temperatura atual";
+          // Map current weather description
+          weather.value.description = getWeatherDescriptionFromCode(currentWeather.weathercode);
           weather.value.temperature = Math.round(currentWeather.temperature);
 
-          // Mapear corretamente os dados
+          // Map forecast descriptions if weathercode is available
           weather.value.forecast = forecast.time.slice(0, 3).map((dateStr, index) => {
             return {
-              dayOfWeek: getDayOfWeek(dateStr), // Usando o 'dateStr' para obter o dia da semana
-              date: formatDate(dateStr), // Agora usamos a data real
-              maxTemperature: Math.round(forecast.temperature_2m_max[index]), // Temperatura máxima
-              minTemperature: Math.round(forecast.temperature_2m_min[index]), // Temperatura mínima
-              precipitation: forecast.precipitation_sum[index] || 0, // Precipitação
+              dayOfWeek: getDayOfWeek(dateStr),
+              date: formatDate(dateStr),
+              maxTemperature: Math.round(forecast.temperature_2m_max[index]),
+              minTemperature: Math.round(forecast.temperature_2m_min[index]),
+              precipitation: forecast.precipitation_sum[index] || 0,
+              description: getWeatherDescriptionFromCode(forecast.weathercode[index] || null),
             };
           });
 
