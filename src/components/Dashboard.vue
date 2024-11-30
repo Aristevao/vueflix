@@ -31,8 +31,12 @@
         <div class="card text-center">
           <div class="card-body">
             <h5 class="card-title">Clima</h5>
-            <p class="card-text">{{ weather.description }}</p>
-            <p class="card-text">{{ weather.temperature }}°C</p>
+            <p v-if="loadingWeather" class="card-text">Carregando...</p>
+            <p v-else-if="errorWeather" class="card-text text-danger">Erro ao carregar clima</p>
+            <p v-else>
+              {{ weather.description }}<br />
+              <strong>{{ weather.temperature }}°C</strong>
+            </p>
           </div>
         </div>
       </div>
@@ -68,6 +72,7 @@
   import { ref, onMounted } from "vue";
   import Chart from "chart.js/auto";
   import apiClient from '../store/apiClient'
+  import axios from "axios";
 
   export default {
     setup() {
@@ -82,7 +87,6 @@
       const errorFarms = ref(false);
 
       // Outros estados
-      const weather = ref({ description: "Ensolarado", temperature: 28 });
       const cowsInCorral = ref(10);
 
       // Estados para o gráfico
@@ -95,6 +99,37 @@
         Vaca: 15,
         Bezerro: 18,
       });
+
+      const weather = ref({
+        description: "",
+        temperature: null,
+      });
+      const loadingWeather = ref(true);
+      const errorWeather = ref(false)
+
+      // Função para buscar o clima
+      const fetchWeather = async () => {
+        try {
+          const latitude = -22.35694;
+          const longitude = -47.38416;
+
+          // API gratuita Open-Meteo
+          const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+
+          const response = await axios.get(apiUrl);
+          const data = response.data.current_weather;
+
+          // Atualizar os dados do clima
+          weather.value.description = "Temperatura atual";
+          weather.value.temperature = Math.round(data.temperature);
+          loadingWeather.value = false;
+        } catch (err) {
+          console.error("Erro ao buscar dados de clima:", err);
+          errorWeather.value = true;
+          loadingWeather.value = false;
+        }
+      };
+
 
       // Função para buscar dados de espécies
       const fetchAnimalCategories = async () => {
@@ -181,6 +216,7 @@
         if (!errorChart.value) {
           initializeChart();
         }
+        fetchWeather();
         fetchAnimalCount();
         fetchFarmCount();
 
@@ -214,11 +250,13 @@
         farms,
         loadingFarms,
         errorFarms,
-        weather,
         cowsInCorral,
         animalCategories,
         loadingChart,
         errorChart,
+        weather,
+        loadingWeather,
+        errorWeather,
       };
     },
   };
