@@ -75,9 +75,21 @@
       </div>
     </div>
 
-    <!-- Row 2: Gráfico de Rosca -->
     <div class="row mt-4">
-      <div class="col-md-6 offset-md-3">
+      <!-- Card: Gráfico de Vacinação -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title text-center">Status de Vacinação</h5>
+            <div v-if="loadingVaccinationChart">Carregando gráfico...</div>
+            <div v-else-if="errorVaccinationChart" class="text-danger">Erro ao carregar gráfico</div>
+            <canvas v-show="!loadingVaccinationChart && !errorVaccinationChart" id="vaccinationChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Gráfico de Rosca -->
+      <div class="col-md-6">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title text-center">Quantidade por Categoria</h5>
@@ -366,6 +378,79 @@
         }
       };
 
+      // Estados para o gráfico de vacinação
+      const loadingVaccinationChart = ref(true);
+      const errorVaccinationChart = ref(false);
+      const vaccinationData = ref({ VacinasAtrasadas: 0, VacinasEmDia: 0 });
+      let vaccinationChartInstance = null;
+
+      // Função para buscar os dados de vacinação
+      const fetchVaccinationData = async () => {
+        try {
+          const response = await apiClient.get("dashboard/vaccination-status"); // Endpoint para buscar os dados
+          const rawData = response.data;
+
+          // Inicialize os contadores
+          const vaccinationSummary = { "Vacinas Em Dia": 0, "Vacinas Atrasadas": 0, "Vacinas Futuras": 0 };
+
+          rawData.forEach((animal) => {
+            animal.vaccineStatuses.forEach((vaccine) => {
+              if (vaccine.isVaccinated) {
+                // Contabilizar vacinas em dia
+                vaccinationSummary["Vacinas Em Dia"]++;
+              } else if (new Date(vaccine.nextVaccineDate) < new Date()) {
+                // Contabilizar vacinas atrasadas
+                vaccinationSummary["Vacinas Atrasadas"]++;
+              } else {
+                // Contabilizar vacinas futuras
+                vaccinationSummary["Vacinas Futuras"]++;
+              }
+            });
+          });
+
+          // Atualize os dados para o gráfico
+          vaccinationData.value = vaccinationSummary;
+          loadingVaccinationChart.value = false;
+        } catch (err) {
+          console.error("Erro ao buscar status de vacinação:", err);
+          errorVaccinationChart.value = true;
+          loadingVaccinationChart.value = false;
+        }
+      };
+
+
+      // Função para inicializar o gráfico
+      const initializeVaccinationChart = () => {
+        const ctx = document.getElementById("vaccinationChart").getContext("2d");
+        const labels = Object.keys(vaccinationData.value);
+        const data = Object.values(vaccinationData.value);
+
+        if (vaccinationChartInstance) {
+          vaccinationChartInstance.destroy(); // Destroi o gráfico anterior antes de recriar
+        }
+
+        vaccinationChartInstance = new Chart(ctx, {
+          type: "pie", // Gráfico de pizza
+          data: {
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor: ["#28a745", "#dc3545", "#e0a604"], // Vermelho (atrasado) e verde (em dia)
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "bottom",
+              },
+            },
+          },
+        });
+      };
+
       onMounted(async () => {
         await fetchAnimalCategories();
         if (!errorChart.value) {
@@ -375,6 +460,10 @@
         fetchAnimalCount();
         fetchFarmCount();
         fetchCorralStatus();
+        await fetchVaccinationData();
+        if (!errorVaccinationChart.value) {
+          initializeVaccinationChart();
+        }
 
         // Gráfico de rosca
         const ctx = document.getElementById("pieChart").getContext("2d");
@@ -418,6 +507,8 @@
         corralStatus,
         loadingCorral,
         errorCorral,
+        loadingVaccinationChart,
+        errorVaccinationChart,
       };
     },
   };
