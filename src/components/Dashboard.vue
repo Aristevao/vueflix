@@ -31,24 +31,15 @@
         <div class="card text-center" @click="toggleForecast">
           <div class="card-body">
             <h5 class="card-title">Clima</h5>
-
-            <!-- Loading state -->
             <p v-if="loadingWeather" class="card-text">Carregando...</p>
-
-            <!-- Error state -->
             <p v-else-if="errorWeather" class="card-text text-danger">Erro ao carregar clima</p>
-
-            <!-- Weather information -->
             <p v-else>
-              <!-- Weather Icon -->
               <i :class="getWeatherIconFromCode(weather.currentWeatherCode)" class="weather-icon"></i>
               {{ weather.description }}<br />
               <strong>{{ weather.temperature }}°C</strong>
             </p>
-
-            <!-- Weather Forecast -->
             <div v-if="showForecast" v-for="(forecast, index) in weather.forecast" :key="index">
-              <p> <strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong> </p>
+              <p><strong>{{ forecast.dayOfWeek }} | {{ forecast.date }}:</strong></p>
               <i :class="forecast.icon" class="weather-icon"></i>{{ forecast.description }}
               <p>Max: {{ forecast.maxTemperature }}°C</p>
               <p>Min: {{ forecast.minTemperature }}°C</p>
@@ -78,7 +69,7 @@
     <div class="row mt-4">
       <!-- Card: Gráfico de Vacinação -->
       <div class="col-md-6">
-        <div class="card">
+        <div class="card h-100">
           <div class="card-body">
             <h5 class="card-title text-center">Status de Vacinação</h5>
             <div v-if="loadingVaccinationChart">Carregando gráfico...</div>
@@ -90,7 +81,7 @@
 
       <!-- Card: Gráfico de Rosca -->
       <div class="col-md-3">
-        <div class="card">
+        <div class="card h-100">
           <div class="card-body">
             <h5 class="card-title text-center">Quantidade por Categoria</h5>
             <div v-if="loadingChart">Carregando gráfico...</div>
@@ -101,35 +92,28 @@
       </div>
     </div>
 
-    <div class="container mt-4">
-      <div class="row mt-4">
-        <!-- Card: Gráfico de Evolução -->
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title text-center">Evolução de Animais</h5>
-
-              <!-- Dropdown para alternar entre os formatos -->
-              <div class="d-flex justify-content-end mb-3">
-                <select v-model="selectedView" @change="fetchData" class="form-select w-25">
-                  <option value="entries">Entradas Mensais</option>
-                  <option value="evolution">Evolução Acumulada</option>
-                </select>
-              </div>
-
-              <!-- Gráfico -->
-              <div v-if="loadingChart">Carregando gráfico...</div>
-              <div v-else-if="errorChart" class="text-danger">Erro ao carregar gráfico</div>
-              <canvas v-show="!loadingChart && !errorChart" id="evolutionChart"></canvas>
+    <div class="row mt-4">
+      <!-- Card: Gráfico de Evolução -->
+      <div class="col-md-12">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title text-center">Evolução de Animais</h5>
+            <div class="d-flex justify-content-end mb-3">
+              <select v-model="selectedView" @change="fetchData" class="form-select w-25">
+                <option value="entries">Entradas Mensais</option>
+                <option value="evolution">Evolução Acumulada</option>
+              </select>
             </div>
+            <div v-if="loadingChart">Carregando gráfico...</div>
+            <div v-else-if="errorChart" class="text-danger">Erro ao carregar gráfico</div>
+            <canvas v-show="!loadingChart && !errorChart" id="evolutionChart"></canvas>
           </div>
         </div>
       </div>
     </div>
-
-
   </div>
 </template>
+
 
 <script>
   import { ref, onMounted } from "vue";
@@ -653,19 +637,19 @@
   .weather-icon {
     font-size: 1.5rem;
     margin-right: 8px;
-    color: #007bff;
-    /* Example: Blue for all weather icons */
+    color: #007bff; /* Blue for all weather icons */
   }
 
   .card .weather-icon {
-    font-size: 1.6rem;
-    /* Larger icons for the main card */
+    font-size: 1.6rem; /* Larger icons for the main card */
   }
 
   .vacas-card {
-    min-height: 131.19px;
-    /* Altura mínima reduzida */
-    max-height: 133.19px;
-    /* Opcional: limite máximo */
+    min-height: 131.19px; /* Reduced minimum height */
+    max-height: 133.19px; /* Optional: max height limit */
+  }
+
+  .h-100 {
+    height: 100%;
   }
 </style>
