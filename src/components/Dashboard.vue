@@ -4,7 +4,7 @@
     <div class="row">
       <!-- Card: Quantidade de Animais -->
       <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center" @click="redirectToAnimalsList">
           <div class="card-body">
             <h5 class="card-title">Animais</h5>
             <p v-if="loadingAnimals" class="card-text">Carregando...</p>
@@ -16,7 +16,7 @@
 
       <!-- Card: Quantidade de Fazendas -->
       <div class="col-md-3">
-        <div class="card text-center">
+        <div class="card text-center" @click="redirectToUnitList">
           <div class="card-body">
             <h5 class="card-title">Fazendas</h5>
             <p v-if="loadingFarms" class="card-text">Carregando...</p>
@@ -120,18 +120,29 @@
   import Chart from "chart.js/auto";
   import apiClient from '../store/apiClient'
   import axios from "axios";
+  import { useRouter } from 'vue-router'
 
   export default {
     setup() {
+      const router = useRouter()
+
       // Estados para Animais
       const animals = ref(0);
       const loadingAnimals = ref(true);
       const errorAnimals = ref(false);
 
+      const redirectToAnimalsList = () => {
+        router.push({ name: 'Animals' })
+      };
+
       // Estados para Fazendas
       const farms = ref(0);
       const loadingFarms = ref(true);
       const errorFarms = ref(false);
+
+      const redirectToUnitList = () => {
+        router.push({ name: 'Units' })
+      };
 
       const corralStatus = ref({
         totalOutside: 0,
@@ -619,6 +630,8 @@
         showForecast,
         getWeatherIconFromCode,
         toggleForecast,
+        redirectToAnimalsList,
+        redirectToUnitList,
         corralStatus,
         loadingCorral,
         errorCorral,
