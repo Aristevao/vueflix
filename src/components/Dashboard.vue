@@ -419,32 +419,53 @@
       };
 
 
-      // Função para inicializar o gráfico
+      // Função para inicializar o gráfico de barras de vacinação com dados da API
       const initializeVaccinationChart = () => {
         const ctx = document.getElementById("vaccinationChart").getContext("2d");
-        const labels = Object.keys(vaccinationData.value);
-        const data = Object.values(vaccinationData.value);
+
+        const labels = Object.keys(vaccinationData.value); // ["Vacinas Em Dia", "Vacinas Atrasadas", "Vacinas Futuras"]
+        const data = Object.values(vaccinationData.value); // [x, y, z]
 
         if (vaccinationChartInstance) {
           vaccinationChartInstance.destroy(); // Destroi o gráfico anterior antes de recriar
         }
 
         vaccinationChartInstance = new Chart(ctx, {
-          type: "pie", // Gráfico de pizza
+          type: "bar", // Mudando para gráfico de barras
           data: {
             labels,
             datasets: [
               {
+                label: 'Quantidade de Animais',
                 data,
-                backgroundColor: ["#28a745", "#dc3545", "#e0a604"], // Vermelho (atrasado) e verde (em dia)
+                backgroundColor: ["#28a745", "#dc3545", "#007bff"], // Verde, Vermelho e Azul
+                borderColor: ["#28a745", "#dc3545", "#007bff"], // Cor da borda das barras
+                borderWidth: 1,
               },
             ],
           },
           options: {
             responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true, // Começa o eixo Y do gráfico do zero
+              },
+            },
             plugins: {
               legend: {
-                position: "bottom",
+                position: "top",
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                      label += ": ";
+                    }
+                    label += context.raw;
+                    return label;
+                  },
+                },
               },
             },
           },
