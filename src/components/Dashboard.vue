@@ -101,14 +101,23 @@
       </div>
     </div>
 
-    <!-- Card: Gráfico de Espécies por Data -->
     <div class="container mt-4">
       <div class="row mt-4">
         <!-- Card: Gráfico de Evolução -->
-        <div class="col-md-6">
+        <div class="col-md-12">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title text-center">Evolução de Animais</h5>
+
+              <!-- Dropdown para alternar entre os formatos -->
+              <div class="d-flex justify-content-end mb-3">
+                <select v-model="selectedView" @change="fetchData" class="form-select w-25">
+                  <option value="entries">Entradas Mensais</option>
+                  <option value="evolution">Evolução Acumulada</option>
+                </select>
+              </div>
+
+              <!-- Gráfico -->
               <div v-if="loadingChart">Carregando gráfico...</div>
               <div v-else-if="errorChart" class="text-danger">Erro ao carregar gráfico</div>
               <canvas v-show="!loadingChart && !errorChart" id="evolutionChart"></canvas>
@@ -491,50 +500,67 @@
         });
       };
 
-      const loadingEvolutionChart = ref(true);
-      const errorEvolutionChart = ref(false);
-      let evolutionChartInstance = null;
-      const evolutionData = ref([]);
+      const animalsEvolutionLoadingChart = ref(true);
+      const animalsEvolutionErrorChart = ref(false);
+      const selectedView = ref("entries"); // View selecionada: 'entries' ou 'evolution'
+      let animalsEvolutionChartInstance = null;
 
-      // Function to initialize the chart dynamically
-      const initializeEvolutionChart = () => {
+      const fetchData = async () => {
+        animalsEvolutionLoadingChart.value = true;
+        animalsEvolutionErrorChart.value = false;
+
+        try {
+          const response = await apiClient.get(
+            `/dashboard/${selectedView.value === "entries" ? "animal-entries" : "animal-evolution"
+            }`,
+          );
+
+          updateChart(response.data);
+        } catch (error) {
+          console.error("Erro ao buscar dados:", error);
+          animalsEvolutionErrorChart.value = true;
+        } finally {
+          animalsEvolutionLoadingChart.value = false;
+        }
+      };
+
+      const updateChart = (data) => {
         const ctx = document.getElementById("evolutionChart").getContext("2d");
 
-        // Extract months and datasets dynamically
-        const months = evolutionData.value.map((data) => data.month);
-        const totalAnimals = evolutionData.value.map((data) => data.total);
+        const months = data.map((d) => d.month);
+        const total = data.map((d) => d.total);
 
-        // Collect dynamic categories
-        const categories = Object.keys(evolutionData.value[0] || {}).filter(
-          (key) => key !== "month" && key !== "total"
+        // Extrair espécies dinamicamente
+        const species = Array.from(
+          new Set(
+            data.flatMap((d) =>
+              Object.keys(d).filter((key) => key !== "month" && key !== "total")
+            )
+          )
         );
 
         const datasets = [
           {
             label: "Total de Animais",
-            data: totalAnimals,
+            data: total,
             borderColor: "#007bff",
             fill: false,
           },
-          ...categories.map((category, index) => ({
-            label: category,
-            data: evolutionData.value.map((data) => data[category] || 0),
-            borderColor: getDynamicColor(index),
+          ...species.map((specie) => ({
+            label: specie,
+            data: data.map((d) => d[specie] || 0),
+            borderColor: generateRandomColor(),
             fill: false,
           })),
         ];
 
-        // Destroy existing chart if it exists
-        if (evolutionChartInstance) {
-          evolutionChartInstance.destroy();
-        }
+        if (animalsEvolutionChartInstance) animalsEvolutionChartInstance.destroy();
 
-        // Create the new chart
-        evolutionChartInstance = new Chart(ctx, {
+        animalsEvolutionChartInstance = new Chart(ctx, {
           type: "line",
           data: {
             labels: months,
-            datasets: datasets,
+            datasets,
           },
           options: {
             responsive: true,
@@ -552,35 +578,8 @@
         });
       };
 
-      // Function to generate dynamic colors for datasets
-      const getDynamicColor = (index) => {
-        const colors = [
-          "#28a745", // Green
-          "#ffc107", // Yellow
-          "#dc3545", // Red
-          "#17a2b8", // Teal
-          "#6610f2", // Purple
-          "#fd7e14", // Orange
-        ];
-        return colors[index % colors.length];
-      };
-
-      // Fetch data from the API
-      const fetchData = async () => {
-        try {
-          const response = await apiClient.get("/dashboard/animal-evolution");
-          evolutionData.value = response.data.map((item) => ({
-            ...item,
-            month: item.month, // Format if needed
-          }));
-          initializeEvolutionChart();
-        } catch (error) {
-          console.error("Erro ao carregar dados:", error);
-          errorEvolutionChart.value = true;
-        } finally {
-          loadingEvolutionChart.value = false;
-        }
-      };
+      const generateRandomColor = () =>
+        `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Gera cores aleatórias
 
       onMounted(async () => {
         await fetchAnimalCategories();
@@ -641,8 +640,10 @@
         errorCorral,
         loadingVaccinationChart,
         errorVaccinationChart,
-        loadingEvolutionChart,
-        errorEvolutionChart,
+        animalsEvolutionLoadingChart,
+        animalsEvolutionErrorChart,
+        selectedView,
+        fetchData,
       };
     },
   };
