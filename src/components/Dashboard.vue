@@ -90,6 +90,40 @@
           </div>
         </div>
       </div>
+
+      <!-- Card: Lista de Notificações -->
+      <div class="col-md-3">
+        <div class="card h-100" @click="redirectToNotificationList">
+          <div class="card-body">
+            <h5 class="card-title text-center">Notificações</h5>
+            <div class="notification-list">
+              <ul class="list-group">
+                <li v-if="loadingNotifications" class="list-group-item text-center">
+                  Carregando notificações...
+                </li>
+                <li v-else-if="errorNotifications" class="list-group-item text-danger text-center">
+                  Erro ao carregar notificações
+                </li>
+
+                <li v-else-if="notifications.length === 0" class="list-group-item text-center">
+                  Não há notificações no momento.
+                </li>
+
+                <li v-else v-for="notification in notifications" :key="notification.id" class="list-group-item"
+                  :title="notification.message">
+                  <strong>{{ notification.title }}</strong>
+                  <p class="message-truncated">
+                    {{ truncateMessage(notification.message) }}
+                  </p>
+                  <small class="text-muted d-block">
+                    Recebido em: {{ formatNotificationDate(notification.createdAt) }}
+                  </small>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row mt-4">
@@ -113,7 +147,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
   import { ref, onMounted, onBeforeUnmount } from "vue";
@@ -142,6 +175,41 @@
 
       const redirectToUnitList = () => {
         router.push({ name: 'Units' })
+      };
+
+      const redirectToNotificationList = () => {
+        router.push({ name: 'Notifications' })
+      };
+
+      const notifications = ref([]);
+      const loadingNotifications = ref(true);
+      const errorNotifications = ref(false);
+
+      const fetchNotifications = async () => {
+        try {
+          loadingNotifications.value = true;
+          errorNotifications.value = false;
+          const response = await apiClient.get("/notification?isRead=false");
+          notifications.value = response.data.content;
+        } catch (error) {
+          console.error("Erro ao carregar notificações:", error);
+          errorNotifications.value = true;
+        } finally {
+          loadingNotifications.value = false;
+        }
+      };
+
+      // Formatar a data (removido "async")
+      const formatNotificationDate = (dateString) => {
+        const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+        return new Date(dateString).toLocaleDateString("pt-BR", options);
+      };
+
+      // Truncar mensagem (removido "async")
+      const truncateMessage = (message, maxLength = 60) => {
+        return message.length > maxLength
+          ? message.slice(0, maxLength) + "..."
+          : message;
       };
 
       const corralStatus = ref({
@@ -587,6 +655,7 @@
         fetchWeather();
         fetchAnimalCount();
         fetchFarmCount();
+        fetchNotifications();
 
         fetchCorralStatus(); // Initial fetch when mounted
         corralDataInterval = setInterval(() => {
@@ -653,6 +722,12 @@
         animalsEvolutionErrorChart,
         selectedView,
         fetchData,
+        notifications,
+        loadingNotifications,
+        errorNotifications,
+        truncateMessage,
+        formatNotificationDate,
+        redirectToNotificationList,
       };
     },
   };
@@ -680,5 +755,26 @@
 
   .h-100 {
     height: 100%;
+  }
+
+  .notification-list {
+    max-height: 300px;
+    /* Define altura fixa */
+    overflow-y: auto;
+    /* Adiciona barra de rolagem interna */
+  }
+
+  .list-group-item {
+    font-size: 0.85rem;
+    /* Reduz tamanho da fonte */
+    padding: 0.5rem 0.75rem;
+  }
+
+  .message-truncated {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
   }
 </style>
