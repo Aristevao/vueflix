@@ -116,7 +116,7 @@
 
 
 <script>
-  import { ref, onMounted } from "vue";
+  import { ref, onMounted, onBeforeUnmount } from "vue";
   import Chart from "chart.js/auto";
   import apiClient from '../store/apiClient'
   import axios from "axios";
@@ -158,7 +158,7 @@
 
         try {
           const response = await apiClient.get("/animal/status");
-          const data = await response.data;
+          const data = response.data;
           corralStatus.value = {
             totalOutside: data.totalOutside,
             totalInside: data.totalInside,
@@ -576,6 +576,9 @@
       const generateRandomColor = () =>
         `#${Math.floor(Math.random() * 16777215).toString(16)}`; // Gera cores aleatórias
 
+      // Set interval to fetch data every 10 seconds
+      let corralDataInterval;
+
       onMounted(async () => {
         await fetchAnimalCategories();
         if (!errorChart.value) {
@@ -584,7 +587,12 @@
         fetchWeather();
         fetchAnimalCount();
         fetchFarmCount();
-        fetchCorralStatus();
+
+        fetchCorralStatus(); // Initial fetch when mounted
+        corralDataInterval = setInterval(() => {
+          fetchCorralStatus(); // Fetch every 10 seconds
+        }, 30000);
+
         await fetchVaccinationData();
         if (!errorVaccinationChart.value) {
           initializeVaccinationChart();
@@ -605,6 +613,10 @@
             ],
           },
         });
+      });
+      onBeforeUnmount(() => {
+        // Clear the interval when the component is destroyed
+        clearInterval(corralDataInterval);
       });
 
       // Recria o gráfico toda vez que os dados forem atualizados
@@ -650,16 +662,20 @@
   .weather-icon {
     font-size: 1.5rem;
     margin-right: 8px;
-    color: #007bff; /* Blue for all weather icons */
+    color: #007bff;
+    /* Blue for all weather icons */
   }
 
   .card .weather-icon {
-    font-size: 1.6rem; /* Larger icons for the main card */
+    font-size: 1.6rem;
+    /* Larger icons for the main card */
   }
 
   .vacas-card {
-    min-height: 131.19px; /* Reduced minimum height */
-    max-height: 133.19px; /* Optional: max height limit */
+    min-height: 131.19px;
+    /* Reduced minimum height */
+    max-height: 133.19px;
+    /* Optional: max height limit */
   }
 
   .h-100 {
