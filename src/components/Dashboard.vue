@@ -96,7 +96,7 @@
         <div class="card h-100" @click="redirectToNotificationList">
           <div class="card-body">
             <h5 class="card-title text-center">
-              <i class="bi bi-bell-fill me-2"></i> Notificações
+              <i class="fas fa-bell me-2"></i> Notificações
             </h5>
             <div class="notification-list">
               <ul class="list-group">
