@@ -100,6 +100,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Card: Gráfico de Espécies por Data -->
+    <div class="container mt-4">
+      <div class="row mt-4">
+        <!-- Card: Gráfico de Evolução -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-center">Evolução de Animais</h5>
+              <div v-if="loadingChart">Carregando gráfico...</div>
+              <div v-else-if="errorChart" class="text-danger">Erro ao carregar gráfico</div>
+              <canvas v-show="!loadingChart && !errorChart" id="evolutionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -472,6 +491,97 @@
         });
       };
 
+      const loadingEvolutionChart = ref(true);
+      const errorEvolutionChart = ref(false);
+      let evolutionChartInstance = null;
+      const evolutionData = ref([]);
+
+      // Function to initialize the chart dynamically
+      const initializeEvolutionChart = () => {
+        const ctx = document.getElementById("evolutionChart").getContext("2d");
+
+        // Extract months and datasets dynamically
+        const months = evolutionData.value.map((data) => data.month);
+        const totalAnimals = evolutionData.value.map((data) => data.total);
+
+        // Collect dynamic categories
+        const categories = Object.keys(evolutionData.value[0] || {}).filter(
+          (key) => key !== "month" && key !== "total"
+        );
+
+        const datasets = [
+          {
+            label: "Total de Animais",
+            data: totalAnimals,
+            borderColor: "#007bff",
+            fill: false,
+          },
+          ...categories.map((category, index) => ({
+            label: category,
+            data: evolutionData.value.map((data) => data[category] || 0),
+            borderColor: getDynamicColor(index),
+            fill: false,
+          })),
+        ];
+
+        // Destroy existing chart if it exists
+        if (evolutionChartInstance) {
+          evolutionChartInstance.destroy();
+        }
+
+        // Create the new chart
+        evolutionChartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: months,
+            datasets: datasets,
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              legend: {
+                position: "top",
+              },
+            },
+          },
+        });
+      };
+
+      // Function to generate dynamic colors for datasets
+      const getDynamicColor = (index) => {
+        const colors = [
+          "#28a745", // Green
+          "#ffc107", // Yellow
+          "#dc3545", // Red
+          "#17a2b8", // Teal
+          "#6610f2", // Purple
+          "#fd7e14", // Orange
+        ];
+        return colors[index % colors.length];
+      };
+
+      // Fetch data from the API
+      const fetchData = async () => {
+        try {
+          const response = await apiClient.get("/dashboard/animal-evolution");
+          evolutionData.value = response.data.map((item) => ({
+            ...item,
+            month: item.month, // Format if needed
+          }));
+          initializeEvolutionChart();
+        } catch (error) {
+          console.error("Erro ao carregar dados:", error);
+          errorEvolutionChart.value = true;
+        } finally {
+          loadingEvolutionChart.value = false;
+        }
+      };
+
       onMounted(async () => {
         await fetchAnimalCategories();
         if (!errorChart.value) {
@@ -485,6 +595,7 @@
         if (!errorVaccinationChart.value) {
           initializeVaccinationChart();
         }
+        fetchData();
 
         // Gráfico de rosca
         const ctx = document.getElementById("pieChart").getContext("2d");
@@ -530,6 +641,8 @@
         errorCorral,
         loadingVaccinationChart,
         errorVaccinationChart,
+        loadingEvolutionChart,
+        errorEvolutionChart,
       };
     },
   };
