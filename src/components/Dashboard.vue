@@ -95,7 +95,9 @@
       <div class="col-md-3">
         <div class="card h-100" @click="redirectToNotificationList">
           <div class="card-body">
-            <h5 class="card-title text-center">Notificações</h5>
+            <h5 class="card-title text-center">
+              <i class="bi bi-bell-fill me-2"></i> Notificações
+            </h5>
             <div class="notification-list">
               <ul class="list-group">
                 <li v-if="loadingNotifications" class="list-group-item text-center">
