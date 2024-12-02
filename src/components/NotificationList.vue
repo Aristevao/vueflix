@@ -151,7 +151,7 @@
         });
       },
       truncateMessage(message) {
-        return message.length > 100 ? `${message.substring(0, 100)}...` : message
+        return message.length > 130 ? `${message.substring(0, 130)}...` : message
       },
       openNotificationModal(notification) {
         this.selectedNotification = notification
@@ -282,7 +282,7 @@
   }
 
   .read-column {
-    width: 101px;
+    width: 120px;
     text-align: center;
   }
 </style>
