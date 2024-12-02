@@ -4,8 +4,7 @@
             <img src="@/assets/menu.png" alt="Toggle" class="toggle-icon" />
         </button>
         <div class="logo">
-            <img src="@/assets/paw.png" alt="Logo" class="logo-icon" v-if="!isCollapsed" />
-            <span class="logo-text" v-if="!isCollapsed">DigitalPec</span>
+            <span class="logo-text" v-if="!isCollapsed"></span>
         </div>
         <div class="nav-container">
             <nav>

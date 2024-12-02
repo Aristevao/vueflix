@@ -2,7 +2,7 @@
   <header class="app-header">
     <div class="left">
       <div class="logo">
-        <img src="@/assets/paw.png" alt="Logo" class="logo-icon" />
+        <img src="@/assets/logo.png" alt="Logo" class="logo-icon" />
         <span class="app-name">DigitalPec</span>
       </div>
     </div>
@@ -58,8 +58,8 @@
   }
 
   .logo-icon {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     margin-right: 10px;
   }
 
