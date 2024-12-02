@@ -6,7 +6,11 @@
       <div class="col-md-3">
         <div class="card text-center" @click="redirectToAnimalsList">
           <div class="card-body">
-            <h5 class="card-title">Animais</h5>
+            <!-- Título com Ícone -->
+            <h5 class="card-title ">
+              <!-- <img src="@/assets/animais.png" alt="Ícone de Animal" class="me-2" style="width: 25px; height: auto;" /> -->
+              Animais
+            </h5>
             <p v-if="loadingAnimals" class="card-text">Carregando...</p>
             <p v-else-if="errorAnimals" class="card-text text-danger">Erro ao carregar</p>
             <p v-else class="card-text display-4">{{ animals }}</p>
@@ -14,11 +18,16 @@
         </div>
       </div>
 
+
       <!-- Card: Quantidade de Fazendas -->
       <div class="col-md-3">
         <div class="card text-center" @click="redirectToUnitList">
           <div class="card-body">
-            <h5 class="card-title">Fazendas</h5>
+            <!-- Título com Ícone -->
+            <h5 class="card-title d-flex justify-content-center align-items-center">
+              <!-- <img src="@/assets/fazendas.png" alt="Ícone de Animal" class="me-2" style="width: 25px; height: auto;" /> -->
+              Fazendas
+            </h5>
             <p v-if="loadingFarms" class="card-text">Carregando...</p>
             <p v-else-if="errorFarms" class="card-text text-danger">Erro ao carregar</p>
             <p v-else class="card-text display-4">{{ farms }}</p>
