@@ -96,7 +96,12 @@
         <div class="card h-100" @click="redirectToNotificationList">
           <div class="card-body">
             <h5 class="card-title text-center">
-              <i class="fas fa-bell me-2"></i> Notificações
+              <span class="position-relative">
+                <i class="bi bi-bell-fill me-2"></i>
+                <!-- Bolinha vermelha (badge) condicional -->
+                <span v-if="notifications.length > 0" class="notification-badge"></span>
+              </span>
+              Notificações
             </h5>
             <div class="notification-list">
               <ul class="list-group">
@@ -778,5 +783,17 @@
     text-overflow: ellipsis;
     margin: 0;
     padding: 0;
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: -2px;
+    right: 3px;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
   }
 </style>
