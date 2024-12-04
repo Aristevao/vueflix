@@ -181,8 +181,10 @@
         )
       },
       formatDate(date) {
-        const [year, month, day] = date.split('-');
-        return `${day}/${month}/${year}`;
+        if (date != null) {
+          const [year, month, day] = date.split('-');
+          return `${day}/${month}/${year}`;
+        }
       },
       formatNextApplicationDates(dates) {
         return dates.map((date) => this.formatDate(date)).join(', ')
