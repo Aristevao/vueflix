@@ -42,7 +42,7 @@
               <br>
               <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="mb-2">
                 <div class="d-flex align-items-center">
-                  <input type="date" v-model="formData.nextApplicationDates[index]" :min="today"
+                  <input type="date" v-model="formData.nextApplicationDates[index]" :min="formData.applicationDate"
                     class="form-control me-2" />
                   <button type="button" @click="removeNextApplicationDate(index)" class="btn btn btn-light btn-sm p-0"
                     style="width: 20px; height: 20px; font-size: 16px; line-height: 16px;">&times;</button>
