@@ -8,7 +8,8 @@
           <div class="modal-body">
             <div class="mb-3">
               <label for="animal" class="form-label">Animal</label>
-              <select v-model="formData.animalId" id="animal" class="form-select" required>
+              <select v-model="formData.animalId" id="animal" class="form-select" :disabled="formData.id !== null"
+                required>
                 <option v-for="animal in animals" :key="animal.id" :value="animal.id">
                   {{ animal.name }}
                 </option>
@@ -17,7 +18,8 @@
 
             <div class="mb-3">
               <label for="vaccine" class="form-label">Vacina</label>
-              <select v-model="formData.vaccineId" id="vaccine" class="form-select" required>
+              <select v-model="formData.vaccineId" id="vaccine" class="form-select" :disabled="formData.id !== null"
+                required>
                 <option v-for="vaccine in vaccines" :key="vaccine.id" :value="vaccine.id">
                   {{ vaccine.name }}
                 </option>
@@ -40,7 +42,8 @@
               <br>
               <div v-for="(date, index) in formData.nextApplicationDates" :key="index" class="mb-2">
                 <div class="d-flex align-items-center">
-                  <input type="date" v-model="formData.nextApplicationDates[index]" :min="today" class="form-control me-2" />
+                  <input type="date" v-model="formData.nextApplicationDates[index]" :min="today"
+                    class="form-control me-2" />
                   <button type="button" @click="removeNextApplicationDate(index)" class="btn btn btn-light btn-sm p-0"
                     style="width: 20px; height: 20px; font-size: 16px; line-height: 16px;">&times;</button>
                 </div>
